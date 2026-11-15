@@ -22,6 +22,8 @@
 | 8 | Hướng tiếp cận | 35 giây | 4:00 |
 | 9 | Lựa chọn kỹ thuật | 40 giây | 4:40 |
 | 10 | Tóm tắt đề tài và đầu ra | 25 giây | 5:05 |
+| 11 | Toàn cảnh quy trình (cảm ơn, hỏi đáp) | — | — |
+| 12 | Tiêu chí đánh giá (dự phòng khi hỏi đáp) | — | — |
 
 Nếu bị giới hạn đúng 5 phút, bỏ câu "Ngoài ra, nhóm so tỉ lệ flip giữa tiếng Việt và tiếng Anh…" ở màn 7, vì màn 10 đã nhắc lại ý này.
 
@@ -103,9 +105,9 @@ Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không
 > Hướng tiếp cận gồm bốn bước, đi từ trái sang phải.
 >
 > Một: lấy 150 câu hỏi có đáp án từ tập validation của UIT-ViQuAD 2.0, bộ đọc hiểu tiếng Việt của VLSP 2021. Nhóm ưu tiên câu "vì sao", "như thế nào" để câu trả lời đủ dài.
-> Hai: cho vài mô hình có chất lượng khác nhau trả lời, rồi ghép thành cặp X và Y.
+> Hai: cho ba mô hình dùng miễn phí là Qwen, ChatGPT và Gemini trả lời cùng các câu hỏi đó. Mỗi câu có ba câu trả lời, ghép thành ba cặp X và Y, tổng cộng 450 cặp.
 > Ba: chấm song song. Hai người chấm cho điểm độc lập. LLM judge chấm mỗi cặp hai lượt: lượt đầu X ở vị trí A, lượt sau đổi chỗ, Y ở vị trí A. Mỗi lượt lưu lại xác suất "A" và "B".
-> Bốn: so sánh kết quả của judge với người chấm. Nhóm không huấn luyện mô hình nào.
+> Bốn: đánh giá theo sáu tiêu chí trong ô cuối, từ tỉ lệ flip, độ ưa vị trí đầu, độ tự tin, đến độ khớp với người chấm sau khi cân bằng hai thứ tự. Nhóm không huấn luyện mô hình nào.
 
 ## Màn 9 · Lựa chọn kỹ thuật (40 giây)
 
@@ -113,6 +115,7 @@ Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không
 
 > Mỗi kỹ thuật được chọn vì một lý do cụ thể.
 > **Chấm theo cặp, cả hai thứ tự:** thiên vị vị trí chỉ lộ ra khi có hai vị trí để đổi. Chấm từng câu riêng lẻ thì không đo được.
+> **Ba mô hình free sinh câu trả lời:** Qwen, ChatGPT, Gemini mạnh yếu khác nhau ở tiếng Việt, nên có cả cặp chênh rõ lẫn cặp gần ngang nhau. Đây cũng là các mô hình mà một nhóm ít kinh phí thực sự phải chọn giữa.
 > **Judge mã mở Qwen2.5:** nhóm cần xác suất token, mà không phải API trả phí nào cũng trả về. Qwen chạy được trên Colab và có hỗ trợ tiếng Việt.
 > **Xác suất token "A" và "B":** đọc thẳng từ đầu ra của Transformer decoder trong cùng lần chấm. Đây chính là bước sinh token đã học trong môn.
 > **Balanced Position Calibration** của Wang và cộng sự: gộp kết quả hai thứ tự đã chấm sẵn, không cần huấn luyện.
@@ -125,11 +128,21 @@ Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không
 
 *[Chỉ vào dòng "Đầu ra dự kiến".]*
 
-> Đồ án sẽ cho ra bốn thứ: tỉ lệ flip trên tiếng Việt so với tiếng Anh; phân tích flip xảy ra khi nào; khuyến nghị có nên chấm hai thứ tự; và một demo trực tiếp.
+> Đồ án sẽ cho ra bốn thứ: sáu tiêu chí đánh giá đo trên tiếng Việt, có so với tiếng Anh; phân tích flip xảy ra khi nào; khuyến nghị có nên chấm hai thứ tự, kèm xếp hạng Qwen, ChatGPT, Gemini trên tiếng Việt; và một demo trực tiếp.
 >
-> Qua đó, nhóm muốn góp phần trả lời câu hỏi: khi nào phán quyết của LLM judge đáng tin, nhất là với tiếng Việt.
->
-> Em xin cảm ơn thầy và các bạn. Nhóm sẵn sàng nhận câu hỏi.
+> Qua đó, nhóm muốn góp phần trả lời câu hỏi: khi nào phán quyết của LLM judge đáng tin, nhất là với tiếng Việt. Về lâu dài, một judge đáng tin là nền để xây harness tự chọn mô hình free phù hợp cho từng câu hỏi, vừa trả lời tốt vừa tiết kiệm chi phí.
+
+*[Chuyển sang màn 11 rồi mới cảm ơn.]*
+
+## Màn 11 · Toàn cảnh quy trình (nền khi hỏi đáp, không tính giờ)
+
+> Em xin cảm ơn thầy và các bạn. Đây là toàn cảnh quy trình của nhóm. Nhóm sẵn sàng nhận câu hỏi.
+
+*[Để màn này trên màn hình suốt phần hỏi đáp. Khi được hỏi về cách làm, chỉ vào cột tương ứng: cột 2 cho câu trả lời của Qwen, ChatGPT, Gemini, cột 3 cho hai lượt chấm đổi thứ tự, cột 4 cho xác suất token, cột 5 cho cách xác định flip, cột 6 cho người chấm, cột 7 cho các tiêu chí đánh giá. Nếu hỏi các con số trong hình: đó là ví dụ giả định, chưa phải kết quả. Câu hỏi thật ưu tiên dạng "vì sao", "như thế nào". Nếu được hỏi chi tiết cách tính một tiêu chí, nhấn → sang màn 12.]*
+
+## Màn 12 · Tiêu chí đánh giá (dự phòng cho hỏi đáp)
+
+*[Chỉ mở khi được hỏi cách tính. Mỗi dòng: tên tiêu chí, câu hỏi nghiên cứu nó trả lời, công thức.]*
 
 ---
 
@@ -145,10 +158,16 @@ Nhóm làm trên tiếng Việt, đối chiếu với người chấm, và phân
 Mô hình mã mở cho lấy trực tiếp xác suất token "A" và "B", điều mà câu hỏi 3 cần. Ngoài ra, chạy trên Colab thì không tốn phí API và người khác tái lập được thí nghiệm.
 
 **Câu trả lời do mô hình nào sinh ra?**
-Nhóm chưa chốt. Hướng dự kiến là dùng các mô hình có kích cỡ khác nhau để tạo độ chênh chất lượng. Nếu judge và mô hình sinh câu trả lời cùng một họ, judge có thể thiên vị câu trả lời của chính họ mình (self-enhancement bias). Khi đó nhóm sẽ chọn mô hình sinh câu trả lời khác họ với judge, hoặc ghi rõ đây là giới hạn.
+Ba mô hình dùng miễn phí: Qwen2.5-7B-Instruct chạy trên Colab, ChatGPT bản miễn phí và Gemini Flash qua free tier của Google AI Studio. Cả ba nhận cùng một prompt. Mỗi câu hỏi có ba câu trả lời, ghép thành ba cặp, tổng 450 cặp.
+
+**Qwen vừa trả lời vừa làm judge, có bị thiên vị không?**
+Có thể. Judge có thể ưa câu trả lời của chính họ mình (self-enhancement bias). Nhưng điều này không tạo ra flip, vì cùng một cặp được chấm ở cả hai thứ tự; nó chỉ có thể làm lệch người thắng. Nhóm báo cáo riêng các cặp có Qwen để thấy ảnh hưởng này.
+
+**Vì sao chọn ba mô hình free?**
+Đây là lựa chọn thực tế của một nhóm ít kinh phí. Về sau, nhóm muốn xây một harness tự chọn mô hình free phù hợp cho từng câu hỏi để trả lời tốt mà vẫn tiết kiệm chi phí. Muốn vậy cần một judge so sánh các mô hình một cách công bằng, và đồ án này kiểm tra điều kiện đó.
 
 **150 câu và hai người chấm có đủ không?**
-Chỉ đủ cho kết luận sơ bộ. Nhóm đã ghi điều này trong phần giới hạn.
+Chỉ đủ cho kết luận sơ bộ. Mỗi người chấm phải chấm 450 câu trả lời. Nhóm đã ghi điều này trong phần giới hạn.
 
 **Judge có thể đã thấy UIT-ViQuAD lúc huấn luyện không?**
 Có thể. Đây là bộ dữ liệu phổ biến. Việc nhóm chọn tập validation thay vì tập train chỉ giảm được rủi ro này, không loại bỏ được. Tuy vậy, thứ được chấm là câu trả lời do mô hình sinh ra, không phải đáp án gốc, nên ảnh hưởng đến việc đo flip là hạn chế.

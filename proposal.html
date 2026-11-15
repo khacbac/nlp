@@ -235,6 +235,8 @@ body.present .card td{font-size:.86rem;line-height:1.5}
 body.present .card th{padding-top:8px}
 body.present #h-plan{font-size:1.6rem}
 .pipe svg{width:100%;height:auto;display:block}
+.crit td:nth-child(2){white-space:nowrap;color:var(--muted)}
+body.present .crit td{font-size:.92rem;padding-block:8px}
 .pl-h{fill:var(--muted);font:600 13px var(--mono);letter-spacing:.06em;text-transform:uppercase}
 .pl-t{fill:var(--ink);font:600 17px var(--body)}
 .pl-s{fill:var(--muted);font:400 14.5px var(--body)}
@@ -678,7 +680,7 @@ ul.plain{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
 
 <section class="stack" aria-labelledby="h-sim">
   <div class="col stack-s">
-    <h2 id="h-sim"><span class="vi">Từ một cặp đến 150 cặp</span><span class="en">From one pair to 150 pairs</span></h2>
+    <h2 id="h-sim"><span class="vi">Từ một cặp đến hàng trăm cặp</span><span class="en">From one pair to hundreds</span></h2>
     <p>
       <span class="vi">Mỗi chấm bên dưới là một cặp câu trả lời, xếp theo độ chênh điểm mà người chấm cho hai câu. Giả thuyết của đồ án: flip dồn về bên trái, nơi hai câu gần ngang nhau. Kéo thanh trượt để tăng độ thiên vị vị trí của judge.</span>
       <span class="en">Each dot below is one answer pair, placed by the score gap human annotators gave the two answers. The project's hypothesis: flips pile up on the left, where the two answers are close. Drag the slider to raise the judge's position bias.</span>
@@ -732,32 +734,32 @@ ul.plain{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
     <div>
       <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="4" y="10" width="24" height="18" rx="4" fill="var(--x-soft)" stroke="var(--x)" stroke-width="2"></rect><rect x="36" y="10" width="24" height="18" rx="4" fill="var(--y-soft)" stroke="var(--y)" stroke-width="2"></rect><rect x="4" y="38" width="24" height="18" rx="4" fill="var(--y-soft)" stroke="var(--y)" stroke-width="2"></rect><rect x="36" y="38" width="24" height="18" rx="4" fill="var(--x-soft)" stroke="var(--x)" stroke-width="2"></rect><path d="M32 30v6" stroke="var(--flip)" stroke-width="3" stroke-linecap="round"></path></svg>
       <b><span class="vi">1. Judge flip thường xuyên đến mức nào?</span><span class="en">1. How often does the judge flip?</span></b>
-      <span class="m"><span class="vi">Đo bằng: tỉ lệ flip trên toàn bộ các cặp</span><span class="en">Measured by: flip rate over all pairs</span></span>
+      <span class="m"><span class="vi">Đo bằng: Flip Rate, First-Position Preference</span><span class="en">Measured by: Flip Rate, First-Position Preference</span></span>
     </div>
     <div>
       <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M4 56h56" stroke="var(--line)" stroke-width="2"></path><circle cx="10" cy="48" r="4" fill="var(--flip)"></circle><circle cx="20" cy="48" r="4" fill="var(--flip)"></circle><circle cx="10" cy="38" r="4" fill="var(--flip)"></circle><circle cx="20" cy="38" r="4" fill="var(--ok)"></circle><circle cx="34" cy="48" r="4" fill="var(--flip)"></circle><circle cx="34" cy="38" r="4" fill="var(--ok)"></circle><circle cx="48" cy="48" r="4" fill="var(--ok)"></circle><circle cx="58" cy="48" r="4" fill="var(--ok)"></circle><circle cx="48" cy="38" r="4" fill="var(--ok)"></circle><circle cx="10" cy="28" r="4" fill="var(--flip)"></circle></svg>
       <b><span class="vi">2. Flip có dồn vào các cặp gần ngang nhau?</span><span class="en">2. Do flips pile up on close pairs?</span></b>
-      <span class="m"><span class="vi">Đo bằng: flip theo độ chênh điểm của người chấm</span><span class="en">Measured by: flips by human score gap</span></span>
+      <span class="m"><span class="vi">Đo bằng: flip theo Human Score Gap</span><span class="en">Measured by: flips by Human Score Gap</span></span>
     </div>
     <div>
       <svg viewBox="0 0 64 64" aria-hidden="true"><text x="4" y="25" font-family="monospace" font-size="12" font-weight="700" fill="var(--ink)">A</text><rect x="16" y="15" width="30" height="12" rx="3" fill="var(--ink)"></rect><text x="4" y="49" font-family="monospace" font-size="12" font-weight="700" fill="var(--ink)">B</text><rect x="16" y="39" width="27" height="12" rx="3" fill="var(--ink)"></rect><path d="M52 8v50" stroke="var(--flip)" stroke-width="2" stroke-dasharray="3 3"></path></svg>
       <b><span class="vi">3. Lúc flip, judge có đang lưỡng lự?</span><span class="en">3. Is the judge unsure when it flips?</span></b>
-      <span class="m"><span class="vi">Đo bằng: xác suất judge gán cho "A" và "B"</span><span class="en">Measured by: the judge's probabilities for "A" and "B"</span></span>
+      <span class="m"><span class="vi">Đo bằng: Confidence Margin từ xác suất "A", "B"</span><span class="en">Measured by: Confidence Margin from P("A"), P("B")</span></span>
     </div>
     <div>
       <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M6 10h52L38 34v18l-12 6V34z" fill="var(--sunk)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"></path><path d="M24 22l5 5 10-10" stroke="var(--x)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
       <b><span class="vi">4. Chỉ giữ phán quyết nhất quán thì có khớp người chấm hơn?</span><span class="en">4. Does keeping only consistent verdicts agree with humans more?</span></b>
-      <span class="m"><span class="vi">Đo bằng: độ đồng thuận trước và sau khi lọc</span><span class="en">Measured by: agreement before and after filtering</span></span>
+      <span class="m"><span class="vi">Đo bằng: khớp người chấm trước và sau lọc, sau BPC</span><span class="en">Measured by: human agreement before/after filtering and BPC</span></span>
     </div>
   </div>
   <div class="tbl noshow">
     <table>
       <thead><tr><th><span class="vi">Câu hỏi</span><span class="en">Question</span></th><th><span class="vi">Đo bằng gì</span><span class="en">How it is measured</span></th><th><span class="vi">Nói theo chuyện cô Hoa</span><span class="en">In Ms. Hoa's terms</span></th></tr></thead>
       <tbody>
-        <tr><td><span class="vi">Judge flip thường xuyên đến mức nào khi đảo thứ tự hai câu trả lời tiếng Việt?</span><span class="en">How often does the judge flip when two Vietnamese answers are swapped?</span></td><td><span class="vi">Tỉ lệ flip trên toàn bộ các cặp</span><span class="en">Flip rate over all pairs</span></td><td><span class="vi">Cô đổi ý nhiều không?</span><span class="en">How often does she change her mind?</span></td></tr>
-        <tr><td><span class="vi">Flip có tập trung ở các cặp mà người chấm cho điểm gần nhau không?</span><span class="en">Are flips concentrated on pairs humans rate as close?</span></td><td><span class="vi">Tỉ lệ flip theo độ chênh điểm của người chấm</span><span class="en">Flip rate by human score gap</span></td><td><span class="vi">Cô đổi ý khi hai bài ngang nhau, hay cả khi một bài hơn hẳn?</span><span class="en">Does she waver only when the essays are close, or even when one is clearly better?</span></td></tr>
-        <tr><td><span class="vi">Flip có đi kèm độ tự tin thấp của judge không?</span><span class="en">Do flips coincide with low judge confidence?</span></td><td><span class="vi">Xác suất token judge gán cho "A" và "B"</span><span class="en">Token probabilities the judge assigns to "A" and "B"</span></td><td><span class="vi">Lúc đổi ý, cô có đang lưỡng lự không?</span><span class="en">When she changes her mind, was she hesitating?</span></td></tr>
-        <tr><td><span class="vi">Chấm cả hai thứ tự và chỉ giữ phán quyết nhất quán có khớp người chấm hơn không?</span><span class="en">Does judging both orders and keeping consistent verdicts improve agreement with humans?</span></td><td><span class="vi">Độ đồng thuận với người chấm, trước và sau khi lọc</span><span class="en">Agreement with humans, before and after filtering</span></td><td><span class="vi">Bắt cô chấm cả hai thứ tự và chỉ công nhận khi hai lần trùng nhau, thì kết quả có giống hội đồng hơn không?</span><span class="en">If she must grade in both orders and only matching verdicts count, does she agree with the panel more?</span></td></tr>
+        <tr><td><span class="vi">Judge flip thường xuyên đến mức nào khi đảo thứ tự hai câu trả lời tiếng Việt?</span><span class="en">How often does the judge flip when two Vietnamese answers are swapped?</span></td><td><span class="vi">Flip Rate trên toàn bộ các cặp; First-Position Preference cho biết flip nghiêng về câu đứng trước hay đứng sau</span><span class="en">Flip Rate over all pairs; First-Position Preference shows whether flips favour the first or the second slot</span></td><td><span class="vi">Cô đổi ý nhiều không?</span><span class="en">How often does she change her mind?</span></td></tr>
+        <tr><td><span class="vi">Flip có tập trung ở các cặp mà người chấm cho điểm gần nhau không?</span><span class="en">Are flips concentrated on pairs humans rate as close?</span></td><td><span class="vi">Flip Rate theo Human Score Gap (độ chênh điểm người chấm giữa hai câu)</span><span class="en">Flip Rate by Human Score Gap (the annotators' score difference between the two answers)</span></td><td><span class="vi">Cô đổi ý khi hai bài ngang nhau, hay cả khi một bài hơn hẳn?</span><span class="en">Does she waver only when the essays are close, or even when one is clearly better?</span></td></tr>
+        <tr><td><span class="vi">Flip có đi kèm độ tự tin thấp của judge không?</span><span class="en">Do flips coincide with low judge confidence?</span></td><td><span class="vi">Confidence Margin, tính từ xác suất token judge gán cho "A" và "B"</span><span class="en">Confidence Margin, from the token probabilities the judge assigns to "A" and "B"</span></td><td><span class="vi">Lúc đổi ý, cô có đang lưỡng lự không?</span><span class="en">When she changes her mind, was she hesitating?</span></td></tr>
+        <tr><td><span class="vi">Chấm cả hai thứ tự và chỉ giữ phán quyết nhất quán có khớp người chấm hơn không?</span><span class="en">Does judging both orders and keeping consistent verdicts improve agreement with humans?</span></td><td><span class="vi">Độ đồng thuận với người chấm: chấm một lượt, chỉ giữ cặp nhất quán, và sau BPC</span><span class="en">Agreement with humans: one order, consistent pairs only, and after BPC</span></td><td><span class="vi">Bắt cô chấm cả hai thứ tự và chỉ công nhận khi hai lần trùng nhau, thì kết quả có giống hội đồng hơn không?</span><span class="en">If she must grade in both orders and only matching verdicts count, does she agree with the panel more?</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -768,7 +770,7 @@ ul.plain{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
   <span class="eyebrow onlyshow"><span class="vi">Phần 5 · Đề tài</span><span class="en">Part 5 · The project</span></span>
   <h2 id="h-method"><span class="vi">Hướng tiếp cận</span><span class="en">Approach</span></h2>
   <figure class="onlyshow pipe">
-    <svg viewBox="0 0 1000 300" role="img" aria-label="Pipeline: 150 UIT-ViQuAD questions, answers from several models paired up, graded in parallel by two humans and an LLM judge in both orders, then analysed">
+    <svg viewBox="0 0 1000 300" role="img" aria-label="Pipeline: 150 UIT-ViQuAD questions answered by three free models (Qwen, ChatGPT, Gemini) and paired up, graded in parallel by two humans and an LLM judge in both orders, then analysed">
       <defs><marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fill-ink" d="M0 0 10 5 0 10z"></path></marker></defs>
       <text class="pl-h" x="0" y="16"><tspan class="vi">1 · Dữ liệu</tspan><tspan class="en">1 · Data</tspan></text>
       <text class="pl-h" x="215" y="16"><tspan class="vi">2 · Tạo cặp</tspan><tspan class="en">2 · Pairs</tspan></text>
@@ -780,10 +782,10 @@ ul.plain{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
       <text class="pl-s" x="16" y="163"><tspan class="vi">150 câu hỏi</tspan><tspan class="en">150 questions</tspan></text>
       <text class="pl-s" x="16" y="186"><tspan class="vi">"vì sao", "thế nào"</tspan><tspan class="en">"why", "how"</tspan></text>
 
-      <rect class="pl-box" x="215" y="105" width="185" height="110" rx="10"></rect>
-      <text class="pl-t" x="231" y="137"><tspan class="vi">Mô hình trả lời</tspan><tspan class="en">Models answer</tspan></text>
-      <text class="pl-s" x="231" y="163"><tspan class="vi">chất lượng khác nhau</tspan><tspan class="en">of varied quality</tspan></text>
-      <text class="pl-s" x="231" y="186"><tspan class="vi">ghép cặp </tspan><tspan class="en">paired as </tspan>(<tspan class="pl-x">X</tspan>, <tspan class="pl-y">Y</tspan>)</text>
+      <rect class="pl-box" x="215" y="105" width="200" height="110" rx="10"></rect>
+      <text class="pl-t" x="231" y="137"><tspan class="vi">3 mô hình free</tspan><tspan class="en">3 free models</tspan></text>
+      <text class="pl-s" x="231" y="163">Qwen · ChatGPT · Gemini</text>
+      <text class="pl-s" x="231" y="186"><tspan class="vi">450 cặp </tspan><tspan class="en">450 pairs </tspan>(<tspan class="pl-x">X</tspan>, <tspan class="pl-y">Y</tspan>)</text>
 
       <rect class="pl-hum" x="450" y="34" width="240" height="105" rx="10"></rect>
       <text class="pl-t" x="466" y="64"><tspan class="vi">Hai người chấm</tspan><tspan class="en">Two annotators</tspan></text>
@@ -797,17 +799,19 @@ ul.plain{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
       <text class="pl-s" x="466" y="268"><tspan class="vi">lưu </tspan><tspan class="en">save </tspan>P("A"), P("B")</text>
 
       <rect class="pl-box" x="740" y="34" width="260" height="250" rx="10"></rect>
-      <text class="pl-t" x="756" y="66"><tspan class="vi">So sánh</tspan><tspan class="en">Compare</tspan></text>
-      <text class="pl-s" x="756" y="96"><tspan class="vi">• tỉ lệ flip</tspan><tspan class="en">• flip rate</tspan></text>
-      <text class="pl-s" x="756" y="122"><tspan class="vi">• flip theo độ chênh điểm</tspan><tspan class="en">• flips by score gap</tspan></text>
-      <text class="pl-s" x="756" y="148"><tspan class="vi">• flip theo độ tự tin</tspan><tspan class="en">• flips by confidence</tspan></text>
-      <text class="pl-s" x="756" y="174"><tspan class="vi">• khớp người chấm</tspan><tspan class="en">• agreement with humans</tspan></text>
-      <text class="pl-s" x="756" y="226"><tspan class="vi">baseline: F1, cosine</tspan><tspan class="en">baselines: F1, cosine</tspan></text>
-      <text class="pl-s" x="756" y="252"><tspan class="vi">không huấn luyện mô hình</tspan><tspan class="en">no model training</tspan></text>
+      <text class="pl-t" x="756" y="64"><tspan class="vi">Tiêu chí đánh giá</tspan><tspan class="en">Evaluation criteria</tspan></text>
+      <text class="pl-s" x="756" y="92">• Flip Rate</text>
+      <text class="pl-s" x="756" y="116">• First-Position Preference</text>
+      <text class="pl-s" x="756" y="140">• Confidence Margin</text>
+      <text class="pl-s" x="756" y="164">• Human Score Gap</text>
+      <text class="pl-s" x="756" y="188"><tspan class="vi">• BPC, khớp người chấm</tspan><tspan class="en">• BPC, human agreement</tspan></text>
+      <text class="pl-s" x="756" y="212"><tspan class="vi">• Việt – Anh</tspan><tspan class="en">• Vietnamese vs. English</tspan></text>
+      <text class="pl-s" x="756" y="246"><tspan class="vi">baseline: F1, cosine</tspan><tspan class="en">baselines: F1, cosine</tspan></text>
+      <text class="pl-s" x="756" y="270"><tspan class="vi">không huấn luyện mô hình</tspan><tspan class="en">no model training</tspan></text>
 
       <path class="st" d="M175 160H209" marker-end="url(#arr2)"></path>
-      <path class="st" d="M400 160H422V86H444M422 160V225H444" marker-end="url(#arr2)"></path>
-      <path class="st" d="M422 160V86H444" marker-end="url(#arr2)"></path>
+      <path class="st" d="M415 160H429V86H444M429 160V225H444" marker-end="url(#arr2)"></path>
+      <path class="st" d="M429 160V86H444" marker-end="url(#arr2)"></path>
       <path class="st" d="M690 86H734M690 225H734" marker-end="url(#arr2)"></path>
       <path class="st" d="M690 86H734" marker-end="url(#arr2)"></path>
     </svg>
@@ -816,14 +820,14 @@ ul.plain{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
     <li><div><h3><span class="vi">Dữ liệu</span><span class="en">Data</span></h3>
       <p><span class="vi">150 câu hỏi có đáp án lấy từ tập validation của UIT-ViQuAD 2.0 (VLSP 2021, bản công khai trên Hugging Face), ưu tiên câu "vì sao", "như thế nào" để câu trả lời đủ dài, trải đều qua nhiều bài viết. Đáp án gốc giúp người chấm đối chiếu.</span><span class="en">150 answerable questions from the UIT-ViQuAD 2.0 validation split (VLSP 2021, public on Hugging Face), favouring "why" and "how" questions so answers are long enough, spread across many articles. The gold answer helps the annotators.</span></p></div></li>
     <li><div><h3><span class="vi">Tạo cặp câu trả lời</span><span class="en">Build answer pairs</span></h3>
-      <p><span class="vi">Mỗi câu hỏi được trả lời bởi các mô hình có chất lượng khác nhau, rồi ghép thành cặp.</span><span class="en">Each question is answered by models of different quality, then paired.</span></p></div></li>
+      <p><span class="vi">Ba mô hình dùng miễn phí trả lời cùng 150 câu hỏi với cùng một prompt: Qwen2.5-7B-Instruct (chạy trên Colab), ChatGPT (bản miễn phí) và Gemini Flash (free tier của Google AI Studio). Mỗi câu hỏi có ba câu trả lời, ghép thành ba cặp (Qwen–ChatGPT, Qwen–Gemini, ChatGPT–Gemini), tổng cộng 450 cặp. Ba mô hình có mức tiếng Việt khác nhau nên tự nhiên có cặp chênh rõ và cặp gần ngang nhau.</span><span class="en">Three free-to-use models answer the same 150 questions with the same prompt: Qwen2.5-7B-Instruct (on Colab), ChatGPT (free tier) and Gemini Flash (Google AI Studio free tier). Each question gets three answers, paired three ways (Qwen–ChatGPT, Qwen–Gemini, ChatGPT–Gemini), 450 pairs in total. The models differ in Vietnamese ability, so the data naturally contains both clear-gap and close pairs.</span></p></div></li>
     <li><div><h3><span class="vi">Chấm song song</span><span class="en">Grade in parallel</span></h3>
       <div class="fork">
         <div><h3><span class="vi">Người chấm</span><span class="en">Human reference</span></h3><p class="small"><span class="vi">Hai người chấm độc lập, thang 1–5 theo rubric, không biết mô hình nào viết và không biết phán quyết của judge. Độ đồng thuận báo cáo bằng Cohen's kappa.</span><span class="en">Two annotators rate independently on a 1–5 rubric, blind to the source model and the judge's verdict. Agreement reported with Cohen's kappa.</span></p></div>
         <div><h3><span class="vi">LLM judge</span><span class="en">LLM judge</span></h3><p class="small"><span class="vi">Mô hình mã mở instruction-tuned (ứng viên: Qwen2.5-Instruct) chạy trên Google Colab. Mỗi cặp chấm hai thứ tự, lưu xác suất token của phán quyết. Không huấn luyện mô hình nào.</span><span class="en">An open-weight instruction-tuned model (candidate: Qwen2.5-Instruct) on Google Colab. Each pair judged in both orders, verdict token probabilities saved. No model training.</span></p></div>
       </div></div></li>
     <li><div><h3><span class="vi">Phân tích</span><span class="en">Analysis</span></h3>
-      <p><span class="vi">Tỉ lệ flip, flip theo độ chênh chất lượng, flip theo độ tự tin, và độ đồng thuận với người chấm. Word-overlap F1 và cosine embedding làm baseline đối chiếu.</span><span class="en">Flip rate, flips by quality gap, flips by confidence, and agreement with humans. Word-overlap F1 and embedding cosine serve as context baselines.</span></p></div></li>
+      <p><span class="vi">Đánh giá theo sáu tiêu chí ở mục "Tiêu chí đánh giá": Flip Rate, First-Position Preference, Confidence Margin, Human Score Gap, Balanced Position Calibration (BPC) so với người chấm, và so sánh Việt–Anh. Các chỉ số được tính chung và tách theo từng cặp mô hình. Word-overlap F1 và cosine embedding làm baseline đối chiếu.</span><span class="en">Evaluated on the six criteria under "Evaluation criteria": Flip Rate, First-Position Preference, Confidence Margin, Human Score Gap, Balanced Position Calibration (BPC) against human ratings, and Vietnamese vs. English. Each is computed overall and per model pair. Word-overlap F1 and embedding cosine serve as context baselines.</span></p></div></li>
   </ol>
 </section>
 
@@ -835,6 +839,7 @@ ul.plain{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
       <thead><tr><th><span class="vi">Kỹ thuật</span><span class="en">Technique</span></th><th><span class="vi">Dùng để</span><span class="en">Used to</span></th><th><span class="vi">Vì sao chọn</span><span class="en">Why this one</span></th></tr></thead>
       <tbody>
         <tr><td><b><span class="vi">Chấm theo cặp, cả hai thứ tự</span><span class="en">Pairwise judging, both orders</span></b></td><td><span class="vi">Đo flip</span><span class="en">Measure flips</span></td><td><span class="vi">Thiên vị vị trí chỉ lộ ra khi có hai vị trí để đổi; chấm từng câu riêng lẻ không đo được. Đây là cách đo của Zheng et al. (2023).</span><span class="en">Position bias only shows when there are two positions to swap; single-answer grading cannot measure it. This is how Zheng et al. (2023) measure it.</span></td></tr>
+        <tr><td><b><span class="vi">3 mô hình free sinh câu trả lời</span><span class="en">3 free models write the answers</span></b></td><td><span class="vi">Tạo cặp cần chấm</span><span class="en">Create the pairs to judge</span></td><td><span class="vi">Qwen, ChatGPT, Gemini đều dùng được miễn phí, mạnh yếu khác nhau ở tiếng Việt, nên cho cả cặp chênh rõ lẫn cặp gần ngang nhau. Đây cũng là các mô hình mà một nhóm ít kinh phí thực sự cân nhắc.</span><span class="en">Qwen, ChatGPT and Gemini are all free to use and differ in Vietnamese ability, giving both clear-gap and close pairs. They are also the models a low-budget team would actually choose between.</span></td></tr>
         <tr><td><b><span class="vi">Judge mã mở: Qwen2.5-Instruct</span><span class="en">Open-weight judge: Qwen2.5-Instruct</span></b></td><td><span class="vi">Làm giám khảo</span><span class="en">Act as the judge</span></td><td><span class="vi">Lấy được đầy đủ xác suất token, chạy được trên Colab, có hỗ trợ tiếng Việt. Không phải API trả phí nào cũng trả về xác suất token.</span><span class="en">Full access to token probabilities, runs on Colab, supports Vietnamese. Not every paid API returns token probabilities.</span></td></tr>
         <tr><td><b><span class="vi">Xác suất token "A" / "B"</span><span class="en">Token probabilities of "A" / "B"</span></b></td><td><span class="vi">Đo độ tự tin</span><span class="en">Measure confidence</span></td><td><span class="vi">Đọc thẳng từ đầu ra của decoder trong cùng lần chấm, không tốn thêm lần chạy và không dựa vào việc mô hình tự khai độ tin.</span><span class="en">Read directly from the decoder output of the same run, with no extra runs and no reliance on the model stating its own confidence.</span></td></tr>
         <tr><td><b>Balanced Position Calibration</b></td><td><span class="vi">Giảm thiểu</span><span class="en">Mitigate</span></td><td><span class="vi">Gộp kết quả của hai thứ tự đã chấm sẵn, không cần huấn luyện. Đề xuất bởi Wang et al. (2023).</span><span class="en">Combines the two orders already judged, with no training. Proposed by Wang et al. (2023).</span></td></tr>
@@ -855,18 +860,47 @@ ul.plain{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
         <tr><th><span class="vi">Nhóm chủ đề</span><span class="en">Area</span></th><td><span class="vi">Đánh giá NLP (NLP Evaluation)</span><span class="en">NLP Evaluation</span></td></tr>
         <tr><th><span class="vi">Mô tả &amp; phạm vi</span><span class="en">Scope</span></th><td><span class="vi">Phân tích vì sao LLM dùng làm giám khảo đổi phán quyết khi chỉ đổi thứ tự hai câu trả lời: cách đo, nguyên nhân, cách giảm thiểu; kiểm chứng bằng thí nghiệm nhỏ trên câu trả lời đọc hiểu tiếng Việt.</span><span class="en">Why an LLM judge changes its verdict when only the order of two answers changes: how to measure it, its causes, and mitigations; checked with a small experiment on Vietnamese reading-comprehension answers.</span></td></tr>
         <tr><th><span class="vi">Nội dung kỹ thuật</span><span class="en">Technical content</span></th><td><span class="vi"><ul><li>Pairwise comparison vs. single-answer grading; đo độ nhất quán khi đảo thứ tự (flip rate).</li><li>Position bias, verbosity bias, self-enhancement bias; token bias của nhãn "A"/"B".</li><li>Giảm thiểu: chấm cả hai thứ tự, Balanced Position Calibration; độ tự tin từ xác suất token.</li></ul></span><span class="en"><ul><li>Pairwise comparison vs. single-answer grading; consistency under swapping (flip rate).</li><li>Position, verbosity and self-enhancement bias; label token bias for "A"/"B".</li><li>Mitigation: judging both orders, Balanced Position Calibration; confidence from token probabilities.</li></ul></span></td></tr>
-        <tr><th><span class="vi">Mô hình / phương pháp</span><span class="en">Models / methods</span></th><td><span class="vi">Prompt chấm theo cặp của MT-Bench, Balanced Position Calibration, Qwen2.5-Instruct (judge mã mở); baseline word-overlap F1, cosine embedding câu.</span><span class="en">MT-Bench pairwise judge prompt, Balanced Position Calibration, Qwen2.5-Instruct (open-weight judge); baselines word-overlap F1, sentence-embedding cosine.</span></td></tr>
-        <tr><th><span class="vi">Dữ liệu / benchmark</span><span class="en">Data / benchmark</span></th><td><span class="vi">MT-Bench, Vicuna-80 (số liệu từ các bài gốc); UIT-ViQuAD 2.0 cho thí nghiệm của nhóm (tiếng Việt, 150 câu, hai người chấm).</span><span class="en">MT-Bench, Vicuna-80 (figures from the original papers); UIT-ViQuAD 2.0 for the team's experiment (Vietnamese, 150 questions, two annotators).</span></td></tr>
-        <tr><th><span class="vi">Đầu ra dự kiến</span><span class="en">Expected outcome</span></th><td><span class="vi"><ul><li>Tỉ lệ flip đo được trên tiếng Việt, so với tiếng Anh.</li><li>Phân tích flip xảy ra khi nào: theo độ chênh chất lượng và theo độ tự tin của judge.</li><li>Khuyến nghị dùng LLM judge (chấm hai thứ tự có đáng không), kiểm chứng bằng điểm người chấm.</li><li>Demo trực tiếp: judge đổi phán quyết khi đảo hai câu trả lời.</li></ul></span><span class="en"><ul><li>A measured flip rate for Vietnamese, compared with English.</li><li>When flips occur: by quality gap and by judge confidence.</li><li>A recommendation for using LLM judges (is judging both orders worth it), tested against human ratings.</li><li>A live demo of the judge reversing its verdict after a swap.</li></ul></span></td></tr>
+        <tr><th><span class="vi">Mô hình / phương pháp</span><span class="en">Models / methods</span></th><td><span class="vi">Câu trả lời từ 3 mô hình free: Qwen2.5-7B-Instruct, ChatGPT, Gemini Flash. Judge mã mở Qwen2.5-Instruct với prompt chấm theo cặp của MT-Bench; Balanced Position Calibration; baseline word-overlap F1, cosine embedding câu.</span><span class="en">Answers from 3 free models: Qwen2.5-7B-Instruct, ChatGPT, Gemini Flash. Open-weight judge Qwen2.5-Instruct with the MT-Bench pairwise prompt; Balanced Position Calibration; baselines word-overlap F1, sentence-embedding cosine.</span></td></tr>
+        <tr><th><span class="vi">Dữ liệu / benchmark</span><span class="en">Data / benchmark</span></th><td><span class="vi">MT-Bench, Vicuna-80 (số liệu từ các bài gốc); UIT-ViQuAD 2.0 cho thí nghiệm của nhóm (tiếng Việt, 150 câu × 3 câu trả lời = 450 cặp, hai người chấm).</span><span class="en">MT-Bench, Vicuna-80 (figures from the original papers); UIT-ViQuAD 2.0 for the team's experiment (Vietnamese, 150 questions × 3 answers = 450 pairs, two annotators).</span></td></tr>
+        <tr><th><span class="vi">Đầu ra dự kiến</span><span class="en">Expected outcome</span></th><td><span class="vi"><ul><li>Bảng sáu tiêu chí đánh giá trên tiếng Việt (Flip Rate, First-Position Preference, Confidence Margin, Human Score Gap, BPC, so với tiếng Anh).</li><li>Phân tích flip xảy ra khi nào: theo độ chênh chất lượng, theo độ tự tin của judge và theo từng cặp mô hình.</li><li>Khuyến nghị dùng LLM judge (chấm hai thứ tự có đáng không), kiểm chứng bằng điểm người chấm; kèm xếp hạng Qwen, ChatGPT, Gemini trên tiếng Việt.</li><li>Demo trực tiếp: judge đổi phán quyết khi đảo hai câu trả lời.</li></ul></span><span class="en"><ul><li>The six evaluation criteria measured on Vietnamese (Flip Rate, First-Position Preference, Confidence Margin, Human Score Gap, BPC, vs. English).</li><li>When flips occur: by quality gap, by judge confidence and by model pair.</li><li>A recommendation for using LLM judges (is judging both orders worth it), tested against human ratings, plus a ranking of Qwen, ChatGPT and Gemini on Vietnamese.</li><li>A live demo of the judge reversing its verdict after a swap.</li></ul></span></td></tr>
         <tr><th><span class="vi">Câu hỏi mở</span><span class="en">Open question</span></th><td><span class="vi">Làm sao biết khi nào phán quyết của LLM judge đáng tin, nhất là với ngôn ngữ ít tài nguyên như tiếng Việt?</span><span class="en">How can we tell when an LLM judge&#39;s verdict is trustworthy, especially for a lower-resource language such as Vietnamese?</span></td></tr>
         <tr><th><span class="vi">Tài liệu tham khảo</span><span class="en">References</span></th><td><span class="vi">1. Zheng et al. (NeurIPS 2023 - MT-Bench) arXiv:2306.05685<br>2. Wang et al. (2023 - LLMs are not Fair Evaluators) arXiv:2305.17926</span><span class="en">1. Zheng et al. (NeurIPS 2023 - MT-Bench) arXiv:2306.05685<br>2. Wang et al. (2023 - LLMs are not Fair Evaluators) arXiv:2305.17926</span></td></tr>
     </tbody></table>
   </div>
 </section>
 
+<section class="stack" aria-labelledby="h-overview">
+  <span class="eyebrow"><span class="vi">Tổng kết</span><span class="en">Wrap-up</span></span>
+  <h2 id="h-overview"><span class="vi">Toàn cảnh quy trình thí nghiệm</span><span class="en">The experiment at a glance</span></h2>
+  <figure>
+    <a href="assets/position-bias-workflow.jpg" target="_blank" rel="noopener"><img src="assets/position-bias-workflow.jpg" width="1536" height="1024" style="display:block;width:auto;height:auto;max-width:100%;max-height:calc(100vh - 230px);margin:0 auto;border-radius:10px" alt="Seven-step workflow: a UIT-ViQuAD question, two candidate answers X and Y, two judge runs with the order swapped, token probabilities mapped back to X and Y, comparison into consistent win or position-following flip, two blinded annotators, and the analysis outputs."></a>
+    <figcaption><span class="vi">Hình minh hoạ. Câu hỏi và các xác suất trong hình là ví dụ giả định; câu hỏi thật ưu tiên dạng "vì sao", "như thế nào". X và Y là hai trong ba câu trả lời của Qwen, ChatGPT, Gemini. Bấm vào hình để xem cỡ lớn.</span><span class="en">Illustration. The question and probabilities shown are made-up examples; real items favour "why" and "how" questions. X and Y are two of the three answers from Qwen, ChatGPT and Gemini. Click the image to view it full size.</span></figcaption>
+  </figure>
+</section>
+
+<section class="stack" aria-labelledby="h-criteria">
+  <h2 id="h-criteria"><span class="vi">Tiêu chí đánh giá</span><span class="en">Evaluation criteria</span></h2>
+  <p class="col"><span class="vi">Sáu tiêu chí ở cột 7 của hình toàn cảnh. P₁, P₂ là xác suất judge gán cho một câu trả lời ở lượt 1 và lượt 2, sau khi đã đổi nhãn "A"/"B" về đúng câu X/Y.</span><span class="en">The six criteria in column 7 of the overview figure. P₁ and P₂ are the probabilities the judge gives an answer in run 1 and run 2, after mapping the "A"/"B" labels back to X/Y.</span></p>
+  <div class="tbl crit">
+    <table>
+      <thead><tr><th><span class="vi">Tiêu chí</span><span class="en">Criterion</span></th><th><span class="vi">Câu hỏi</span><span class="en">For</span></th><th><span class="vi">Cách tính</span><span class="en">How it is computed</span></th></tr></thead>
+      <tbody>
+        <tr><td><b>Flip Rate</b></td><td>RQ1</td><td><span class="vi">Số cặp flip theo vị trí ÷ tổng số cặp. Flip: P₁(X) &gt; P₁(Y) nhưng P₂(Y) &gt; P₂(X), hoặc ngược lại.</span><span class="en">Position-following flips ÷ all pairs. Flip: P₁(X) &gt; P₁(Y) but P₂(Y) &gt; P₂(X), or the reverse.</span></td></tr>
+        <tr><td><b>First-Position Preference</b></td><td>RQ1</td><td><span class="vi">P(thắng | đứng trước) − P(thắng | đứng sau), tính cho X và cho Y. Dương nghĩa là judge ưa câu đứng trước.</span><span class="en">P(win | first) − P(win | second), for X and for Y. Positive means the judge favours the first slot.</span></td></tr>
+        <tr><td><b>Confidence Margin</b></td><td>RQ3</td><td><span class="vi">Δ = |P(thắng) − P(thua)|, lấy trung bình hai lượt. So Δ của cặp flip với cặp nhất quán.</span><span class="en">Δ = |P(win) − P(lose)|, averaged over both runs. Compare Δ for flipped and consistent pairs.</span></td></tr>
+        <tr><td><b>Human Score Gap</b></td><td>RQ2</td><td><span class="vi">Điểm trung bình hai người chấm cho X − cho Y. Chia cặp theo độ chênh rồi tính Flip Rate từng nhóm.</span><span class="en">Mean annotator score for X − for Y. Bin pairs by gap and compute Flip Rate per bin.</span></td></tr>
+        <tr><td><b>Balanced Position Calibration</b></td><td>RQ4</td><td><span class="vi">Lấy trung bình điểm hai thứ tự (Wang et al., 2023), không huấn luyện. So độ khớp người chấm: một lượt, chỉ cặp nhất quán, sau BPC.</span><span class="en">Average the scores of both orders (Wang et al., 2023), no training. Compare human agreement: one order, consistent pairs only, after BPC.</span></td></tr>
+        <tr><td><b><span class="vi">Việt – Anh</span><span class="en">Vietnamese vs. English</span></b></td><td><span class="vi">Điều kiện phụ</span><span class="en">Secondary</span></td><td><span class="vi">Tính lại các chỉ số trên bản dịch tiếng Anh của cùng các cặp.</span><span class="en">Recompute the criteria on an English translation of the same pairs.</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="col muted small"><span class="vi">Mọi chỉ số được tính chung cho 450 cặp và tách theo ba cặp mô hình (Qwen–ChatGPT, Qwen–Gemini, ChatGPT–Gemini).</span><span class="en">Every criterion is computed over all 450 pairs and per model pair (Qwen–ChatGPT, Qwen–Gemini, ChatGPT–Gemini).</span></p>
+</section>
+
 <section class="stack col" aria-labelledby="h-use">
   <h2 id="h-use"><span class="vi">Ai dùng được kết quả này</span><span class="en">Who can use the result</span></h2>
   <p><span class="vi">Một nhóm làm chatbot tiếng Việt sửa prompt và nhờ LLM so 500 cặp câu trả lời của bản cũ và bản mới. Nếu bản mới luôn nằm ở vị trí A và judge thiên về A, con số "bản mới thắng" có thể chỉ do vị trí.</span><span class="en">A team building a Vietnamese chatbot edits its prompt and asks an LLM to compare 500 answer pairs from the old and new versions. If the new version always sits in position A and the judge favours A, the "new version wins" number may come from position alone.</span></p>
+  <p><span class="vi"><b>Hướng phát triển: harness chọn mô hình free.</b> Khi đã biết judge đáng tin trong điều kiện nào (chấm hai thứ tự, BPC), có thể dùng nó để so Qwen, ChatGPT, Gemini theo từng loại câu hỏi. Một lớp harness phía trước sẽ gửi mỗi câu hỏi tới mô hình free rẻ nhất mà vẫn đủ tốt cho loại câu đó, và chỉ gọi mô hình khác khi cần. Kết quả của đồ án là bước nền: nếu judge thiên vị vị trí, bảng xếp hạng dùng để chọn mô hình cũng sai theo.</span><span class="en"><b>Future direction: a harness that picks a free model.</b> Once we know when the judge can be trusted (both orders, BPC), it can compare Qwen, ChatGPT and Gemini per question type. A harness in front would route each question to the cheapest free model that is good enough for that type, and call another model only when needed. This project is the groundwork: if the judge is position-biased, the ranking used to pick models is wrong too.</span></p>
 </section>
 
 <section class="stack col" aria-labelledby="h-course">
@@ -903,7 +937,9 @@ ul.plain{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
 <section class="stack col" aria-labelledby="h-lim">
   <h2 id="h-lim"><span class="vi">Giới hạn</span><span class="en">Limitations</span></h2>
   <ul class="plain">
-    <li><span class="vi">Khoảng 150 câu hỏi và hai người chấm chỉ đủ cho kết luận sơ bộ.</span><span class="en">About 150 questions and two annotators support preliminary conclusions only.</span></li>
+    <li><span class="vi">Khoảng 150 câu hỏi (450 cặp) và hai người chấm chỉ đủ cho kết luận sơ bộ. Mỗi người chấm phải chấm 450 câu trả lời.</span><span class="en">About 150 questions (450 pairs) and two annotators support preliminary conclusions only. Each annotator rates 450 answers.</span></li>
+    <li><span class="vi">Qwen vừa sinh câu trả lời vừa làm judge, nên judge có thể ưa câu của Qwen (self-enhancement bias). Điều này không tạo ra flip, vì cùng một cặp được chấm ở cả hai thứ tự, nhưng có thể lệch người thắng; nhóm báo cáo riêng các cặp có Qwen.</span><span class="en">Qwen both writes answers and acts as the judge, so the judge may favour Qwen's answers (self-enhancement bias). This does not create flips, since each pair is judged in both orders, but it can shift the winner; pairs involving Qwen are reported separately.</span></li>
+    <li><span class="vi">Bản miễn phí của ChatGPT và Gemini có thể đổi phiên bản mô hình theo thời gian; nhóm ghi lại tên mô hình và ngày sinh câu trả lời.</span><span class="en">The free tiers of ChatGPT and Gemini may change model versions over time; the team records the model name and generation date.</span></li>
     <li><span class="vi">Position bias đã được ghi nhận ở tiếng Anh. Đóng góp ở đây là bối cảnh tiếng Việt và phân tích khi nào, vì sao flip xảy ra.</span><span class="en">Position bias is already documented for English. The contribution is the Vietnamese setting and the analysis of when and why flips occur.</span></li>
     <li><span class="vi">So sánh Việt–Anh phụ thuộc chất lượng bản dịch, nên khác biệt có thể một phần do dịch.</span><span class="en">The Vietnamese–English comparison depends on translation quality, so differences may partly reflect translation.</span></li>
     <li><span class="vi">Tìm kiếm tài liệu chưa thấy nghiên cứu nào đo bias này so với điểm người chấm trên câu trả lời dài tiếng Việt, nhưng việc tìm kiếm chưa toàn diện.</span><span class="en">A literature search found no study of this bias against human ratings on long Vietnamese answers, but the search was not exhaustive.</span></li>
@@ -956,7 +992,7 @@ ul.plain{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
   setLang(saved==='en'?'en':'vi');
 
   /* 5-minute talk: ten stops, suggested seconds per stop (total 300) */
-  var stops=[['header',15],['h-teacher',30],['h-human',25],['h-llm',50],['h-machine',25],['h-origin',25],['h-rq',35],['h-method',30],['h-tech',40],['h-plan',25]]
+  var stops=[['header',15],['h-teacher',30],['h-human',25],['h-llm',50],['h-machine',25],['h-origin',25],['h-rq',35],['h-method',30],['h-tech',40],['h-plan',25],['h-overview',0],['h-criteria',0]]
     .map(function(a){return {el:a[0]==='header'?document.querySelector('.wrap>header'):document.querySelector('[aria-labelledby="'+a[0]+'"]'),sec:a[1]}});
   var cur=-1, dots='';
   stops.forEach(function(){dots+='<i></i>'}); $('p-dots').innerHTML=dots;

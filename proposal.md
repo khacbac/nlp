@@ -13,9 +13,9 @@ Final project proposal for NLP501.22 (Natural Language Processing).
 | Area | NLP Evaluation |
 | Scope | Why an LLM judge changes its verdict when only the order of two answers changes: how to measure it, its causes, and mitigations; checked with a small experiment on Vietnamese reading-comprehension answers. |
 | Technical content | Pairwise comparison vs. single-answer grading; consistency under swapping (flip rate). Position, verbosity and self-enhancement bias; label token bias for "A"/"B". Mitigation: judging both orders, Balanced Position Calibration; confidence from token probabilities. |
-| Models / methods | MT-Bench pairwise judge prompt, Balanced Position Calibration, Qwen2.5-Instruct (open-weight judge); baselines word-overlap F1 and sentence-embedding cosine. |
-| Data / benchmark | MT-Bench, Vicuna-80 (figures from the original papers); UIT-ViQuAD 2.0 for the team's experiment (Vietnamese, 150 questions, two annotators). |
-| Expected outcome | Flip rate for Vietnamese vs. English; when flips occur (by quality gap and judge confidence); a recommendation on judging both orders, tested against human ratings; a live flip demo. |
+| Models / methods | Answers from 3 free models (Qwen2.5-7B-Instruct, ChatGPT, Gemini Flash); MT-Bench pairwise judge prompt, Balanced Position Calibration, Qwen2.5-Instruct (open-weight judge); baselines word-overlap F1 and sentence-embedding cosine. |
+| Data / benchmark | MT-Bench, Vicuna-80 (figures from the original papers); UIT-ViQuAD 2.0 for the team's experiment (Vietnamese, 150 questions × 3 answers = 450 pairs, two annotators). |
+| Expected outcome | The six evaluation criteria measured on Vietnamese, vs. English; when flips occur (by quality gap and judge confidence); a recommendation on judging both orders, tested against human ratings, with a ranking of Qwen, ChatGPT and Gemini on Vietnamese; a live flip demo. |
 | Open question | How can we tell when an LLM judge's verdict is trustworthy, especially for a lower-resource language such as Vietnamese? |
 | References | Zheng et al. (NeurIPS 2023, MT-Bench) arXiv:2306.05685; Wang et al. (2023, LLMs are not Fair Evaluators) arXiv:2305.17926 |
 
@@ -94,8 +94,11 @@ Vietnamese and in English.
    compare, and the sample is spread across many articles. The gold answer
    span is shown to the annotators as a reference. The English condition
    uses a machine translation of the same 150 items.
-2. **Answer pairs:** each question is answered by models of different
-   quality, and the answers are paired.
+2. **Answer pairs:** three free-to-use models answer every question with
+   the same prompt: Qwen2.5-7B-Instruct (on Colab), ChatGPT (free tier) and
+   Gemini Flash (Google AI Studio free tier). The three answers per
+   question are paired three ways (Qwen–ChatGPT, Qwen–Gemini,
+   ChatGPT–Gemini), 450 pairs in total.
 3. **Grading in parallel:**
    - *Human reference:* two annotators rate answers independently on a 1-5
      scale using a written rubric, blind to the source model and to the
@@ -105,14 +108,29 @@ Vietnamese and in English.
      Qwen2.5-Instruct) run on Google Colab. Each pair is judged in both
      orders and the verdict token probabilities are saved. No model is
      trained.
-4. **Analysis:** flip rate, flips by quality gap, flips by confidence, and
-   agreement with human annotators. Word-overlap F1 and sentence-embedding
-   cosine serve as context baselines.
+4. **Analysis:** the six evaluation criteria below, computed over all
+   pairs and per model pair. Word-overlap F1 and sentence-embedding cosine
+   serve as context baselines.
+
+## Evaluation criteria
+
+P1 and P2 are the probabilities the judge gives an answer in run 1 and
+run 2, after mapping the "A"/"B" labels back to X/Y.
+
+| Criterion | For | How it is computed |
+|---|---|---|
+| Flip Rate | RQ1 | Position-following flips ÷ all pairs. Flip: P1(X) > P1(Y) but P2(Y) > P2(X), or the reverse. |
+| First-Position Preference | RQ1 | P(win \| first) − P(win \| second), for X and for Y. Positive means the judge favours the first slot. |
+| Confidence Margin | RQ3 | Δ = \|P(win) − P(lose)\|, averaged over both runs; compared between flipped and consistent pairs. |
+| Human Score Gap | RQ2 | Mean annotator score for X − for Y; pairs are binned by gap and Flip Rate is computed per bin. |
+| Balanced Position Calibration | RQ4 | Average the scores of both orders (Wang et al., 2023). Human agreement compared for one order, consistent pairs only, and after BPC. |
+| Vietnamese vs. English | Secondary | Recompute the criteria on an English translation of the same pairs. |
 
 ## Techniques
 
 | Technique | Used to | Why this one |
 |---|---|---|
+| 3 free models write the answers | Create the pairs | Qwen, ChatGPT and Gemini are free to use and differ in Vietnamese ability, giving both clear-gap and close pairs; they are what a low-budget team would actually choose between. |
 | Pairwise judging in both orders | Measure flips | Position bias only shows when there are two positions to swap; single-answer grading cannot measure it. This is how Zheng et al. (2023) measure it. |
 | Open-weight judge (Qwen2.5-Instruct) | Act as the judge | Full access to token probabilities, runs on Colab, supports Vietnamese. Not every paid API returns token probabilities. |
 | Token probabilities of "A" / "B" | Measure confidence | Read directly from the decoder output of the same run, with no extra runs and no reliance on the model stating its own confidence. |
@@ -133,16 +151,34 @@ on positional information in its input.
 
 ## Expected outcome
 
-- A measured flip rate for Vietnamese, with a comparison to English.
+- The six evaluation criteria measured on Vietnamese, with a comparison
+  to English, overall and per model pair.
+- A ranking of Qwen, ChatGPT and Gemini on Vietnamese answers, based on
+  position-corrected (BPC) verdicts checked against human ratings.
 - An analysis of when flips occur and how they relate to judge confidence.
 - A tested recommendation for using LLM judges more reliably.
 - A live demo in which the judge reverses its verdict on the same pair of
   answers after a swap.
 
+## Future direction
+
+A harness that picks a free model: once the judge is known to be
+trustworthy (both orders, BPC), it can compare Qwen, ChatGPT and Gemini
+per question type, and a routing layer can send each question to the
+cheapest free model that is good enough, calling another model only when
+needed. If the judge is position-biased, that ranking is wrong too, so
+this project is the groundwork.
+
 ## Limitations
 
-- About 150 questions and two annotators support preliminary conclusions
-  only.
+- About 150 questions (450 pairs) and two annotators support preliminary
+  conclusions only; each annotator rates 450 answers.
+- Qwen both writes answers and acts as the judge, so the judge may favour
+  Qwen's answers (self-enhancement bias). This cannot create flips, since
+  each pair is judged in both orders, but it can shift the winner; pairs
+  involving Qwen are reported separately.
+- The free tiers of ChatGPT and Gemini may change model versions over
+  time; the model name and generation date are recorded.
 - Position bias is already documented for English; the contribution here
   is the Vietnamese setting and the analysis of when and why flips occur.
 - The Vietnamese versus English comparison depends on translation quality,
