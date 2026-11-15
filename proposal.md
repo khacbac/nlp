@@ -13,7 +13,7 @@ Final project proposal for NLP501.22 (Natural Language Processing).
 | Area | NLP Evaluation |
 | Scope | Why an LLM judge changes its verdict when only the order of two answers changes: how to measure it, its causes, and mitigations; checked with a small experiment on Vietnamese reading-comprehension answers. |
 | Technical content | Pairwise comparison vs. single-answer grading; consistency under swapping (flip rate). Position, verbosity and self-enhancement bias; label token bias for "A"/"B". Mitigation: judging both orders, Balanced Position Calibration; confidence from token probabilities. |
-| Models / methods | Answers from 3 free models (Qwen2.5-7B-Instruct, gpt-oss-20b, Gemini Flash); MT-Bench pairwise judge prompt, Balanced Position Calibration, Qwen2.5-Instruct (open-weight judge); baselines word-overlap F1 and sentence-embedding cosine. |
+| Models / methods | Answers from 3 free models (Qwen2.5-7B-Instruct, gpt-oss-20b, Gemini Flash-Lite); MT-Bench pairwise judge prompt, Balanced Position Calibration, Qwen2.5-Instruct (open-weight judge); baselines word-overlap F1 and sentence-embedding cosine. |
 | Data / benchmark | MT-Bench, Vicuna-80 (figures from the original papers); UIT-ViQuAD 2.0 for the team's experiment (Vietnamese, 150 questions × 3 answers = 450 pairs, two annotators). |
 | Expected outcome | The six evaluation criteria measured on Vietnamese, vs. English; when flips occur (by quality gap and judge confidence); a recommendation on judging both orders, tested against human ratings, with a ranking of Qwen, gpt-oss and Gemini on Vietnamese; a live flip demo. |
 | Open question | How can we tell when an LLM judge's verdict is trustworthy, especially for a lower-resource language such as Vietnamese? |
@@ -97,7 +97,12 @@ Vietnamese and in English.
 2. **Answer pairs:** three free-to-use models answer every question with
    the same prompt: Qwen2.5-7B-Instruct (on Colab), gpt-oss-20b (OpenAI's
    open-weight model) and
-   Gemini Flash (Google AI Studio free tier). The three answers per
+   Gemini Flash-Lite (Google AI Studio free tier, about 500
+   requests/day). The prompt asks for 2-4 sentences with no formatting so
+   length does not outweigh content; gpt-oss-20b runs with low reasoning
+   effort and only its final answer is kept. Qwen2.5-7B is kept on purpose
+   even though Qwen 3.x exists, since an older, smaller model adds quality
+   spread. The three answers per
    question are paired three ways (Qwen–gpt-oss, Qwen–Gemini,
    gpt-oss–Gemini), 450 pairs in total.
 3. **Grading in parallel:**
@@ -178,7 +183,12 @@ this project is the groundwork.
   Qwen's answers (self-enhancement bias). This cannot create flips, since
   each pair is judged in both orders, but it can shift the winner; pairs
   involving Qwen are reported separately.
-- The Gemini free tier may change model versions over time; the model name and generation date are recorded.
+- The three models differ in answer length and the judge may prefer
+  longer answers (verbosity bias). A length limit in the prompt only
+  partly controls this; answer lengths are recorded to check whether flips
+  track length differences.
+- The Gemini Flash-Lite free tier may change model versions and quotas
+  over time; the model name and generation date are recorded.
 - Position bias is already documented for English; the contribution here
   is the Vietnamese setting and the analysis of when and why flips occur.
 - The Vietnamese versus English comparison depends on translation quality,

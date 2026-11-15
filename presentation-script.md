@@ -158,13 +158,22 @@ Nhóm làm trên tiếng Việt, đối chiếu với người chấm, và phân
 Mô hình mã mở cho lấy trực tiếp xác suất token "A" và "B", điều mà câu hỏi 3 cần. Ngoài ra, chạy trên Colab thì không tốn phí API và người khác tái lập được thí nghiệm.
 
 **Câu trả lời do mô hình nào sinh ra?**
-Ba mô hình dùng miễn phí: Qwen2.5-7B-Instruct chạy trên Colab, gpt-oss-20b, mô hình mã mở của OpenAI, và Gemini Flash qua free tier của Google AI Studio. Cả ba nhận cùng một prompt. Mỗi câu hỏi có ba câu trả lời, ghép thành ba cặp, tổng 450 cặp.
+Ba mô hình dùng miễn phí: Qwen2.5-7B-Instruct chạy trên Colab, gpt-oss-20b, mô hình mã mở của OpenAI, và Gemini Flash-Lite qua free tier của Google AI Studio, khoảng 500 request mỗi ngày nên chạy xong trong một ngày. Cả ba nhận cùng một prompt, yêu cầu trả lời 2–4 câu, không định dạng. gpt-oss-20b chạy với reasoning effort thấp và chỉ lấy phần trả lời cuối. Mỗi câu hỏi có ba câu trả lời, ghép thành ba cặp, tổng 450 cặp.
 
 **Qwen vừa trả lời vừa làm judge, có bị thiên vị không?**
 Có thể. Judge có thể ưa câu trả lời của chính họ mình (self-enhancement bias). Nhưng điều này không tạo ra flip, vì cùng một cặp được chấm ở cả hai thứ tự; nó chỉ có thể làm lệch người thắng. Nhóm báo cáo riêng các cặp có Qwen để thấy ảnh hưởng này.
 
 **Vì sao chọn ba mô hình free?**
 Đây là lựa chọn thực tế của một nhóm ít kinh phí. Về sau, nhóm muốn xây một harness tự chọn mô hình free phù hợp cho từng câu hỏi để trả lời tốt mà vẫn tiết kiệm chi phí. Muốn vậy cần một judge so sánh các mô hình một cách công bằng, và đồ án này kiểm tra điều kiện đó.
+
+**Đã có Qwen 3.x, sao vẫn dùng Qwen2.5-7B?**
+Nhóm giữ có chủ ý. Đề tài cần các cặp có chất lượng chênh nhau, và một mô hình nhỏ, cũ hơn giúp tạo độ chênh đó. Mục tiêu là đo judge, không phải tìm mô hình trả lời tốt nhất.
+
+**Ba mô hình mạnh yếu thế nào ở tiếng Việt?**
+Chưa có bảng điểm tiếng Việt chung cho đúng ba bản này. Một đánh giá độc lập cho thấy gpt-oss yếu ở các tác vụ đa ngôn ngữ, nên nhiều khả năng nó là mô hình yếu nhất. Điều đó có ích cho đề tài vì tạo ra các cặp chênh rõ. Thứ hạng thật sẽ do điểm người chấm quyết định.
+
+**Câu dài có được judge ưa hơn không?**
+Có thể, đó là verbosity bias. Nhóm giới hạn câu trả lời 2–4 câu trong prompt và ghi lại độ dài từng câu, để kiểm tra flip có đi kèm chênh lệch độ dài hay không.
 
 **150 câu và hai người chấm có đủ không?**
 Chỉ đủ cho kết luận sơ bộ. Mỗi người chấm phải chấm 450 câu trả lời. Nhóm đã ghi điều này trong phần giới hạn.
