@@ -831,6 +831,36 @@ ul.plain{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
   </ol>
 </section>
 
+<section class="stack" aria-labelledby="h-three">
+  <div class="col stack-s">
+    <span class="eyebrow"><span class="vi">Phần 5 · Đề tài</span><span class="en">Part 5 · The project</span></span>
+    <h2 id="h-three"><span class="vi">Vì sao 3 mô hình, không phải 2</span><span class="en">Why 3 models, not 2</span></h2>
+    <p><span class="vi">Mỗi cặp vẫn là hai câu trả lời, chấm hai lần, lần hai đổi vị trí. Có 3 mô hình thì mỗi câu hỏi cho 3 cặp với độ chênh chất lượng khác nhau, mà độ chênh là yếu tố ảnh hưởng mạnh nhất đến position bias (Shi et al., 2024).</span><span class="en">Each pair is still two answers judged twice, swapped the second time. Three models give 3 pairs per question with different quality gaps, and the gap is the strongest driver of position bias (Shi et al., 2024).</span></p>
+  </div>
+  <div class="panel">
+    <span class="tag real"><span class="vi">Wang et al. 2023, Bảng 2 · tỉ lệ đổi kết quả khi đổi vị trí</span><span class="en">Wang et al. 2023, Table 2 · conflict rate after swapping</span></span>
+    <div class="sb">
+      <span><span class="vi">GPT-4 · cặp gần ngang</span><span class="en">GPT-4 · close pair</span></span><div class="sbar"><span class="s-first" style="width:46.3%">46.3%</span></div>
+      <span><span class="vi">GPT-4 · cặp chênh rõ</span><span class="en">GPT-4 · clear-gap pair</span></span><div class="sbar"><span class="s-first" style="width:5%">5%</span></div>
+      <span><span class="vi">ChatGPT · cặp gần ngang</span><span class="en">ChatGPT · close pair</span></span><div class="sbar"><span class="s-first" style="width:82.5%">82.5%</span></div>
+      <span><span class="vi">ChatGPT · cặp chênh rõ</span><span class="en">ChatGPT · clear-gap pair</span></span><div class="sbar"><span class="s-first" style="width:52.5%">52.5%</span></div>
+    </div>
+    <p class="note"><span class="vi">80 câu hỏi. Cặp gần ngang: Vicuna-13B vs ChatGPT. Cặp chênh rõ: Vicuna-13B vs Alpaca-13B. Cùng một judge, chỉ đổi cặp mô hình mà tỉ lệ flip chênh gần 10 lần.</span><span class="en">80 questions. Close pair: Vicuna-13B vs ChatGPT. Clear-gap pair: Vicuna-13B vs Alpaca-13B. Same judge, only the model pair changes, and the flip rate differs almost tenfold.</span></p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th><span class="vi">Nghiên cứu</span><span class="en">Study</span></th><th><span class="vi">Mô hình sinh câu trả lời</span><span class="en">Answer models</span></th><th><span class="vi">Cách ghép cặp</span><span class="en">Pairing</span></th><th><span class="vi">Quy mô</span><span class="en">Scale</span></th></tr></thead>
+      <tbody>
+        <tr><td>Wang et al. 2023</td><td>3</td><td><span class="vi">2 cặp, cùng có Vicuna-13B</span><span class="en">2 pairs, both with Vicuna-13B</span></td><td><span class="vi">80 câu, 3 người chấm</span><span class="en">80 questions, 3 annotators</span></td></tr>
+        <tr><td>Zheng et al. 2023</td><td>6</td><td><span class="vi">Mọi cặp</span><span class="en">All pairs</span></td><td><span class="vi">80 câu, ~3.000 phiếu của 58 chuyên gia</span><span class="en">80 questions, ~3,000 votes from 58 experts</span></td></tr>
+        <tr><td>Shi et al. 2024</td><td>~40</td><td><span class="vi">Mỗi mô hình đấu với một mô hình mốc</span><span class="en">Each model vs one fixed baseline</span></td><td><span class="vi">192 câu, 15 judge, &gt;150.000 lượt chấm</span><span class="en">192 questions, 15 judges, &gt;150,000 judgments</span></td></tr>
+        <tr><td><b><span class="vi">Đề tài này</span><span class="en">This project</span></b></td><td><b>3</b></td><td><b><span class="vi">Mọi cặp, 3 cặp mỗi câu</span><span class="en">All pairs, 3 per question</span></b></td><td><b><span class="vi">150 câu, 450 cặp, 2 người chấm</span><span class="en">150 questions, 450 pairs, 2 annotators</span></b></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="col muted small noshow"><span class="vi">3 cặp của cùng một câu hỏi không độc lập, nên khoảng tin cậy được tính bằng bootstrap theo câu hỏi, không theo cặp. Với 2 mô hình, 150 câu chỉ cho 150 cặp ở một mức chênh; với 3 mô hình, người chấm làm thêm 1,5 lần nhưng số cặp tăng gấp 3.</span><span class="en">The 3 pairs from one question are not independent, so confidence intervals bootstrap over questions, not pairs. With 2 models, 150 questions give only 150 pairs at one gap level; with 3 models, annotators do 1.5× the work but the pair count triples.</span></p>
+</section>
+
 <section class="stack" aria-labelledby="h-tech">
   <span class="eyebrow"><span class="vi">Phần 5 · Đề tài</span><span class="en">Part 5 · The project</span></span>
   <h2 id="h-tech"><span class="vi">Lựa chọn kỹ thuật</span><span class="en">Technical choices</span></h2>
@@ -959,6 +989,7 @@ ul.plain{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
     <li>Zheng et al. Large Language Models Are Not Robust Multiple Choice Selectors. ICLR 2024. <a href="https://arxiv.org/abs/2309.03882">arXiv:2309.03882</a></li>
     <li>Liu et al. Lost in the Middle: How Language Models Use Long Contexts. TACL. <a href="https://arxiv.org/abs/2307.03172">arXiv:2307.03172</a></li>
     <li>Fu and Liu. How Reliable is Multilingual LLM-as-a-Judge? Findings of EMNLP 2025. <a href="https://arxiv.org/abs/2505.12201">arXiv:2505.12201</a></li>
+    <li>Shi, L., Ma, C., Liang, W., Diao, X., Ma, W., &amp; Vosoughi, S. Judging the Judges: A Systematic Study of Position Bias in LLM-as-a-Judge. 2024. <a href="https://arxiv.org/abs/2406.07791">arXiv:2406.07791</a></li>
     <li>Gu et al. A Survey on LLM-as-a-Judge. <a href="https://arxiv.org/abs/2411.15594">arXiv:2411.15594</a></li>
     <li>Nguyen, K. V., Tran, S. Q., Nguyen, L. T., Huynh, T. V., Luu, S. T., &amp; Nguyen, N. L.-T. (2022). VLSP 2021 - ViMRC Challenge: Vietnamese Machine Reading Comprehension. <a href="https://arxiv.org/abs/2203.11400">arXiv:2203.11400</a>. Dataset: <a href="https://huggingface.co/datasets/taidng/UIT-ViQuAD2.0">huggingface.co/datasets/taidng/UIT-ViQuAD2.0</a></li>
   </ul>
@@ -993,7 +1024,7 @@ ul.plain{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
   setLang(saved==='en'?'en':'vi');
 
   /* 5-minute talk: ten stops, suggested seconds per stop (total 300) */
-  var stops=[['header',15],['h-teacher',30],['h-human',25],['h-llm',50],['h-machine',25],['h-origin',25],['h-rq',35],['h-method',30],['h-tech',40],['h-plan',25],['h-overview',0],['h-criteria',0]]
+  var stops=[['header',15],['h-teacher',30],['h-human',25],['h-llm',40],['h-machine',25],['h-origin',25],['h-rq',35],['h-method',30],['h-three',20],['h-tech',30],['h-plan',25],['h-overview',0],['h-criteria',0]]
     .map(function(a){return {el:a[0]==='header'?document.querySelector('.wrap>header'):document.querySelector('[aria-labelledby="'+a[0]+'"]'),sec:a[1]}});
   var cur=-1, dots='';
   stops.forEach(function(){dots+='<i></i>'}); $('p-dots').innerHTML=dots;

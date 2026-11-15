@@ -118,6 +118,28 @@ Vietnamese and in English.
    pairs and per model pair. Word-overlap F1 and sentence-embedding cosine
    serve as context baselines.
 
+## Why 3 answer models, not 2
+
+Each pair is still two answers judged twice, swapped the second time.
+Three models give 3 pairs per question with different quality gaps, and
+the quality gap is the strongest driver of position bias (Shi et al.,
+2024). Wang et al. (2023, Table 2) show the size of the effect on 80
+questions: GPT-4 flipped on 46.3% of the close pair (Vicuna-13B vs
+ChatGPT) but only 5.0% of the clear-gap pair (Vicuna-13B vs Alpaca-13B);
+ChatGPT as judge flipped on 82.5% and 52.5%.
+
+| Study | Answer models | Pairing | Scale |
+|---|---|---|---|
+| Wang et al. 2023 | 3 | 2 pairs, both with Vicuna-13B | 80 questions, 3 annotators |
+| Zheng et al. 2023 | 6 | All pairs | 80 questions, ~3,000 votes from 58 experts |
+| Shi et al. 2024 | ~40 | Each model vs one fixed baseline | 192 questions, 15 judges, >150,000 judgments |
+| This project | 3 | All pairs, 3 per question | 150 questions, 450 pairs, 2 annotators |
+
+With 2 models, 150 questions give only 150 pairs at a single gap level;
+with 3, annotators do 1.5× the work but the pair count triples. The 3
+pairs from one question are not independent, so confidence intervals
+bootstrap over questions, not pairs.
+
 ## Evaluation criteria
 
 P1 and P2 are the probabilities the judge gives an answer in run 1 and
@@ -222,7 +244,10 @@ this project is the groundwork.
 9. Fu and Liu. How Reliable is Multilingual LLM-as-a-Judge? Findings of
    EMNLP 2025. arXiv:2505.12201
 10. Gu et al. A Survey on LLM-as-a-Judge. arXiv:2411.15594
-11. Nguyen, K. V., Tran, S. Q., Nguyen, L. T., Huynh, T. V., Luu, S. T., &
+11. Shi, L., Ma, C., Liang, W., Diao, X., Ma, W., & Vosoughi, S. (2024).
+    Judging the Judges: A Systematic Study of Position Bias in
+    LLM-as-a-Judge. arXiv:2406.07791
+12. Nguyen, K. V., Tran, S. Q., Nguyen, L. T., Huynh, T. V., Luu, S. T., &
     Nguyen, N. L.-T. (2022). VLSP 2021 - ViMRC Challenge: Vietnamese Machine
     Reading Comprehension. arXiv:2203.11400. Dataset:
     https://huggingface.co/datasets/taidng/UIT-ViQuAD2.0

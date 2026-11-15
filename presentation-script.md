@@ -8,24 +8,25 @@
 - Dùng phím → và ← để chuyển màn. Esc để thoát chế độ trình chiếu.
 - Màu nền sáng hay tối đi theo cài đặt sáng/tối của máy. Kiểm tra trước trên máy chiếu: nền tối thường dễ đọc hơn trong phòng sáng đèn.
 - Mở sẵn trang trước khi lên. Máy cần có mạng để tải font; nếu mất mạng, trang vẫn hiển thị bằng font hệ thống.
-- Màn 4 (50 giây) và màn 9 (40 giây) là hai màn quan trọng nhất. Nếu đã quá 2 phút 30 giây khi rời màn 5, hãy rút gọn màn 6 để giữ đủ thời gian cho màn 9.
+- Màn 4 (40 giây), màn 9 (20 giây) và màn 10 (30 giây) là các màn quan trọng nhất. Nếu đã quá 2 phút 20 giây khi rời màn 5, hãy rút gọn màn 6 để giữ đủ thời gian cho màn 9 và 10.
 
 | Màn | Nội dung | Thời gian | Hết màn lúc |
 |---|---|---|---|
 | 1 | Tiêu đề | 15 giây | 0:15 |
 | 2 | Cô Hoa chấm bài | 30 giây | 0:45 |
 | 3 | Bằng chứng ở người | 25 giây | 1:10 |
-| 4 | Bằng chứng ở LLM | 50 giây | 2:00 |
-| 5 | Nguyên nhân | 25 giây | 2:25 |
-| 6 | Khoảng trống | 25 giây | 2:50 |
-| 7 | Bốn câu hỏi nghiên cứu | 35 giây | 3:25 |
-| 8 | Hướng tiếp cận | 35 giây | 4:00 |
-| 9 | Lựa chọn kỹ thuật | 40 giây | 4:40 |
-| 10 | Tóm tắt đề tài và đầu ra | 25 giây | 5:05 |
-| 11 | Toàn cảnh quy trình (cảm ơn, hỏi đáp) | — | — |
-| 12 | Tiêu chí đánh giá (dự phòng khi hỏi đáp) | — | — |
+| 4 | Bằng chứng ở LLM | 40 giây | 1:50 |
+| 5 | Nguyên nhân | 25 giây | 2:15 |
+| 6 | Khoảng trống | 25 giây | 2:40 |
+| 7 | Bốn câu hỏi nghiên cứu | 35 giây | 3:15 |
+| 8 | Hướng tiếp cận | 35 giây | 3:50 |
+| 9 | Vì sao 3 mô hình, không phải 2 | 20 giây | 4:10 |
+| 10 | Lựa chọn kỹ thuật | 30 giây | 4:40 |
+| 11 | Tóm tắt đề tài và đầu ra | 25 giây | 5:05 |
+| 12 | Toàn cảnh quy trình (cảm ơn, hỏi đáp) | — | — |
+| 13 | Tiêu chí đánh giá (dự phòng khi hỏi đáp) | — | — |
 
-Nếu bị giới hạn đúng 5 phút, bỏ câu "Ngoài ra, nhóm so tỉ lệ flip giữa tiếng Việt và tiếng Anh…" ở màn 7, vì màn 10 đã nhắc lại ý này.
+Nếu bị giới hạn đúng 5 phút, bỏ câu "Ngoài ra, nhóm so tỉ lệ flip giữa tiếng Việt và tiếng Anh…" ở màn 7, vì màn 11 đã nhắc lại ý này.
 
 Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không đọc thành lời.
 
@@ -53,7 +54,7 @@ Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không
 
 > Zhao và cộng sự (2017) phân tích gần 150 nghìn điểm của 88 người chấm bài luận, và thấy điểm của một bài bị kéo về gần điểm của bài chấm ngay trước.
 
-## Màn 4 · Bằng chứng ở LLM (50 giây)
+## Màn 4 · Bằng chứng ở LLM (40 giây)
 
 > Với LLM thì sao? Zheng và cộng sự, trong bài giới thiệu MT-Bench ở NeurIPS 2023, cho ba mô hình chấm cùng một cặp câu trả lời rất giống nhau, theo cả hai thứ tự.
 
@@ -109,7 +110,17 @@ Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không
 > Ba: chấm song song. Hai người chấm cho điểm độc lập. LLM judge chấm mỗi cặp hai lượt: lượt đầu X ở vị trí A, lượt sau đổi chỗ, Y ở vị trí A. Mỗi lượt lưu lại xác suất "A" và "B".
 > Bốn: đánh giá theo sáu tiêu chí trong ô cuối, từ tỉ lệ flip, độ ưa vị trí đầu, độ tự tin, đến độ khớp với người chấm sau khi cân bằng hai thứ tự. Nhóm không huấn luyện mô hình nào.
 
-## Màn 9 · Lựa chọn kỹ thuật (40 giây)
+## Màn 9 · Vì sao 3 mô hình, không phải 2 (20 giây)
+
+*[Chỉ vào biểu đồ thanh, đọc hai thanh GPT-4.]*
+
+> Mỗi cặp vẫn chỉ là hai câu trả lời đổi chỗ, như cô Hoa. Nhưng vì sao nhóm dùng ba mô hình? Wang và cộng sự cho cùng GPT-4 chấm hai loại cặp: cặp gần ngang nhau thì flip 46%, cặp chênh rõ chỉ 5%. Độ chênh quyết định mức thiên vị.
+>
+> Ba mô hình cho ba cặp mỗi câu, với độ chênh khác nhau, nên đo được cả vùng sát nhau lẫn vùng chênh rõ. Đây cũng là cách làm của các nghiên cứu trước, trong bảng phía dưới.
+
+*[Nếu bị hỏi vì sao không ghép với một mô hình mốc như Shi et al.: ghép mọi cặp cho đủ 3 mức chênh mà chỉ cần 3 mô hình. Nếu bị hỏi về độc lập thống kê: 3 cặp cùng câu hỏi không độc lập, nên khoảng tin cậy tính bằng bootstrap theo câu hỏi.]*
+
+## Màn 10 · Lựa chọn kỹ thuật (30 giây)
 
 *[Đọc theo từng dòng, chỉ nói ý chính của cột "Vì sao chọn", không đọc nguyên văn.]*
 
@@ -124,7 +135,7 @@ Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không
 >
 > Nhóm không fine-tune judge và không dùng API trả phí làm judge chính.
 
-## Màn 10 · Tóm tắt đề tài và đầu ra (25 giây)
+## Màn 11 · Tóm tắt đề tài và đầu ra (25 giây)
 
 *[Chỉ vào dòng "Đầu ra dự kiến".]*
 
@@ -132,15 +143,15 @@ Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không
 >
 > Qua đó, nhóm muốn góp phần trả lời câu hỏi: khi nào phán quyết của LLM judge đáng tin, nhất là với tiếng Việt. Về lâu dài, một judge đáng tin là nền để xây harness tự chọn mô hình free phù hợp cho từng câu hỏi, vừa trả lời tốt vừa tiết kiệm chi phí.
 
-*[Chuyển sang màn 11 rồi mới cảm ơn.]*
+*[Chuyển sang màn 12 rồi mới cảm ơn.]*
 
-## Màn 11 · Toàn cảnh quy trình (nền khi hỏi đáp, không tính giờ)
+## Màn 12 · Toàn cảnh quy trình (nền khi hỏi đáp, không tính giờ)
 
 > Em xin cảm ơn thầy và các bạn. Đây là toàn cảnh quy trình của nhóm. Nhóm sẵn sàng nhận câu hỏi.
 
-*[Để màn này trên màn hình suốt phần hỏi đáp. Khi được hỏi về cách làm, chỉ vào cột tương ứng: cột 2 cho câu trả lời của Qwen, gpt-oss, Gemini, cột 3 cho hai lượt chấm đổi thứ tự, cột 4 cho xác suất token, cột 5 cho cách xác định flip, cột 6 cho người chấm, cột 7 cho các tiêu chí đánh giá. Nếu hỏi các con số trong hình: đó là ví dụ giả định, chưa phải kết quả. Câu hỏi thật ưu tiên dạng "vì sao", "như thế nào". Nếu được hỏi chi tiết cách tính một tiêu chí, nhấn → sang màn 12.]*
+*[Để màn này trên màn hình suốt phần hỏi đáp. Khi được hỏi về cách làm, chỉ vào cột tương ứng: cột 2 cho câu trả lời của Qwen, gpt-oss, Gemini, cột 3 cho hai lượt chấm đổi thứ tự, cột 4 cho xác suất token, cột 5 cho cách xác định flip, cột 6 cho người chấm, cột 7 cho các tiêu chí đánh giá. Nếu hỏi các con số trong hình: đó là ví dụ giả định, chưa phải kết quả. Câu hỏi thật ưu tiên dạng "vì sao", "như thế nào". Nếu được hỏi chi tiết cách tính một tiêu chí, nhấn → sang màn 13.]*
 
-## Màn 12 · Tiêu chí đánh giá (dự phòng cho hỏi đáp)
+## Màn 13 · Tiêu chí đánh giá (dự phòng cho hỏi đáp)
 
 *[Chỉ mở khi được hỏi cách tính. Mỗi dòng: tên tiêu chí, câu hỏi nghiên cứu nó trả lời, công thức.]*
 
