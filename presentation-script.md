@@ -105,8 +105,8 @@ Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không
 
 > Hướng tiếp cận gồm bốn bước, đi từ trái sang phải.
 >
-> Một: lấy 150 câu hỏi có đáp án từ tập validation của UIT-ViQuAD 2.0, bộ đọc hiểu tiếng Việt của VLSP 2021. Nhóm ưu tiên câu "vì sao", "như thế nào" để câu trả lời đủ dài.
-> Hai: cho ba mô hình dùng miễn phí là Qwen, gpt-oss và Gemini trả lời cùng các câu hỏi đó. Mỗi câu có ba câu trả lời, ghép thành ba cặp X và Y, tổng cộng 450 cặp.
+> Một: lấy 300 câu hỏi có đáp án từ tập validation của UIT-ViQuAD 2.0, bộ đọc hiểu tiếng Việt của VLSP 2021. Nhóm ưu tiên câu "vì sao", "như thế nào" để câu trả lời đủ dài.
+> Hai: cho ba mô hình dùng miễn phí là Qwen, gpt-oss và Gemini trả lời cùng các câu hỏi đó. Mỗi câu có ba câu trả lời, ghép thành ba cặp X và Y, tổng cộng 900 cặp.
 > Ba: chấm song song. Hai người chấm cho điểm độc lập. LLM judge chấm mỗi cặp hai lượt: lượt đầu X ở vị trí A, lượt sau đổi chỗ, Y ở vị trí A. Mỗi lượt lưu lại xác suất "A" và "B".
 > Bốn: đánh giá theo sáu tiêu chí trong ô cuối, từ tỉ lệ flip, độ ưa vị trí đầu, độ tự tin, đến độ khớp với người chấm sau khi cân bằng hai thứ tự. Nhóm không huấn luyện mô hình nào.
 
@@ -169,7 +169,7 @@ Nhóm làm trên tiếng Việt, đối chiếu với người chấm, và phân
 Mô hình mã mở cho lấy trực tiếp xác suất token "A" và "B", điều mà câu hỏi 3 cần. Ngoài ra, chạy trên Colab thì không tốn phí API và người khác tái lập được thí nghiệm.
 
 **Câu trả lời do mô hình nào sinh ra?**
-Ba mô hình dùng miễn phí: Qwen2.5-7B-Instruct chạy trên Colab, gpt-oss-20b, mô hình mã mở của OpenAI, và Gemini Flash-Lite qua free tier của Google AI Studio, khoảng 500 request mỗi ngày nên chạy xong trong một ngày. Cả ba nhận cùng một prompt, yêu cầu trả lời 2–4 câu, không định dạng. gpt-oss-20b chạy với reasoning effort thấp và chỉ lấy phần trả lời cuối. Mỗi câu hỏi có ba câu trả lời, ghép thành ba cặp, tổng 450 cặp.
+Ba mô hình dùng miễn phí: Qwen2.5-7B-Instruct chạy trên Colab, gpt-oss-20b, mô hình mã mở của OpenAI, và Gemini Flash-Lite qua free tier của Google AI Studio, khoảng 500 request mỗi ngày nên chạy xong trong một ngày. Cả ba nhận cùng một prompt, yêu cầu trả lời 2–4 câu, không định dạng. gpt-oss-20b chạy với reasoning effort thấp và chỉ lấy phần trả lời cuối. Mỗi câu hỏi có ba câu trả lời, ghép thành ba cặp, tổng 900 cặp.
 
 **Qwen vừa trả lời vừa làm judge, có bị thiên vị không?**
 Có thể. Judge có thể ưa câu trả lời của chính họ mình (self-enhancement bias). Nhưng điều này không tạo ra flip, vì cùng một cặp được chấm ở cả hai thứ tự; nó chỉ có thể làm lệch người thắng. Nhóm báo cáo riêng các cặp có Qwen để thấy ảnh hưởng này.
@@ -186,8 +186,8 @@ Chưa có bảng điểm tiếng Việt chung cho đúng ba bản này. Một đ
 **Câu dài có được judge ưa hơn không?**
 Có thể, đó là verbosity bias. Nhóm giới hạn câu trả lời 2–4 câu trong prompt và ghi lại độ dài từng câu, để kiểm tra flip có đi kèm chênh lệch độ dài hay không.
 
-**150 câu và hai người chấm có đủ không?**
-Chỉ đủ cho kết luận sơ bộ. Mỗi người chấm phải chấm 450 câu trả lời. Nhóm đã ghi điều này trong phần giới hạn.
+**Sao không dùng hết bộ dữ liệu, chỉ lấy 300 câu?**
+Giới hạn nằm ở người chấm, không ở máy. Mỗi người chấm phải đọc đoạn văn, đối chiếu đáp án gốc và chấm 900 câu trả lời. 300 câu là mức hai người làm cẩn thận được, và đủ để thấy hiệu ứng lớn như 46% so với 5% của Wang et al. Nhóm cặp gần ngang nhau có thể vẫn ít, nên kết luận về nhóm này chỉ là sơ bộ; nhóm đã ghi điều này trong phần giới hạn.
 
 **Judge có thể đã thấy UIT-ViQuAD lúc huấn luyện không?**
 Có thể. Đây là bộ dữ liệu phổ biến. Việc nhóm chọn tập validation thay vì tập train chỉ giảm được rủi ro này, không loại bỏ được. Tuy vậy, thứ được chấm là câu trả lời do mô hình sinh ra, không phải đáp án gốc, nên ảnh hưởng đến việc đo flip là hạn chế.
@@ -202,4 +202,4 @@ Judge trả lời bằng một token, "A" hoặc "B". Ngoài phần xác suất 
 Mỗi cặp được chấm hai lần, lần hai đổi chỗ hai câu trả lời. Nếu câu thắng ở hai lần khác nhau thì cặp đó là một flip. Tỉ lệ flip bằng số cặp flip chia cho tổng số cặp.
 
 **Vì sao so với tiếng Anh?**
-Để biết hiện tượng này có nặng hơn ở tiếng Việt không. Phần tiếng Anh là bản dịch máy của cùng 150 câu, nên khác biệt giữa hai ngôn ngữ có thể một phần do chất lượng bản dịch.
+Để biết hiện tượng này có nặng hơn ở tiếng Việt không. Phần tiếng Anh là bản dịch máy của cùng 300 câu, nên khác biệt giữa hai ngôn ngữ có thể một phần do chất lượng bản dịch.
