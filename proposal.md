@@ -14,7 +14,7 @@ Final project proposal for NLP501.22 (Natural Language Processing).
 | Scope | Why an LLM judge changes its verdict when only the order of two answers changes: how to measure it, its causes, and mitigations; checked with a small experiment on Vietnamese reading-comprehension answers. |
 | Technical content | Pairwise comparison vs. single-answer grading; consistency under swapping (flip rate). Position, verbosity and self-enhancement bias; label token bias for "A"/"B". Mitigation: judging both orders, Balanced Position Calibration; confidence from token probabilities. |
 | Models / methods | Answers from 3 free models (Qwen2.5-7B-Instruct, gpt-oss-20b, Gemini Flash-Lite); MT-Bench pairwise judge prompt, Balanced Position Calibration, Qwen2.5-Instruct (open-weight judge); baselines word-overlap F1 and sentence-embedding cosine. |
-| Data / benchmark | MT-Bench, Vicuna-80 (figures from the original papers); UIT-ViQuAD 2.0 for the team's experiment (Vietnamese, 1000 questions × 3 answers = 3000 pairs, four annotators, two per answer). |
+| Data / benchmark | MT-Bench, Vicuna-80 (figures from the original papers); UIT-ViQuAD 2.0 for the team's experiment (Vietnamese, 500 questions × 3 answers = 1500 pairs, four annotators, two per answer). |
 | Expected outcome | The six evaluation criteria measured on Vietnamese, vs. English; when flips occur (by quality gap and judge confidence); a recommendation on judging both orders, tested against human ratings, with a ranking of Qwen, gpt-oss and Gemini on Vietnamese; a live flip demo. |
 | Open question | How can we tell when an LLM judge's verdict is trustworthy, especially for a lower-resource language such as Vietnamese? |
 | References | Zheng et al. (NeurIPS 2023, MT-Bench) arXiv:2306.05685; Wang et al. (2023, LLMs are not Fair Evaluators) arXiv:2305.17926 |
@@ -26,7 +26,7 @@ may change its verdict when the two answers being compared are simply
 swapped. This project studies that phenomenon for Vietnamese: how often the
 judge flips, on which kinds of answer pairs, whether flips coincide with low
 judge confidence, and whether judging in both orders improves agreement with
-human annotators. It uses an open-weight LLM as the judge on 1000
+human annotators. It uses an open-weight LLM as the judge on 500
 Vietnamese reading-comprehension questions, with human ratings as the
 reference, and requires no model training.
 
@@ -87,33 +87,33 @@ Vietnamese and in English.
 
 ## Approach
 
-1. **Data:** 1000 answerable questions (`is_impossible = false`) with their
+1. **Data:** 500 answerable questions (`is_impossible = false`) with their
    source passages from the train split of UIT-ViQuAD 2.0 (VLSP 2021
    ViMRC; public copy on Hugging Face: `taidng/UIT-ViQuAD2.0`). No model is
    trained, so the train split can be used; the validation split has only
-   557 passages and 469 "why"/"how" questions. All 1000 questions ask "why"
+   469 "why"/"how" questions on only 318 passages. All 500 questions ask "why"
    or "how", so that answers are long enough to compare. At most 1 question
-   is taken per passage and 15 per article (130 articles in the sample),
+   is taken per passage and 15 per article (108 articles in the sample),
    sampled with a fixed seed (`experiment/select_questions.py`). The gold answer
    span is shown to the annotators as a reference. The English condition
-   uses a machine translation of the same 1000 items.
+   uses a machine translation of the same 500 items.
 2. **Answer pairs:** three free-to-use models answer every question with
    the same prompt: Qwen2.5-7B-Instruct (on Colab), gpt-oss-20b (OpenAI's
    open-weight model) and
    Gemini Flash-Lite (Google AI Studio free tier, about 500
-   requests/day, so about two days). The prompt asks for 2-4 sentences with no formatting so
+   requests/day, so one to two days). The prompt asks for 2-4 sentences with no formatting so
    length does not outweigh content; gpt-oss-20b runs with low reasoning
    effort and only its final answer is kept. Qwen2.5-7B is kept on purpose
    even though Qwen 3.x exists, since an older, smaller model adds quality
    spread. The three answers per
    question are paired three ways (Qwen–gpt-oss, Qwen–Gemini,
-   gpt-oss–Gemini), 3000 pairs in total.
+   gpt-oss–Gemini), 1500 pairs in total.
 3. **Grading in parallel:**
    - *Human reference:* four annotators rate answers on a 1-5 scale using
      a written rubric, blind to the source model and to the judge's
      verdict. Each question goes to one of the six pairs of annotators, who
      rate all three of its answers independently, so every answer has two
-     ratings and each annotator rates about 1500 answers. Agreement is
+     ratings and each annotator rates about 750 answers. Agreement is
      reported with Cohen's kappa per pair and Krippendorff's alpha overall.
    - *LLM judge:* an open-weight instruction-tuned LLM (candidate:
      Qwen2.5-Instruct) run on Google Colab. Each pair is judged in both
@@ -138,9 +138,9 @@ ChatGPT as judge flipped on 82.5% and 52.5%.
 | Wang et al. 2023 | 3 | 2 pairs, both with Vicuna-13B | 80 questions, 3 annotators |
 | Zheng et al. 2023 | 6 | All pairs | 80 questions, ~3,000 votes from 58 experts |
 | Shi et al. 2024 | ~40 | Each model vs one fixed baseline | 192 questions, 15 judges, >150,000 judgments |
-| This project | 3 | All pairs, 3 per question | 1000 questions, 3000 pairs, 4 annotators (2 per answer) |
+| This project | 3 | All pairs, 3 per question | 500 questions, 1500 pairs, 4 annotators (2 per answer) |
 
-With 2 models, 1000 questions give only 1000 pairs at a single gap level;
+With 2 models, 500 questions give only 500 pairs at a single gap level;
 with 3, annotators do 1.5× the work but the pair count triples. The 3
 pairs from one question are not independent, so confidence intervals
 bootstrap over questions, not pairs.
@@ -204,7 +204,7 @@ this project is the groundwork.
 
 ## Limitations
 
-- Each annotator rates about 1500 answers (roughly 25 hours), so
+- Each annotator rates about 750 answers (roughly 12-13 hours), so
   attention may drift over the grading period. A shared calibration round
   on 20 answers comes first, and agreement is checked per annotator pair.
 - The questions come from the public train split, which the answer models

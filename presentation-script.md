@@ -105,8 +105,8 @@ Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không
 
 > Hướng tiếp cận gồm bốn bước, đi từ trái sang phải.
 >
-> Một: lấy 1000 câu hỏi "vì sao", "như thế nào" có đáp án từ UIT-ViQuAD 2.0, bộ đọc hiểu tiếng Việt của VLSP 2021, mỗi đoạn văn chỉ lấy một câu.
-> Hai: cho ba mô hình dùng miễn phí là Qwen, gpt-oss và Gemini trả lời cùng các câu hỏi đó. Mỗi câu có ba câu trả lời, ghép thành ba cặp X và Y, tổng cộng 3000 cặp.
+> Một: lấy 500 câu hỏi "vì sao", "như thế nào" có đáp án từ UIT-ViQuAD 2.0, bộ đọc hiểu tiếng Việt của VLSP 2021, mỗi đoạn văn chỉ lấy một câu.
+> Hai: cho ba mô hình dùng miễn phí là Qwen, gpt-oss và Gemini trả lời cùng các câu hỏi đó. Mỗi câu có ba câu trả lời, ghép thành ba cặp X và Y, tổng cộng 1500 cặp.
 > Ba: chấm song song. Bốn người chấm, mỗi câu trả lời do hai người cho điểm độc lập. LLM judge chấm mỗi cặp hai lượt: lượt đầu X ở vị trí A, lượt sau đổi chỗ, Y ở vị trí A. Mỗi lượt lưu lại xác suất "A" và "B".
 > Bốn: đánh giá theo sáu tiêu chí trong ô cuối, từ tỉ lệ flip, độ ưa vị trí đầu, độ tự tin, đến độ khớp với người chấm sau khi cân bằng hai thứ tự. Nhóm không huấn luyện mô hình nào.
 
@@ -169,7 +169,7 @@ Nhóm làm trên tiếng Việt, đối chiếu với người chấm, và phân
 Mô hình mã mở cho lấy trực tiếp xác suất token "A" và "B", điều mà câu hỏi 3 cần. Ngoài ra, chạy trên Colab thì không tốn phí API và người khác tái lập được thí nghiệm.
 
 **Câu trả lời do mô hình nào sinh ra?**
-Ba mô hình dùng miễn phí: Qwen2.5-7B-Instruct chạy trên Colab, gpt-oss-20b, mô hình mã mở của OpenAI, và Gemini Flash-Lite qua free tier của Google AI Studio, khoảng 500 request mỗi ngày nên chạy trong khoảng hai ngày. Cả ba nhận cùng một prompt, yêu cầu trả lời 2–4 câu, không định dạng. gpt-oss-20b chạy với reasoning effort thấp và chỉ lấy phần trả lời cuối. Mỗi câu hỏi có ba câu trả lời, ghép thành ba cặp, tổng 3000 cặp.
+Ba mô hình dùng miễn phí: Qwen2.5-7B-Instruct chạy trên Colab, gpt-oss-20b, mô hình mã mở của OpenAI, và Gemini Flash-Lite qua free tier của Google AI Studio, khoảng 500 request mỗi ngày nên chạy trong một đến hai ngày. Cả ba nhận cùng một prompt, yêu cầu trả lời 2–4 câu, không định dạng. gpt-oss-20b chạy với reasoning effort thấp và chỉ lấy phần trả lời cuối. Mỗi câu hỏi có ba câu trả lời, ghép thành ba cặp, tổng 1500 cặp.
 
 **Qwen vừa trả lời vừa làm judge, có bị thiên vị không?**
 Có thể. Judge có thể ưa câu trả lời của chính họ mình (self-enhancement bias). Nhưng điều này không tạo ra flip, vì cùng một cặp được chấm ở cả hai thứ tự; nó chỉ có thể làm lệch người thắng. Nhóm báo cáo riêng các cặp có Qwen để thấy ảnh hưởng này.
@@ -186,11 +186,11 @@ Chưa có bảng điểm tiếng Việt chung cho đúng ba bản này. Một đ
 **Câu dài có được judge ưa hơn không?**
 Có thể, đó là verbosity bias. Nhóm giới hạn câu trả lời 2–4 câu trong prompt và ghi lại độ dài từng câu, để kiểm tra flip có đi kèm chênh lệch độ dài hay không.
 
-**Sao không dùng hết bộ dữ liệu, chỉ lấy 1000 câu?**
-Giới hạn nằm ở người chấm, không ở máy. 1000 câu cho 3000 câu trả lời, mỗi câu cần hai người chấm, tức 6000 lượt chấm. Chia cho bốn người, mỗi người khoảng 1500 câu trả lời, tầm 25 giờ. Đó là mức tối đa nhóm làm cẩn thận được. Đổi lại, nhóm cặp gần ngang nhau, nơi flip xảy ra nhiều nhất, có đủ số cặp để kết luận.
+**Sao không dùng hết bộ dữ liệu, chỉ lấy 500 câu?**
+Giới hạn nằm ở người chấm, không ở máy. 500 câu cho 1500 câu trả lời, mỗi câu cần hai người chấm, tức 3000 lượt chấm; chia cho bốn người, mỗi người khoảng 750 câu trả lời, tầm 12 giờ. Với 500 câu, sai số của tỉ lệ flip trong nhóm cặp gần ngang nhau vào khoảng ±5 điểm, nhỏ hơn khoảng 2,5 lần so với các bài 80 câu. Lên 1000 câu thì công chấm gấp đôi mà sai số chỉ giảm thêm khoảng 1,3 điểm, trong khi người chấm mệt sẽ làm điểm tham chiếu nhiễu hơn.
 
 **Sao lấy câu từ tập train, không phải validation?**
-Nhóm không huấn luyện mô hình nào nên tập train không bị "dùng" vào việc gì khác. Tập validation chỉ có 557 đoạn văn và 469 câu "vì sao", "như thế nào", không đủ 1000 câu.
+Nhóm không huấn luyện mô hình nào nên tập train không bị "dùng" vào việc gì khác. Tập validation chỉ có 469 câu "vì sao", "như thế nào" nằm trên 318 đoạn văn, không đủ 500 câu nếu mỗi đoạn văn chỉ lấy một câu.
 
 **Judge có thể đã thấy UIT-ViQuAD lúc huấn luyện không?**
 Có thể. Đây là bộ dữ liệu công khai, và cả tập train lẫn validation đều có trên mạng. Tuy vậy, thứ được chấm là câu trả lời do mô hình sinh ra, không phải đáp án gốc, nên ảnh hưởng đến việc đo flip là hạn chế. Nhóm đã ghi điều này trong phần giới hạn.
@@ -205,4 +205,4 @@ Judge trả lời bằng một token, "A" hoặc "B". Ngoài phần xác suất 
 Mỗi cặp được chấm hai lần, lần hai đổi chỗ hai câu trả lời. Nếu câu thắng ở hai lần khác nhau thì cặp đó là một flip. Tỉ lệ flip bằng số cặp flip chia cho tổng số cặp.
 
 **Vì sao so với tiếng Anh?**
-Để biết hiện tượng này có nặng hơn ở tiếng Việt không. Phần tiếng Anh là bản dịch máy của cùng 1000 câu, nên khác biệt giữa hai ngôn ngữ có thể một phần do chất lượng bản dịch.
+Để biết hiện tượng này có nặng hơn ở tiếng Việt không. Phần tiếng Anh là bản dịch máy của cùng 500 câu, nên khác biệt giữa hai ngôn ngữ có thể một phần do chất lượng bản dịch.

@@ -1,8 +1,8 @@
 # Experiment pipeline
 
 ```
-select_questions.py   ->  data/questions.jsonl     (1000 questions, committed)
-generate_answers.py   ->  data/answers.jsonl       (3000 answers, 3 models)
+select_questions.py   ->  data/questions.jsonl     (500 questions, committed)
+generate_answers.py   ->  data/answers.jsonl       (1500 answers, 3 models)
 make_grading_sheet.py ->  data/grading_sheet_A.csv ... _D.csv (one per annotator)
                           data/key.csv              (git-ignored, keep private)
 ```
@@ -17,9 +17,9 @@ python select_questions.py
 ```
 
 Questions come from the train split (no model is trained; the validation
-split has only 557 passages and 469 why/how questions). The script takes
-at most one question per passage and 15 per article; all 1000 are
-"why/how" questions, from 130 articles.
+split has only 469 why/how questions on 318 passages). The script takes
+at most one question per passage and 15 per article; all 500 are
+"why/how" questions, from 108 articles.
 
 ## 2. Answers (Google Colab)
 
@@ -37,9 +37,9 @@ os.environ["GROQ_API_KEY"] = userdata.get("GROQ_API_KEY")      # console.groq.co
 os.environ["GEMINI_API_KEY"] = userdata.get("GEMINI_API_KEY")  # aistudio.google.com
 
 !python generate_answers.py --model gemini --limit 3   # trial run, read the output
-!python generate_answers.py --model qwen               # ~15 min on a T4
-!python generate_answers.py --model gpt-oss            # ~1.5 h, may hit the daily quota
-!python generate_answers.py --model gemini             # ~1.5 h, ~500 requests/day: 2 days
+!python generate_answers.py --model qwen               # ~10 min on a T4
+!python generate_answers.py --model gpt-oss            # ~40 min
+!python generate_answers.py --model gemini             # ~40 min, ~500 requests/day: 1-2 days
 ```
 
 Download `data/answers.jsonl` before the Colab session ends, and upload it
@@ -58,7 +58,7 @@ python make_grading_sheet.py
 
 Each question goes to one of the 6 pairs of the 4 annotators (A+B, A+C,
 ..., C+D), and both rate all three of its answers, so every answer gets two
-ratings and each annotator gets about 1500 rows (~25 hours).
+ratings and each annotator gets about 750 rows (~12-13 hours).
 
 Import each `grading_sheet_X.csv` into its own Google Sheet and share it
 with that annotator only; add a 1-5 dropdown on the `score` column

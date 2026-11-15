@@ -1,9 +1,9 @@
 """Build the blinded grading sheets for the four human annotators.
 
-1000 questions x 3 models = 3000 answers, and every answer is rated by two
+500 questions x 3 models = 1500 answers, and every answer is rated by two
 annotators. Each question goes to one of the 6 pairs of annotators (A+B,
-A+C, ..., C+D) in turn, so each annotator rates about 500 questions, i.e.
-1500 answers. Both annotators of a pair rate all three answers to the
+A+C, ..., C+D) in turn, so each annotator rates about 250 questions, i.e.
+750 answers. Both annotators of a pair rate all three answers to the
 question, so the score gap inside every answer pair comes from the same
 two people.
 
