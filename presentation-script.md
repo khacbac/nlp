@@ -1,0 +1,166 @@
+# Kịch bản trình bày: Thứ tự có quan trọng không?
+
+Đề xuất đồ án cuối kỳ NLP501.22, nhóm ABNQ. Tổng thời gian khoảng 5 phút, gồm 10 màn.
+
+## Chuẩn bị
+
+- Mở `proposal.html#present-1` trong Chrome và bật toàn màn hình (F11 hoặc ⌃⌘F).
+- Dùng phím → và ← để chuyển màn. Esc để thoát chế độ trình chiếu.
+- Màu nền sáng hay tối đi theo cài đặt sáng/tối của máy. Kiểm tra trước trên máy chiếu: nền tối thường dễ đọc hơn trong phòng sáng đèn.
+- Mở sẵn trang trước khi lên. Máy cần có mạng để tải font; nếu mất mạng, trang vẫn hiển thị bằng font hệ thống.
+- Màn 4 (50 giây) và màn 9 (40 giây) là hai màn quan trọng nhất. Nếu đã quá 2 phút 30 giây khi rời màn 5, hãy rút gọn màn 6 để giữ đủ thời gian cho màn 9.
+
+| Màn | Nội dung | Thời gian | Hết màn lúc |
+|---|---|---|---|
+| 1 | Tiêu đề | 15 giây | 0:15 |
+| 2 | Cô Hoa chấm bài | 30 giây | 0:45 |
+| 3 | Bằng chứng ở người | 25 giây | 1:10 |
+| 4 | Bằng chứng ở LLM | 50 giây | 2:00 |
+| 5 | Nguyên nhân | 25 giây | 2:25 |
+| 6 | Khoảng trống | 25 giây | 2:50 |
+| 7 | Bốn câu hỏi nghiên cứu | 35 giây | 3:25 |
+| 8 | Hướng tiếp cận | 35 giây | 4:00 |
+| 9 | Lựa chọn kỹ thuật | 40 giây | 4:40 |
+| 10 | Tóm tắt đề tài và đầu ra | 25 giây | 5:05 |
+
+Nếu bị giới hạn đúng 5 phút, bỏ câu "Ngoài ra, nhóm so tỉ lệ flip giữa tiếng Việt và tiếng Anh…" ở màn 7, vì màn 10 đã nhắc lại ý này.
+
+Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không đọc thành lời.
+
+---
+
+## Màn 1 · Tiêu đề (15 giây)
+
+> Em chào thầy và các bạn. Em là [tên], đại diện nhóm ABNQ. Đề tài của nhóm là thiên vị vị trí của LLM judge, kiểm chứng trên tiếng Việt. Câu hỏi của nhóm rất đơn giản: thứ tự có quan trọng không?
+
+*[Chỉ vào cán cân: hai thẻ X và Y đổi chỗ, nhưng cán cân vẫn nghiêng về bên trái.]*
+
+## Màn 2 · Cô Hoa chấm bài (30 giây)
+
+> Thử hình dung cô Hoa chọn bài văn hay hơn giữa bài của An và bài của Bình. Sáng thứ Hai, cô đọc bài của An trước và chọn An. Sáng thứ Ba, vẫn hai bài đó, cô đọc bài của Bình trước và chọn Bình. Hai bài không đổi một chữ, nhưng người thắng đã đổi.
+>
+> Trong đề tài, cô Hoa là một LLM được nhờ chấm, gọi là **judge**. Mỗi lần judge đổi ý như vậy là một **flip**. Thói quen này gọi là **position bias**.
+
+*[Câu cuối là định nghĩa ba thuật ngữ. Đọc chậm ở câu này.]*
+
+## Màn 3 · Bằng chứng ở người (25 giây)
+
+> Hiện tượng này đã được đo trên người thật. Bruine de Bruin (2005) phân tích dữ liệu Eurovision và trượt băng nghệ thuật: tiết mục diễn càng về sau thì điểm càng cao.
+
+*[Chỉ vào biểu đồ cột nhỏ. Đây là sơ đồ minh hoạ xu hướng, không phải số liệu của bài báo, nên đừng đọc độ cao cột như con số thật.]*
+
+> Zhao và cộng sự (2017) phân tích gần 150 nghìn điểm của 88 người chấm bài luận, và thấy điểm của một bài bị kéo về gần điểm của bài chấm ngay trước.
+
+## Màn 4 · Bằng chứng ở LLM (50 giây)
+
+> Với LLM thì sao? Zheng và cộng sự, trong bài giới thiệu MT-Bench ở NeurIPS 2023, cho ba mô hình chấm cùng một cặp câu trả lời rất giống nhau, theo cả hai thứ tự.
+
+*[Chỉ vào biểu đồ trên cùng.]*
+
+> Phần đầu mỗi thanh là tỉ lệ judge giữ nguyên phán quyết sau khi đổi chỗ, phần màu hồng là khi judge chọn câu đứng trước. Claude-v1 chỉ nhất quán ở 23,8% số cặp; 75% số cặp nó chọn câu đứng trước. GPT-3.5 nhất quán ở 46%. Ngay cả GPT-4 cũng chỉ đạt 65%.
+
+*[Chỉ xuống ô dưới bên trái.]*
+
+> Wang và cộng sự (2023) còn cho thấy, khi ChatGPT làm giám khảo, chỉ cần đổi thứ tự là Vicuna-13B "thắng" được ChatGPT ở 66 trên 80 câu hỏi.
+
+*[Chỉ xuống ô dưới bên phải.]*
+
+> Khi GPT-4 chấm, hai mô hình càng chênh nhau rõ thì nó càng nhất quán, từ 67,5% lên 98,8%. Nghĩa là thiên vị mạnh nhất khi hai câu trả lời khó phân biệt, cũng là lúc ta cần judge nhất.
+
+## Màn 5 · Nguyên nhân (25 giây)
+
+> Vì sao lại như vậy? Ở cả hai phía, nguyên nhân chưa được xác định chắc chắn. Ô bên trái là các giải thích cho con người. Ô bên phải là ba giải thích cho LLM: do dữ liệu huấn luyện hoặc do kiến trúc đọc từ trái sang phải; mô hình có sẵn thói quen chọn nhãn "A" hơn "B", bất kể nội dung, gọi là token bias; và mô hình dùng thông tin ở đầu, cuối ngữ cảnh tốt hơn phần giữa.
+>
+*[Chỉ vào khung hồng "Điểm gặp nhau".]*
+
+> Điểm chung là thứ tự chi phối mạnh nhất khi hai thứ cần so khó phân biệt. Nhóm không khẳng định người và máy có cùng cơ chế.
+
+## Màn 6 · Khoảng trống (25 giây)
+
+> Xếp lại: ta đã biết con người bị thứ tự chi phối, LLM judge tiếng Anh cũng flip, và judge kém ổn định khi đổi ngôn ngữ. Fu và Liu (2025) đo trên 25 ngôn ngữ, độ nhất quán chỉ đạt kappa khoảng 0,3, kém nhất ở ngôn ngữ ít tài nguyên.
+>
+> Còn tiếng Việt, với câu trả lời dài và có đối chiếu người chấm, nhóm chưa tìm thấy nghiên cứu nào. Đề tài này nhắm vào chỗ trống đó.
+
+*[Chỉ vào cột cuối, cột có gạch hồng phía trên.]*
+
+## Màn 7 · Bốn câu hỏi nghiên cứu (35 giây)
+
+*[Đi lần lượt bốn thẻ: trên trái, trên phải, dưới trái, dưới phải. Mỗi thẻ đọc câu hỏi trên slide, rồi nói thêm một câu theo chuyện cô Hoa.]*
+
+> Nhóm đặt bốn câu hỏi.
+>
+> Một: judge flip thường xuyên đến mức nào, tức là cô Hoa có hay đổi ý không. Nhóm đo bằng tỉ lệ flip.
+> Hai: flip có dồn vào các cặp gần ngang nhau không, hay cả khi một bài hơn hẳn cô vẫn đổi ý. Nhóm đo flip theo độ chênh điểm của người chấm.
+> Ba: lúc flip, judge có đang lưỡng lự không. Nhóm đo bằng xác suất judge gán cho "A" và "B"; gần 50/50 nghĩa là lưỡng lự.
+> Bốn: nếu chỉ giữ những phán quyết trùng nhau ở cả hai thứ tự, kết quả có khớp người chấm hơn không.
+>
+> Ngoài ra, nhóm so tỉ lệ flip giữa tiếng Việt và tiếng Anh trên cùng nội dung.
+
+## Màn 8 · Hướng tiếp cận (35 giây)
+
+*[Đi theo mũi tên từ trái sang phải. Ở ô LLM judge, chỉ vào hai lượt: X và Y đổi vị trí A, B.]*
+
+> Hướng tiếp cận gồm bốn bước, đi từ trái sang phải.
+>
+> Một: lấy 150 câu hỏi có đáp án từ tập validation của UIT-ViQuAD 2.0, bộ đọc hiểu tiếng Việt của VLSP 2021. Nhóm ưu tiên câu "vì sao", "như thế nào" để câu trả lời đủ dài.
+> Hai: cho vài mô hình có chất lượng khác nhau trả lời, rồi ghép thành cặp X và Y.
+> Ba: chấm song song. Hai người chấm cho điểm độc lập. LLM judge chấm mỗi cặp hai lượt: lượt đầu X ở vị trí A, lượt sau đổi chỗ, Y ở vị trí A. Mỗi lượt lưu lại xác suất "A" và "B".
+> Bốn: so sánh kết quả của judge với người chấm. Nhóm không huấn luyện mô hình nào.
+
+## Màn 9 · Lựa chọn kỹ thuật (40 giây)
+
+*[Đọc theo từng dòng, chỉ nói ý chính của cột "Vì sao chọn", không đọc nguyên văn.]*
+
+> Mỗi kỹ thuật được chọn vì một lý do cụ thể.
+> **Chấm theo cặp, cả hai thứ tự:** thiên vị vị trí chỉ lộ ra khi có hai vị trí để đổi. Chấm từng câu riêng lẻ thì không đo được.
+> **Judge mã mở Qwen2.5:** nhóm cần xác suất token, mà không phải API trả phí nào cũng trả về. Qwen chạy được trên Colab và có hỗ trợ tiếng Việt.
+> **Xác suất token "A" và "B":** đọc thẳng từ đầu ra của Transformer decoder trong cùng lần chấm. Đây chính là bước sinh token đã học trong môn.
+> **Balanced Position Calibration** của Wang và cộng sự: gộp kết quả hai thứ tự đã chấm sẵn, không cần huấn luyện.
+> **Cohen's kappa:** trừ đi phần đồng ý do ngẫu nhiên, nên cho biết rubric có đủ rõ không.
+> Cuối cùng, **F1 và cosine embedding** là hai baseline so sánh văn bản, dùng lại biểu diễn của môn học.
+>
+> Nhóm không fine-tune judge và không dùng API trả phí làm judge chính.
+
+## Màn 10 · Tóm tắt đề tài và đầu ra (25 giây)
+
+*[Chỉ vào dòng "Đầu ra dự kiến".]*
+
+> Đồ án sẽ cho ra bốn thứ: tỉ lệ flip trên tiếng Việt so với tiếng Anh; phân tích flip xảy ra khi nào; khuyến nghị có nên chấm hai thứ tự; và một demo trực tiếp.
+>
+> Qua đó, nhóm muốn góp phần trả lời câu hỏi: khi nào phán quyết của LLM judge đáng tin, nhất là với tiếng Việt.
+>
+> Em xin cảm ơn thầy và các bạn. Nhóm sẵn sàng nhận câu hỏi.
+
+---
+
+## Chuẩn bị trả lời câu hỏi
+
+**Đầu ra cụ thể của đồ án là gì?**
+Có bốn thứ: tỉ lệ flip đo được trên tiếng Việt, kèm so sánh với tiếng Anh; phân tích flip xảy ra khi nào và có liên quan đến độ tự tin của judge không; một khuyến nghị dùng judge đã được kiểm chứng trên dữ liệu thật; và một demo trực tiếp, trong đó judge đổi phán quyết khi hai câu trả lời đổi chỗ.
+
+**Đề tài này khác gì Zheng et al.?**
+Nhóm làm trên tiếng Việt, đối chiếu với người chấm, và phân tích flip theo độ chênh chất lượng và độ tự tin của judge. Đề tài không nhằm phát hiện ra position bias, vì hiện tượng này đã được ghi nhận ở tiếng Anh.
+
+**Vì sao không dùng GPT-4 làm judge?**
+Mô hình mã mở cho lấy trực tiếp xác suất token "A" và "B", điều mà câu hỏi 3 cần. Ngoài ra, chạy trên Colab thì không tốn phí API và người khác tái lập được thí nghiệm.
+
+**Câu trả lời do mô hình nào sinh ra?**
+Nhóm chưa chốt. Hướng dự kiến là dùng các mô hình có kích cỡ khác nhau để tạo độ chênh chất lượng. Nếu judge và mô hình sinh câu trả lời cùng một họ, judge có thể thiên vị câu trả lời của chính họ mình (self-enhancement bias). Khi đó nhóm sẽ chọn mô hình sinh câu trả lời khác họ với judge, hoặc ghi rõ đây là giới hạn.
+
+**150 câu và hai người chấm có đủ không?**
+Chỉ đủ cho kết luận sơ bộ. Nhóm đã ghi điều này trong phần giới hạn.
+
+**Judge có thể đã thấy UIT-ViQuAD lúc huấn luyện không?**
+Có thể. Đây là bộ dữ liệu phổ biến. Việc nhóm chọn tập validation thay vì tập train chỉ giảm được rủi ro này, không loại bỏ được. Tuy vậy, thứ được chấm là câu trả lời do mô hình sinh ra, không phải đáp án gốc, nên ảnh hưởng đến việc đo flip là hạn chế.
+
+**Balanced Position Calibration là gì?**
+Đây là một cách giảm thiểu trong Wang et al. (2023): chấm cặp câu trả lời theo cả hai thứ tự, rồi lấy trung bình điểm của hai lần.
+
+**Token bias là gì?**
+Judge trả lời bằng một token, "A" hoặc "B". Ngoài phần xác suất đến từ nội dung, mô hình vốn đã ưa token "A" hơn. Câu đứng trước luôn mang nhãn "A", nên ưa "A" cũng là ưa câu đứng trước. Khi hai câu gần ngang nhau, thói quen này đủ để lật phán quyết. Lưu ý: Zheng et al. (2024) đo hiện tượng này trên câu hỏi trắc nghiệm. Với việc chấm theo cặp, đây mới là một nguyên nhân có thể, chưa được chứng minh.
+
+**Flip được tính thế nào?**
+Mỗi cặp được chấm hai lần, lần hai đổi chỗ hai câu trả lời. Nếu câu thắng ở hai lần khác nhau thì cặp đó là một flip. Tỉ lệ flip bằng số cặp flip chia cho tổng số cặp.
+
+**Vì sao so với tiếng Anh?**
+Để biết hiện tượng này có nặng hơn ở tiếng Việt không. Phần tiếng Anh là bản dịch máy của cùng 150 câu, nên khác biệt giữa hai ngôn ngữ có thể một phần do chất lượng bản dịch.

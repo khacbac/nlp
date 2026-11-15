@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Demo đổi chỗ</title>
+<style>
+:root{
+  --bg:#F2F5F6; --surface:#FFFFFF; --sunk:#E6ECEE; --ink:#13242C; --muted:#56686F; --line:#D2DBDF;
+  --x:#0B7285; --x-soft:#DCEFF2; --y:#9A5B06; --y-soft:#F6EAD3;
+  --flip:#C2255C; --flip-soft:#FBE2EB; --good:#2B8A3E; --good-soft:#E3F4E6;
+  --body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E181D; --surface:#16242B; --sunk:#1E3038; --ink:#E7EEF1; --muted:#96A9B1; --line:#2C414A;
+    --x:#5AC8D8; --x-soft:#123A42; --y:#E5B862; --y-soft:#3B2F14;
+    --flip:#F4759F; --flip-soft:#45192B; --good:#69DB7C; --good-soft:#173A20; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E181D; --surface:#16242B; --sunk:#1E3038; --ink:#E7EEF1; --muted:#96A9B1; --line:#2C414A;
+  --x:#5AC8D8; --x-soft:#123A42; --y:#E5B862; --y-soft:#3B2F14;
+  --flip:#F4759F; --flip-soft:#45192B; --good:#69DB7C; --good-soft:#173A20; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--body)}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 60px}
+h1{font-size:1.9rem;margin:0 0 6px;line-height:1.2}
+h2{font-size:1.05rem;margin:0 0 10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.note{background:var(--sunk);border-left:4px solid var(--y);padding:10px 14px;border-radius:8px;font-size:.92rem;color:var(--muted);margin:10px 0 18px}
+.note b{color:var(--ink)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tabs button{font:inherit;font-size:.92rem;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.tabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid2>*,.runs>*{min-width:0}
+.prompt,.ans,.ctx{overflow-wrap:anywhere}
+@media (max-width:820px){.grid2{grid-template-columns:1fr}}
+.q{font-size:1.25rem;font-weight:600;margin:4px 0 10px}
+.ctx{font-size:.92rem;color:var(--muted);max-height:9.5em;overflow:auto}
+mark{background:var(--good-soft);color:var(--ink);padding:1px 2px;border-radius:3px}
+.meta{font:12px var(--mono);color:var(--muted)}
+.ans{border-radius:10px;padding:10px 14px;margin:6px 0}
+.ans .tag{font-weight:700;margin-right:6px}
+.ax{background:var(--x-soft);border:1.5px solid var(--x)} .ax .tag{color:var(--x)}
+.ay{background:var(--y-soft);border:1.5px solid var(--y)} .ay .tag{color:var(--y)}
+.prompt{font:14.5px/1.55 var(--mono);background:var(--sunk);border-radius:10px;padding:12px 14px}
+.slot{display:block;margin:8px 0;padding:8px 10px;border-radius:8px;transition:transform .5s ease,opacity .3s}
+.slot.sx{background:var(--x-soft);border:1.5px solid var(--x)}
+.slot.sy{background:var(--y-soft);border:1.5px solid var(--y)}
+.slot .lbl{font-weight:700}
+.swapping .slot:first-of-type{transform:translateY(100%)}
+.swapping .slot:last-of-type{transform:translateY(-100%)}
+.ctrl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0 4px}
+.ctrl button{font:inherit;font-weight:600;padding:10px 18px;border-radius:10px;border:0;background:var(--ink);color:var(--bg);cursor:pointer}
+.ctrl button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.ctrl button:disabled{opacity:.35;cursor:default}
+.ctrl .hint{font-size:.85rem;color:var(--muted)}
+.runs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.run{border:1px dashed var(--line);border-radius:10px;padding:10px 12px;min-height:118px}
+.run h3{margin:0 0 6px;font-size:.9rem;color:var(--muted);font-weight:600}
+.run.empty>*:not(h3){visibility:hidden}
+.bar{display:grid;grid-template-columns:52px 1fr 48px;gap:8px;align-items:center;font-size:.88rem;margin:3px 0}
+.bar .t{height:14px;background:var(--sunk);border-radius:7px;overflow:hidden}
+.bar .f{height:100%;border-radius:7px;background:var(--muted);transition:width .6s ease}
+.verdict{margin-top:6px;font-weight:600}
+.cx{color:var(--x)} .cy{color:var(--y)}
+.res{font-size:1.15rem;font-weight:700;padding:12px 16px;border-radius:10px;margin-top:12px}
+.res.flip{background:var(--flip-soft);color:var(--flip)}
+.res.same{background:var(--good-soft);color:var(--good)}
+.res small{display:block;font-weight:400;color:var(--ink);font-size:.9rem;margin-top:2px}
+.hidden{display:none}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600;font-size:.85rem}
+.locked{position:relative}
+.locked .cover{position:absolute;inset:0;background:var(--surface);border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--muted);font-size:.95rem;border:1px dashed var(--line)}
+.cmp li{margin:4px 0}
+.chart{display:grid;gap:6px;margin-top:8px}
+.chart .row{display:grid;grid-template-columns:132px 1fr 44px;gap:8px;align-items:center;font-size:.88rem}
+.chart .t{height:18px;background:var(--sunk);border-radius:4px;overflow:hidden}
+.chart .f{height:100%;background:repeating-linear-gradient(45deg,var(--flip) 0 6px,var(--flip-soft) 6px 9px)}
+.fake{display:inline-block;font:600 11px var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--flip);border:1px solid var(--flip);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:middle}
+.stat{display:flex;gap:28px;flex-wrap:wrap;margin-top:6px}
+.stat div{font-size:.9rem;color:var(--muted)} .stat b{display:block;font-size:1.6rem;color:var(--ink)}
+.kbd{font:12px var(--mono);border:1px solid var(--line);border-radius:4px;padding:0 5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Đổi chỗ hai câu trả lời, judge có đổi ý không?</h1>
+  <div class="note"><b>Đây là mô phỏng, chưa chạy mô hình.</b> Câu hỏi, đoạn văn và đáp án gốc lấy nguyên văn từ UIT-ViQuAD 2.0 (tập validation). Câu trả lời X/Y, điểm người chấm và xác suất của judge là <b>giả định</b> để minh hoạ cách đề tài đo.</div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>1 · Dữ liệu (ViQuAD)</h2>
+      <div class="meta" id="meta"></div>
+      <div class="q" id="q"></div>
+      <div class="ctx" id="ctx"></div>
+      <div style="margin-top:8px;font-size:.92rem"><b>Đáp án gốc:</b> <span id="gold"></span></div>
+    </div>
+    <div class="card">
+      <h2>2 · Hai mô hình trả lời <span class="fake">giả định</span></h2>
+      <div class="ans ax"><span class="tag">X</span><span id="ansX"></span></div>
+      <div class="ans ay"><span class="tag">Y</span><span id="ansY"></span></div>
+      <div style="font-size:.85rem;color:var(--muted);margin-top:8px">Đáp án gốc không vào cặp so sánh. Nó chỉ dùng làm tham chiếu cho người chấm và để tính baseline F1.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>3 · LLM judge chấm hai lượt</h2>
+    <div class="grid2">
+      <div>
+        <div class="prompt" id="prompt">
+          <div>Câu hỏi: <span id="pq"></span></div>
+          <span class="slot" id="slotA"><span class="lbl">[Câu trả lời A]</span> <span></span></span>
+          <span class="slot" id="slotB"><span class="lbl">[Câu trả lời B]</span> <span></span></span>
+          <div>Câu nào tốt hơn? Chỉ trả lời "A" hoặc "B".</div>
+        </div>
+        <div style="font-size:.8rem;color:var(--muted);margin-top:4px">Prompt rút gọn, dựa trên prompt chấm theo cặp của MT-Bench.</div>
+      </div>
+      <div>
+        <div class="runs">
+          <div class="run empty" id="run1"><h3>Lượt 1 · A = X, B = Y</h3><div class="bars"></div><div class="verdict"></div></div>
+          <div class="run empty" id="run2"><h3>Lượt 2 · A = Y, B = X</h3><div class="bars"></div><div class="verdict"></div></div>
+        </div>
+        <div class="res hidden" id="res"></div>
+      </div>
+    </div>
+    <div class="ctrl">
+      <button id="back" class="ghost">← Lùi</button>
+      <button id="next">Chấm lượt 1 →</button>
+      <span class="hint">Phím <span class="kbd">→</span> <span class="kbd">←</span> để đi tiếp/lùi, <span class="kbd">1</span>–<span class="kbd">3</span> để đổi ví dụ</span>
+    </div>
+  </div>
+
+  <div class="card locked" id="humanCard">
+    <h2>4 · So với người chấm <span class="fake">giả định</span></h2>
+    <div class="grid2">
+      <div>
+        <table>
+          <thead><tr><th></th><th>Người 1</th><th>Người 2</th><th>Trung bình</th></tr></thead>
+          <tbody id="htab"></tbody>
+        </table>
+        <div style="font-size:.85rem;color:var(--muted);margin-top:6px">Chấm 1–5 cho từng câu, độc lập, không biết câu nào của mô hình nào và không thấy judge chọn gì.</div>
+      </div>
+      <ul class="cmp" id="cmp"></ul>
+    </div>
+    <div class="cover" id="cover">Người chấm đã chấm riêng từ trước.<br>Kết quả chỉ mở ra sau khi judge chấm xong cả hai lượt.</div>
+  </div>
+
+  <div class="card">
+    <h2>5 · Nếu chạy đủ 150 câu, kết quả trông như thế này <span class="fake">số giả định</span></h2>
+    <div style="font-size:.9rem;color:var(--muted)">Các con số dưới đây chỉ để hình dung <b>dạng</b> kết quả đề tài sẽ báo cáo. Chúng chưa phải kết quả thật.</div>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <b>Câu hỏi 2 · Flip rate theo độ chênh điểm của người chấm</b>
+        <div class="chart" id="c1"></div>
+      </div>
+      <div>
+        <b>Câu hỏi 3 · Flip rate theo độ tự tin của judge</b> <span style="font-size:.8rem;color:var(--muted)">(xác suất cao hơn trong P("A"), P("B"))</span>
+        <div class="chart" id="c2"></div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:18px">
+      <div><b>Câu hỏi 1 · Flip rate chung</b>
+        <div class="stat"><div><b>?? %</b>tiếng Việt</div><div><b>?? %</b>tiếng Anh (bản dịch)</div></div></div>
+      <div><b>Câu hỏi 4 · Khớp với người chấm</b>
+        <div class="stat"><div><b>?? %</b>chấm 1 lượt</div><div><b>?? %</b>chấm 2 chiều + BPC</div></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Question, passage and gold answer are verbatim from UIT-ViQuAD 2.0 validation (taidng/UIT-ViQuAD2.0).
+   Answers X/Y, human scores and judge probabilities are made up for illustration.
+   p1 = P("A") in run 1 (A = X); p2 = P("A") in run 2 (A = Y). */
+var CASES=[
+ {name:'Ví dụ 1 · chênh rõ',uit:'uit_000210',title:'Paris',
+  q:'Vì sao các gia đình ở Paris thường chỉ có 3 thành viên?',
+  ctx:'… Ngược lại, tỷ lệ sinh 1,75 con trên một gia đình của Paris thấp hơn mức trung bình 1,87 của cả vùng và 1,86 của cả nước Pháp. Trong đó 50% số gia đình Paris chỉ có một con và 17% có ba con hoặc hơn. Lý do bởi giá bất động sản cao, các gia đình thường sống trong một diện tích nhỏ hẹp.',
+  gold:'bởi giá bất động sản cao, các gia đình thường sống trong một diện tích nhỏ hẹp',
+  X:'Vì giá bất động sản ở Paris cao, các gia đình thường sống trong diện tích nhỏ hẹp nên phần lớn chỉ sinh một con.',
+  Y:'Vì người Paris thích sống độc lập và ít quan tâm đến chuyện gia đình.',
+  h:{X:[5,5],Y:[1,2]},p1:.96,p2:.07,
+  take:'Hai câu chênh rõ và judge rất chắc chắn, nên đổi chỗ không làm judge đổi ý.'},
+ {name:'Ví dụ 2 · sát nút',uit:'uit_000245',title:'Paris',
+  q:'Vì sao Đại hoc Paris phân tách thành các trường riêng biệt?',
+  ctx:'Thế kỷ 20, số lượng sinh viên tăng nhanh. Sau cuộc nổi loạn của sinh viên năm 1968, Đại học Paris được tổ chức lại thành 13 trường độc lập: Paris I tới Paris XIII như hiện nay. Một số trường đại học được mở ở ngoại ô vào những năm 1960, …',
+  gold:'cuộc nổi loạn của sinh viên năm 1968',
+  X:'Sau cuộc nổi loạn của sinh viên năm 1968, Đại học Paris được tổ chức lại thành 13 trường độc lập.',
+  Y:'Do cuộc nổi loạn của sinh viên năm 1968, cùng với việc số lượng sinh viên tăng nhanh trong thế kỷ 20.',
+  h:{X:[5,4],Y:[4,4]},p1:.58,p2:.61,
+  take:'Hai câu gần như ngang nhau, judge lưỡng lự (xác suất gần 50/50), và chỉ cần đổi chỗ là judge đổi ý. Đây là kiểu cặp đề tài muốn bắt được.'},
+ {name:'Ví dụ 3 · chênh vừa',uit:'uit_000382',title:'Paris',
+  q:'Vì sao có nhiều khách sạn xuất hiện ở Paris vào đầu thế kỷ 20?',
+  ctx:'Vào cuối thế kỷ 19, Paris xây dựng thêm rất nhiều khách sạn bởi những cuộc Triển lãm thế giới được tổ chức ở đây đã kéo theo một số lượng lớn du khách từ khắp nơi tới thành phố. Trong số đó có thể kể tới khách sạn Ritz trên quảng trường Vendôme mở cửa năm 1898 và khách sạn Crillon trên quảng trường Concorde năm 1909. …',
+  gold:'những cuộc Triển lãm thế giới được tổ chức ở đây đã kéo theo một số lượng lớn du khách từ khắp nơi tới thành phố',
+  X:'Vì các cuộc Triển lãm thế giới tổ chức ở Paris đã kéo rất nhiều du khách tới thành phố.',
+  Y:'Vì Paris có nhiều khách sạn sang trọng như Ritz và Crillon.',
+  h:{X:[5,4],Y:[2,3]},p1:.81,p2:.30,
+  take:'Judge giữ nguyên kết luận, nhưng độ tự tin ở lượt 2 thấp hơn hẳn lượt 1: vị trí vẫn kéo xác suất đi, chỉ là chưa đủ để lật kết luận.'}
+];
+var cur=0,step=0;
+var $=function(id){return document.getElementById(id)};
+var pct=function(v){return Math.round(v*100)+'%'};
+var mean=function(a){return (a[0]+a[1])/2};
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function tabs(){
+  $('tabs').innerHTML=CASES.map(function(c,i){return '<button class="'+(i===cur?'on':'')+'" data-i="'+i+'">'+c.name+'</button>'}).join('');
+  [].forEach.call($('tabs').children,function(b){b.onclick=function(){load(+b.dataset.i)}});
+}
+function load(i){
+  cur=i;step=0;var c=CASES[i];tabs();
+  $('meta').textContent=c.uit+' · bài "'+c.title+'"';
+  $('q').textContent=c.q; $('pq').textContent=c.q;
+  $('ctx').innerHTML=esc(c.ctx).replace(esc(c.gold),'<mark>'+esc(c.gold)+'</mark>');
+  $('gold').textContent=c.gold; $('ansX').textContent=c.X; $('ansY').textContent=c.Y;
+  render();
+}
+function bars(pA,aIs){
+  var bIs=aIs==='X'?'Y':'X';
+  var col=function(w){return w==='X'?'var(--x)':'var(--y)'};
+  return '<div class="bar"><span>P("A")</span><div class="t"><div class="f" style="width:'+pct(pA)+';background:'+col(aIs)+'"></div></div><span>'+pct(pA)+'</span></div>'+
+         '<div class="bar"><span>P("B")</span><div class="t"><div class="f" style="width:'+pct(1-pA)+';background:'+col(bIs)+'"></div></div><span>'+pct(1-pA)+'</span></div>';
+}
+function verdict(pA,aIs){
+  var letter=pA>=.5?'A':'B', pick=pA>=.5?aIs:(aIs==='X'?'Y':'X');
+  return {pick:pick,html:'Judge trả lời "'+letter+'", tức là chọn <span class="c'+pick.toLowerCase()+'">'+pick+'</span>'};
+}
+function setSlots(swapped){
+  var c=CASES[cur],a=swapped?'Y':'X',b=swapped?'X':'Y';
+  $('slotA').className='slot s'+a.toLowerCase(); $('slotA').lastChild.textContent=c[a];
+  $('slotB').className='slot s'+b.toLowerCase(); $('slotB').lastChild.textContent=c[b];
+}
+function render(){
+  var c=CASES[cur];
+  setSlots(step>=2);
+  var r1=verdict(c.p1,'X'), r2=verdict(c.p2,'Y');
+  var R1=$('run1'),R2=$('run2');
+  R1.classList.toggle('empty',step<1); R2.classList.toggle('empty',step<3);
+  R1.querySelector('.bars').innerHTML=bars(step>=1?c.p1:.5,'X'); R1.querySelector('.verdict').innerHTML=r1.html;
+  R2.querySelector('.bars').innerHTML=bars(step>=3?c.p2:.5,'Y'); R2.querySelector('.verdict').innerHTML=r2.html;
+  var res=$('res'); res.classList.toggle('hidden',step<3);
+  var flip=r1.pick!==r2.pick;
+  res.className='res '+(flip?'flip':'same')+(step<3?' hidden':'');
+  res.innerHTML=flip?'FLIP: hai lượt chọn hai câu khác nhau<small>Nội dung không đổi, chỉ đổi vị trí. Cả hai lượt judge đều trả lời "'+(c.p1>=.5?'A':'B')+'", tức là chọn theo vị trí chứ không theo nội dung.</small>'
+                    :'Nhất quán: cả hai lượt đều chọn '+r1.pick+'<small>Đổi vị trí không làm judge đổi ý.</small>';
+  /* human panel */
+  $('humanCard').classList.toggle('locked',step<4); $('cover').classList.toggle('hidden',step>=4);
+  var mx=mean(c.h.X),my=mean(c.h.Y),hw=mx>my?'X':(my>mx?'Y':'hoà'),gap=Math.abs(mx-my);
+  $('htab').innerHTML='<tr><td class="cx"><b>X</b></td><td>'+c.h.X[0]+'</td><td>'+c.h.X[1]+'</td><td><b>'+mx+'</b></td></tr>'+
+                      '<tr><td class="cy"><b>Y</b></td><td>'+c.h.Y[0]+'</td><td>'+c.h.Y[1]+'</td><td><b>'+my+'</b></td></tr>';
+  var px1=c.p1,px2=1-c.p2,bpc=(px1+px2)/2;
+  var bpcPick=Math.abs(bpc-.5)<.05?'coi là hoà':(bpc>.5?'chọn X':'chọn Y');
+  var ok=function(p){return p===hw?'<span style="color:var(--good)">✓ khớp</span>':'<span style="color:var(--flip)">✗ lệch</span>'};
+  $('cmp').innerHTML=
+    '<li>Người chấm: <b class="c'+hw.toLowerCase()+'">'+hw+'</b> tốt hơn, chênh <b>'+gap+'</b> điểm → '+(gap<=1?'<b>cặp sát nút</b>':'cặp chênh rõ')+'</li>'+
+    '<li>Lượt 1 judge chọn '+r1.pick+': '+ok(r1.pick)+'</li>'+
+    '<li>Lượt 2 judge chọn '+r2.pick+': '+ok(r2.pick)+'</li>'+
+    '<li>BPC (trung bình hai lượt): P(chọn X) = ('+pct(px1)+' + '+pct(px2)+') / 2 = <b>'+pct(bpc)+'</b> → '+bpcPick+'</li>'+
+    '<li style="color:var(--muted)">'+c.take+'</li>';
+  var labels=['Chấm lượt 1 →','Đổi chỗ A ⇄ B →','Chấm lượt 2 →','Mở điểm người chấm →','Xong ✓'];
+  $('next').textContent=labels[step]; $('next').disabled=step>=4; $('back').disabled=step<=0;
+}
+function go(d){
+  var n=Math.max(0,Math.min(4,step+d)); if(n===step)return;
+  if(d>0&&n===2){ /* animate the swap */
+    $('prompt').classList.add('swapping');
+    setTimeout(function(){$('prompt').classList.remove('swapping');step=n;render()},520); return;
+  }
+  step=n;render();
+}
+$('next').onclick=function(){go(1)}; $('back').onclick=function(){go(-1)};
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();go(1)}
+  else if(e.key==='ArrowLeft')go(-1);
+  else if(/^[1-3]$/.test(e.key))load(+e.key-1);
+});
+/* section 5: shape of results only (made-up numbers) */
+function chart(id,rows){$(id).innerHTML=rows.map(function(r){return '<div class="row"><span>'+r[0]+'</span><div class="t"><div class="f" style="width:'+r[1]*2+'%"></div></div><span>'+r[1]+'%</span></div>'}).join('')}
+chart('c1',[['chênh 0–1 điểm',34],['chênh 1–2 điểm',18],['chênh 2–3 điểm',8],['chênh ≥ 3 điểm',3]]);
+chart('c2',[['tự tin 50–60%',41],['tự tin 60–75%',22],['tự tin 75–90%',9],['tự tin > 90%',2]]);
+/* optional deep link: #<case>-<step>, e.g. #2-4 */
+var hm=/^#([1-3])(?:-([0-4]))?$/.exec(location.hash);
+load(hm?+hm[1]-1:0); if(hm&&hm[2]){step=+hm[2];render()}
+</script>
+</body>
+</html>

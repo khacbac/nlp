@@ -1,0 +1,1084 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thứ tự có quan trọng không?</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column; the swap stage and the 150-pair plot break out as full-width instruments. */
+:root{
+  --bg:#F2F5F6; --surface:#FFFFFF; --sunk:#E6ECEE; --ink:#13242C; --muted:#56686F; --line:#D2DBDF;
+  --x:#0B7285; --x-soft:#DCEFF2; --y:#9A5B06; --y-soft:#F6EAD3;
+  --flip:#C2255C; --flip-soft:#FBE2EB; --ok:#8C9CA4;
+  --display:"Space Grotesk","Be Vietnam Pro",system-ui,sans-serif;
+  --body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E181D; --surface:#16242B; --sunk:#1E3038; --ink:#E7EEF1; --muted:#96A9B1; --line:#2C414A;
+    --x:#5AC8D8; --x-soft:#123A42; --y:#E5B862; --y-soft:#3B2F14;
+    --flip:#F4759F; --flip-soft:#45192B; --ok:#5F747D; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E181D; --surface:#16242B; --sunk:#1E3038; --ink:#E7EEF1; --muted:#96A9B1; --line:#2C414A;
+  --x:#5AC8D8; --x-soft:#123A42; --y:#E5B862; --y-soft:#3B2F14;
+  --flip:#F4759F; --flip-soft:#45192B; --ok:#5F747D; color-scheme:dark;
+}
+*{box-sizing:border-box}
+:root{color-scheme:light}
+[hidden]{display:none!important}
+img,svg{max-width:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 72px}
+:root:not([data-lang="en"]) .en{display:none!important}
+:root[data-lang="en"] .vi{display:none!important}
+.wrap{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+.col{max-width:68ch}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2.1rem,6vw,3.5rem);font-weight:700;letter-spacing:-.02em}
+h2{font-size:clamp(1.4rem,3.4vw,1.9rem);font-weight:600;letter-spacing:-.01em}
+h3{font-size:1.05rem;font-weight:600}
+p{margin:0}
+a{color:var(--x)}
+.eyebrow{font-family:var(--mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:1.15rem;color:var(--ink)}
+.muted{color:var(--muted)}
+.small{font-size:.875rem}
+.stack{display:flex;flex-direction:column;gap:16px}
+.stack-s{display:flex;flex-direction:column;gap:8px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.lang{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--surface)}
+.lang button{font:600 .8rem var(--mono);padding:6px 14px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--x);outline-offset:2px}
+.btn{font:600 .9rem var(--body);padding:9px 18px;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn[disabled]{opacity:.5;cursor:default}
+.xc{color:var(--x);font-weight:600}.yc{color:var(--y);font-weight:600}.fc{color:var(--flip);font-weight:600}
+
+/* figures */
+figure{margin:0;display:flex;flex-direction:column;gap:8px}
+figcaption{font-size:.82rem;color:var(--muted)}
+figure svg{display:block;width:100%;height:auto}
+.wide{overflow-x:auto}
+.wide svg{min-width:600px}
+.hero{display:grid;grid-template-columns:1.25fr .75fr;gap:28px;align-items:center}
+.hero>*{min-width:0}
+.st{stroke:var(--ink);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.st-thin{stroke:var(--muted);stroke-width:1.5;fill:none;stroke-dasharray:4 4}
+.fill-ink{fill:var(--ink)}
+.svgl{fill:var(--ink);font:600 13px var(--mono)}
+.svgx{fill:var(--x);font:600 12px var(--mono)}
+.svgf{fill:var(--flip);font:600 12px var(--mono)}
+.cardx rect{fill:var(--x-soft);stroke:var(--x);stroke-width:2}
+.cardy rect{fill:var(--y-soft);stroke:var(--y);stroke-width:2}
+.cardx text{fill:var(--x);font:700 14px var(--mono)}
+.cardy text{fill:var(--y);font:700 14px var(--mono)}
+.cardx{animation:flyx 6s ease-in-out infinite}
+.cardy{animation:flyy 6s ease-in-out infinite}
+@keyframes flyx{0%,35%{transform:translate(0,0)}42.5%{transform:translate(90px,-95px)}50%,85%{transform:translate(180px,-28px)}92.5%{transform:translate(90px,-95px)}100%{transform:translate(0,0)}}
+@keyframes flyy{0%,35%{transform:translate(0,0)}42.5%{transform:translate(-90px,-20px)}50%,85%{transform:translate(-180px,28px)}92.5%{transform:translate(-90px,-20px)}100%{transform:translate(0,0)}}
+.tokbox{fill:var(--sunk);stroke:var(--line);stroke-width:1.5}
+.tokbox.first{stroke:var(--ink);stroke-width:2.5}
+.decbox{fill:var(--surface);stroke:var(--ink);stroke-width:2}
+.pt-ref{fill:var(--ink)}.pt-x{fill:var(--x)}.pt-f{fill:var(--flip)}
+.vec-ref{stroke:var(--ink);stroke-width:2}.vec-x{stroke:var(--x);stroke-width:2}.vec-f{stroke:var(--flip);stroke-width:2}
+.trail{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.trail li{border-top:3px solid var(--ink);padding-top:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.trail li:last-child{border-top-color:var(--flip)}
+.trail .ico{width:44px;height:44px;color:var(--ink)}
+.trail li:last-child .ico{color:var(--flip)}
+.trail .k{font:600 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.trail p{font-size:.92rem}
+@media (max-width:820px){.trail{grid-template-columns:1fr 1fr}.hero{grid-template-columns:1fr}.hero figure{max-width:360px}}
+@media (max-width:480px){.trail{grid-template-columns:1fr}}
+
+/* 5-minute talk mode: one section per screen */
+.pbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:20;align-items:center;justify-content:space-between;gap:12px;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));background:var(--surface);border-top:1px solid var(--line);font:400 .85rem var(--mono)}
+.pbar .btn{padding:6px 14px}
+.pbar .dots{display:flex;gap:6px;align-items:center}
+.pbar .dots i{width:22px;height:5px;border-radius:3px;background:var(--line)}
+.pbar .dots i.on{background:var(--ink)}
+:root:has(body.present){font-size:min(1.3vw,2.3vh)}
+body.present{font-size:1.125rem;padding-bottom:84px}
+body.present header .controls{display:none}
+body.present .fork .small{font-size:1rem}
+body.present .pbar{display:flex}
+body.present .wrap{max-width:66rem;min-height:calc(100vh - 110px);justify-content:center}
+body.present .wrap>*{display:none}
+body.present .wrap>.cur{display:flex;gap:12px}
+body.present .flipflag.onlyshow{padding:8px 16px}
+body.present .noshow{display:none}
+body:not(.present) .onlyshow{display:none!important}
+.sub{font-family:var(--display);font-size:1.25rem;font-weight:600;color:var(--x)}
+.byline{font:500 .9rem var(--body);color:var(--muted);line-height:1.7}
+
+/* evidence */
+.tag{display:inline-block;align-self:flex-start;font:600 .7rem var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:4px}
+.tag.real{background:var(--x-soft);color:var(--x)}
+.tag.illu{background:var(--sunk);color:var(--muted)}
+.evid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.evid>article{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.src{font-size:.8rem;color:var(--muted)}
+.big{font:700 2.2rem var(--display);line-height:1.05;font-variant-numeric:tabular-nums}
+.facts{display:flex;gap:22px;flex-wrap:wrap}
+.facts div{display:flex;flex-direction:column}
+.facts b{font:700 1.5rem var(--display);font-variant-numeric:tabular-nums;line-height:1.1}
+.facts span{font:400 .72rem var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.sb{display:grid;grid-template-columns:minmax(70px,auto) 1fr;gap:8px 12px;align-items:center;font:400 .8rem var(--mono)}
+.sbar{display:flex;height:28px;border-radius:5px;overflow:hidden;min-width:0}
+.sbar span{display:grid;place-items:center;font-size:.72rem;overflow:hidden;white-space:nowrap;color:var(--bg);font-variant-numeric:tabular-nums}
+.s-con{background:var(--ink)}.s-first{background:var(--flip)}.s-second{background:var(--y)}.s-err{background:var(--ok)}
+@media (max-width:640px){.evid{grid-template-columns:1fr}}
+
+/* teacher story */
+.days{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.day-name{font:600 .75rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.read{display:flex;align-items:stretch;gap:10px}
+.read .to{align-self:center;font:700 1.1rem var(--mono);color:var(--muted)}
+.paper{flex:1;min-width:0;border:2px solid var(--line);border-radius:8px 8px 8px 2px;padding:10px 12px;display:flex;flex-direction:column;gap:7px;position:relative}
+.paper.an{border-color:var(--x);background:var(--x-soft)}
+.paper.binh{border-color:var(--y);background:var(--y-soft)}
+.paper.winp{box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--ink)}
+.paper .nm{font:700 1rem var(--display)}
+.paper .ord{font:400 .72rem var(--mono);color:var(--muted)}
+.paper i{display:block;height:3px;border-radius:2px;background:var(--muted);opacity:.4}
+.paper i:last-child{width:60%}
+.paper::after{content:"";position:absolute;left:10px;right:10px;bottom:-10px;height:4px;border-radius:2px;background:var(--ink);opacity:0;animation:reading 5s infinite}
+.paper.second::after{animation-delay:2s}
+@keyframes reading{0%{opacity:0}5%,35%{opacity:1}40%,100%{opacity:0}}
+.say{display:flex;gap:12px;align-items:center}
+.say svg{width:44px;height:44px;flex:none;color:var(--ink)}
+.bubble{background:var(--sunk);border-radius:4px 12px 12px 12px;padding:10px 14px;font-weight:500}
+/* force track */
+.force{position:relative;height:72px;border-radius:10px;overflow:hidden;background:var(--sunk)}
+.force .half{position:absolute;top:0;bottom:0;width:50%}
+.force .half.l{left:0;background:var(--y-soft)}
+.force .half.r{right:0;background:var(--x-soft)}
+.force .mid{position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--ink)}
+.force .link{position:absolute;top:50%;height:4px;margin-top:-2px;background:var(--ink);opacity:.45}
+.force .fd{position:absolute;top:50%;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;display:grid;place-items:center;font:700 .85rem var(--mono);background:var(--ink);color:var(--bg)}
+.force-lab{display:flex;justify-content:space-between;gap:12px;font:600 .8rem var(--mono)}
+.result{font-weight:600;padding:10px 14px;border-radius:8px;background:var(--sunk)}
+.result.is-flip{background:var(--flip-soft)}
+@media (max-width:640px){.days{grid-template-columns:1fr}}
+
+/* swap stage */
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:clamp(16px,3vw,28px);display:flex;flex-direction:column;gap:20px}
+.passage{background:var(--sunk);border-radius:8px;padding:14px 16px;font-size:.95rem}
+.passage b{font-weight:600}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ans{border:2px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-width:0;background:var(--surface)}
+.ans-x{border-color:var(--x);background:var(--x-soft)}
+.ans-y{border-color:var(--y);background:var(--y-soft)}
+.answers.swapped .ans-x{order:2}
+.ans header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pos{font:700 1rem var(--mono);width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--bg)}
+.who{font:600 .8rem var(--mono);letter-spacing:.04em;text-transform:uppercase}
+.ans-x .who{color:var(--x)}.ans-y .who{color:var(--y)}
+.ans.win{box-shadow:0 0 0 4px var(--surface),0 0 0 6px var(--ink)}
+.judge{display:grid;grid-template-columns:auto 1fr;gap:10px 20px;align-items:center;border-top:1px dashed var(--line);padding-top:18px}
+.judge-name{font:600 .95rem var(--display);display:flex;flex-direction:column;gap:2px}
+.judge.thinking .judge-name{animation:pulse .7s ease-in-out infinite alternate}
+@keyframes pulse{to{opacity:.35}}
+.bars{display:flex;flex-direction:column;gap:6px;min-width:0}
+.bar{display:grid;grid-template-columns:54px 1fr 48px;gap:8px;align-items:center;font:400 .8rem var(--mono)}
+.track{height:12px;background:var(--sunk);border-radius:6px;overflow:hidden}
+.fill{height:100%;width:50%;background:var(--ink);border-radius:6px;transition:width .6s ease}
+.bar .v{text-align:right;font-variant-numeric:tabular-nums}
+.verdict{grid-column:1/-1;font-weight:600;min-height:1.65em}
+.log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font:400 .85rem var(--mono)}
+.log li{padding:8px 12px;background:var(--sunk);border-radius:6px;transition:opacity .3s}
+.log li.wait{opacity:.3}
+.flipflag{background:var(--flip-soft);border-left:4px solid var(--flip);padding:12px 16px;border-radius:0 8px 8px 0;font-weight:500}
+.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.note{font-size:.8rem;color:var(--muted)}
+
+/* F1 */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:clamp(16px,3vw,24px);display:flex;flex-direction:column;gap:16px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font:600 .75rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.field input[type=text]{font:400 1rem var(--body);padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.toks{display:flex;flex-wrap:wrap;gap:6px}
+.tok{font:400 .9rem var(--mono);padding:3px 8px;border-radius:5px;border:1px solid var(--line);color:var(--muted)}
+.tok.hit{background:var(--x-soft);border-color:var(--x);color:var(--ink)}
+.metrics{display:flex;gap:28px;flex-wrap:wrap;align-items:baseline}
+.metric{display:flex;flex-direction:column}
+.metric .n{font:700 1.9rem var(--display);font-variant-numeric:tabular-nums;line-height:1.1}
+.metric .l{font:400 .75rem var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.human{font-weight:600;padding:4px 10px;border-radius:6px;background:var(--sunk)}
+
+/* sim */
+.plot{overflow-x:auto}
+.plot svg{display:block;width:100%;min-width:560px;height:auto}
+.dot-ok{fill:var(--ok)}.dot-flip{fill:var(--flip)}
+.axis{stroke:var(--line);stroke-width:1}
+.svgt{fill:var(--muted);font:400 11px var(--mono)}
+svg.anim circle{animation:pop .35s ease-out backwards}
+@keyframes pop{from{opacity:0;transform:translateY(-14px)}}
+.slider{display:grid;grid-template-columns:1fr;gap:6px}
+.slider input{width:100%;accent-color:var(--flip)}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+
+/* tables & flow */
+.tbl{overflow-x:auto}
+.card th{width:11rem;padding-top:14px}
+.card td{font-size:.92rem}
+.card td ul{margin:0;padding-left:1.1em}
+body.present .card th,body.present .card td{padding-block:5px}
+body.present .card td{font-size:.86rem;line-height:1.5}
+body.present .card th{padding-top:8px}
+body.present #h-plan{font-size:1.6rem}
+.pipe svg{width:100%;height:auto;display:block}
+.pl-h{fill:var(--muted);font:600 13px var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.pl-t{fill:var(--ink);font:600 17px var(--body)}
+.pl-s{fill:var(--muted);font:400 14.5px var(--body)}
+.pl-x{fill:var(--x);font-weight:700}.pl-y{fill:var(--y);font-weight:700}
+.pl-box{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.pl-hum{fill:var(--y-soft);stroke:var(--y);stroke-width:1.5}
+.pl-jud{fill:var(--x-soft);stroke:var(--x);stroke-width:1.5}
+.rqg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rqg>div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:grid;grid-template-columns:64px 1fr;gap:4px 16px;align-items:center}
+.rqg svg{grid-row:span 2;width:64px;height:64px}
+.rqg b{font:600 1.05rem var(--display);line-height:1.3}
+.rqg span.m{font-size:.85rem;color:var(--muted)}
+.mini{width:100%;max-width:260px;height:auto}
+.tech td:first-child{width:15rem}
+.tech td:nth-child(2){width:9rem;color:var(--muted)}
+body.present .tech td{font-size:.92rem;padding-block:9px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:.95rem}
+th,td{text-align:left;padding:12px 14px 12px 0;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 .75rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.flow{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;counter-reset:s}
+.flow>li{counter-increment:s;display:grid;grid-template-columns:36px 1fr;gap:14px;padding-bottom:22px;position:relative}
+.flow>li::before{content:counter(s);font:700 .9rem var(--mono);width:32px;height:32px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;background:var(--bg);z-index:1}
+.flow>li:not(:last-child)::after{content:"";position:absolute;left:15px;top:32px;bottom:0;width:2px;background:var(--line)}
+.fork{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.fork>div{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--surface);min-width:0}
+ul.plain.small{font-size:.92rem}
+ul.plain{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px}
+.refs{font-size:.9rem}
+@media (max-width:640px){
+  .answers,.fork{grid-template-columns:1fr}
+  .judge{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="stack">
+  <div class="top">
+    <span class="eyebrow"><span class="vi">NLP501.22 · Xử lý ngôn ngữ tự nhiên · Đề xuất đồ án cuối kỳ</span><span class="en">NLP501.22 · Natural Language Processing · Final project proposal</span></span>
+    <div class="controls">
+      <button class="btn ghost" type="button" id="present"><span class="vi">Trình chiếu</span><span class="en">Present</span></button>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" id="lang-vi" aria-pressed="true">VI</button>
+        <button type="button" id="lang-en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+  </div>
+  <div class="hero">
+    <div class="stack">
+      <h1><span class="vi">Thứ tự có quan trọng không?</span><span class="en">Does the Order Matter?</span></h1>
+      <p class="sub"><span class="vi">Thiên vị vị trí của giám khảo LLM: phân tích và kiểm chứng trên tiếng Việt</span><span class="en">Position Bias in LLM-as-a-Judge: Analysis and a Vietnamese Case Study</span></p>
+      <p class="lede">
+        <span class="vi">Người ta ngày càng dùng LLM để chấm câu trả lời của LLM khác. Đồ án này đo một hiện tượng duy nhất trên tiếng Việt: LLM judge có đổi phán quyết không, khi hai câu trả lời giữ nguyên và chỉ bị đổi chỗ cho nhau.</span>
+        <span class="en">LLMs are increasingly used to grade other LLMs. This project measures one phenomenon for Vietnamese: does an LLM judge change its verdict when the two answers stay identical and only swap places?</span>
+      </p>
+      <p class="byline"><span class="vi">Nhóm ABNQ</span><span class="en">Team ABNQ</span>: Hồ Khắc Bắc · Đặng Thành Nhân · Nguyễn Việt Anh · Lê Trọng Quang<br><span class="vi">Giảng viên</span><span class="en">Lecturer</span>: Nguyễn Sĩ Thìn</p>
+    </div>
+    <figure>
+      <svg viewBox="0 0 360 220" role="img" aria-label="A scale that stays tilted toward position A while the two answers swap pans">
+        <rect class="fill-ink" x="140" y="196" width="80" height="6" rx="3"></rect>
+        <line class="st" x1="180" y1="70" x2="180" y2="196"></line>
+        <line class="st" x1="90" y1="84" x2="270" y2="56"></line>
+        <circle class="fill-ink" cx="180" cy="70" r="5"></circle>
+        <path class="st" d="M90 84 60 150M90 84l30 66M52 150q38 22 76 0"></path>
+        <path class="st" d="M270 56l-30 66M270 56l30 66M232 122q38 22 76 0"></path>
+        <text class="svgl" x="90" y="190" text-anchor="middle"><tspan class="vi">vị trí A</tspan><tspan class="en">position A</tspan></text>
+        <text class="svgl" x="270" y="162" text-anchor="middle"><tspan class="vi">vị trí B</tspan><tspan class="en">position B</tspan></text>
+        <g class="cardx"><rect x="68" y="118" width="44" height="30" rx="5"></rect><text x="90" y="138" text-anchor="middle">X</text></g>
+        <g class="cardy"><rect x="248" y="90" width="44" height="30" rx="5"></rect><text x="270" y="110" text-anchor="middle">Y</text></g>
+      </svg>
+      <figcaption><span class="vi">Hai câu trả lời X và Y đổi chỗ, nhưng cán cân vẫn nghiêng về vị trí A. Đó là thiên vị vị trí.</span><span class="en">Answers X and Y trade places, yet the scale stays tilted toward position A. That is position bias.</span></figcaption>
+    </figure>
+  </div>
+</header>
+
+<section class="stack" aria-labelledby="h-teacher">
+  <div class="col stack-s">
+    <span class="tag illu"><span class="vi">Minh hoạ</span><span class="en">Illustration</span></span>
+    <h2 id="h-teacher"><span class="vi">Hình dung bằng một cô giáo chấm bài</span><span class="en">Picture a teacher grading essays</span></h2>
+    <p>
+      <span class="vi">Cô Hoa phải chọn bài văn hay hơn giữa bài của An và bài của Bình. Cô chấm hai buổi sáng. Giữa hai buổi, hai bài không bị sửa một chữ nào; chỉ có thứ tự cô đọc là khác.</span>
+      <span class="en">Ms. Hoa must pick the better essay between An's and Bình's. She grades on two mornings. Between them, not a word of either essay changes; only the order she reads them in does.</span>
+    </p>
+  </div>
+  <div class="days">
+    <div class="day">
+      <span class="day-name"><span class="vi">Sáng thứ Hai</span><span class="en">Monday morning</span></span>
+      <div class="read">
+        <div class="paper an winp"><span class="nm">An</span><i></i><i></i><i></i><span class="ord"><span class="vi">đọc trước</span><span class="en">read first</span></span></div>
+        <span class="to">→</span>
+        <div class="paper binh second"><span class="nm">Bình</span><i></i><i></i><i></i><span class="ord"><span class="vi">đọc sau</span><span class="en">read second</span></span></div>
+      </div>
+      <div class="say">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="6" r="3.5"></circle><circle cx="24" cy="17" r="8"></circle><path d="M8 45c0-10 7-16 16-16s16 6 16 16"></path></svg>
+        <p class="bubble"><span class="vi">"Bài của <span class="xc">An</span> hay hơn."</span><span class="en">"<span class="xc">An</span>'s essay is better."</span></p>
+      </div>
+    </div>
+    <div class="day">
+      <span class="day-name"><span class="vi">Sáng thứ Ba · vẫn hai bài đó</span><span class="en">Tuesday morning · same two essays</span></span>
+      <div class="read">
+        <div class="paper binh winp"><span class="nm">Bình</span><i></i><i></i><i></i><span class="ord"><span class="vi">đọc trước</span><span class="en">read first</span></span></div>
+        <span class="to">→</span>
+        <div class="paper an second"><span class="nm">An</span><i></i><i></i><i></i><span class="ord"><span class="vi">đọc sau</span><span class="en">read second</span></span></div>
+      </div>
+      <div class="say">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="6" r="3.5"></circle><circle cx="24" cy="17" r="8"></circle><path d="M8 45c0-10 7-16 16-16s16 6 16 16"></path></svg>
+        <p class="bubble"><span class="vi">"Bài của <span class="yc">Bình</span> hay hơn."</span><span class="en">"<span class="yc">Bình</span>'s essay is better."</span></p>
+      </div>
+    </div>
+  </div>
+  <p class="flipflag">
+    <span class="vi">Hai bài không đổi mà người thắng đổi. Cô không chọn bài hay hơn, cô chọn <span class="fc">bài mình đọc trước</span>. Nếu cô chấm thi học sinh giỏi kiểu này, ai được xếp trước là người thắng.</span>
+    <span class="en">The essays did not change, yet the winner did. She is not picking the better essay; she is picking <span class="fc">the one she read first</span>. If she graded a competition this way, whoever is listed first would win.</span>
+  </p>
+  <p class="onlyshow"><span class="vi">Trong đề tài: cô Hoa là một LLM được nhờ chấm, gọi là <b>judge</b>. Mỗi lần cô đổi ý là một <b>flip</b>. Thói quen đó là <b>position bias</b>.</span><span class="en">In the project: Ms. Hoa is an LLM asked to grade, the <b>judge</b>. Each change of mind is a <b>flip</b>. The habit is <b>position bias</b>.</span></p>
+  <div class="col stack-s noshow">
+    <p><span class="vi">Đề tài này là đúng câu chuyện đó, chỉ thay nhân vật:</span><span class="en">This project is exactly that story with the cast replaced:</span></p>
+  </div>
+  <div class="tbl noshow">
+    <table>
+      <thead><tr><th><span class="vi">Trong câu chuyện</span><span class="en">In the story</span></th><th><span class="vi">Trong đề tài</span><span class="en">In the project</span></th></tr></thead>
+      <tbody>
+        <tr><td><span class="vi">Cô Hoa</span><span class="en">Ms. Hoa</span></td><td><span class="vi">Một mô hình AI (LLM) được nhờ chấm điểm, gọi là <b>judge</b></span><span class="en">An AI model (LLM) asked to grade, called the <b>judge</b></span></td></tr>
+        <tr><td><span class="vi">Bài của An và bài của Bình</span><span class="en">An's and Bình's essays</span></td><td><span class="vi">Hai câu trả lời tiếng Việt X và Y cho cùng một câu hỏi đọc hiểu</span><span class="en">Two Vietnamese answers X and Y to the same reading-comprehension question</span></td></tr>
+        <tr><td><span class="vi">Đổi thứ tự đọc</span><span class="en">Changing the reading order</span></td><td><span class="vi">Đổi câu nào được dán lên trước trong prompt (vị trí A)</span><span class="en">Changing which answer is pasted first in the prompt (position A)</span></td></tr>
+        <tr><td><span class="vi">Cô đổi ý</span><span class="en">She changes her mind</span></td><td><span class="vi">Một <b>flip</b></span><span class="en">A <b>flip</b></span></td></tr>
+        <tr><td><span class="vi">Thói quen thiên vị bài đọc trước</span><span class="en">Her habit of favouring what she read first</span></td><td><b>Position bias</b></td></tr>
+        <tr><td><span class="vi">Hội đồng chấm lại để biết bài nào thật sự hay hơn</span><span class="en">A panel re-grading to learn which essay is truly better</span></td><td><span class="vi">Hai người chấm độc lập, làm mốc tham chiếu</span><span class="en">Two independent human annotators as the reference</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="stack" aria-labelledby="h-human">
+  <div class="col stack-s">
+    <span class="eyebrow"><span class="vi">Phần 1 · Con người</span><span class="en">Part 1 · Humans</span></span>
+    <h2 id="h-human"><span class="vi">Thứ tự làm thay đổi điểm của giám khảo người</span><span class="en">Order changes the scores human judges give</span></h2>
+    <p><span class="vi">Cô Hoa là nhân vật minh hoạ, nhưng hiện tượng thì đã được đo trên dữ liệu thật, từ trước khi có LLM.</span><span class="en">Ms. Hoa is an illustration, but the effect has been measured on real data, well before LLMs existed.</span></p>
+  </div>
+  <div class="evid">
+    <article>
+      <span class="tag real"><span class="vi">Thi biểu diễn</span><span class="en">Juried contests</span></span>
+      <h3><span class="vi">Diễn sau thì điểm cao hơn</span><span class="en">Later performers score higher</span></h3>
+      <svg class="mini onlyshow" viewBox="0 0 260 96" role="img" aria-label="Schematic: bars rise with performance order">
+        <path d="M10 70h240" stroke="var(--line)" stroke-width="2"></path>
+        <rect x="22" y="48" width="28" height="22" rx="3" fill="var(--ok)"></rect>
+        <rect x="70" y="42" width="28" height="28" rx="3" fill="var(--ok)"></rect>
+        <rect x="118" y="34" width="28" height="36" rx="3" fill="var(--ok)"></rect>
+        <rect x="166" y="24" width="28" height="46" rx="3" fill="var(--ok)"></rect>
+        <rect x="214" y="12" width="28" height="58" rx="3" fill="var(--x)"></rect>
+        <text class="svgt" x="10" y="90"><tspan class="vi">thứ tự biểu diễn →  (sơ đồ xu hướng)</tspan><tspan class="en">performance order →  (schematic trend)</tspan></text>
+      </svg>
+      <p class="onlyshow"><span class="vi">Eurovision và trượt băng nghệ thuật: diễn càng về sau, điểm càng cao.</span><span class="en">Eurovision and figure skating: the later the slot, the higher the score.</span></p>
+      <p class="noshow"><span class="vi">Trên dữ liệu Eurovision Song Contest và trượt băng nghệ thuật châu Âu, điểm của ban giám khảo tăng dần theo thứ tự biểu diễn. Hiệu ứng xuất hiện cả khi giám khảo chấm sau khi xem hết, lẫn khi chấm ngay sau từng tiết mục.</span><span class="en">In Eurovision Song Contest and European figure-skating data, jury ratings rose with serial position. The effect appeared both when judges scored at the end and when they scored right after each performance.</span></p>
+      <p class="src">Bruine de Bruin (2005), <i>Acta Psychologica</i> 118(3), 245–260. <a href="https://doi.org/10.1016/j.actpsy.2004.08.005">doi:10.1016/j.actpsy.2004.08.005</a></p>
+    </article>
+    <article>
+      <span class="tag real"><span class="vi">Chấm bài luận</span><span class="en">Essay rating</span></span>
+      <h3><span class="vi">Điểm bài này bị kéo theo điểm bài trước</span><span class="en">A score is pulled toward the previous one</span></h3>
+      <div class="facts">
+        <div><b>67,500</b><span><span class="vi">bài luận</span><span class="en">essays</span></span></div>
+        <div><b>88</b><span><span class="vi">người chấm</span><span class="en">raters</span></span></div>
+        <div><b>146,727</b><span><span class="vi">điểm số</span><span class="en">scores</span></span></div>
+      </div>
+      <p class="onlyshow"><span class="vi">Kỳ thi viết tiếng Anh ở Trung Quốc: điểm một bài bị kéo về gần điểm của bài chấm ngay trước.</span><span class="en">English writing test in China: an essay's score is pulled toward the score of the essay graded just before.</span></p>
+      <p class="noshow"><span class="vi">Trong một kỳ thi viết tiếng Anh quy mô lớn ở Trung Quốc, điểm người chấm cho một bài có xu hướng tiến gần về điểm họ vừa cho bài trước đó. Người chấm nhiều kinh nghiệm ít bị ảnh hưởng hơn. Kết quả này cùng hướng với Attali (2011).</span><span class="en">In a large-scale, high-stakes English writing test in China, a rater's score for an essay tended to move toward the score they had just given. More experienced raters were less affected. This matches Attali (2011).</span></p>
+      <p class="src">Zhao, Andersson, Guo &amp; Xin (2017), <i>Frontiers in Psychology</i> 8:933. <a href="https://doi.org/10.3389/fpsyg.2017.00933">doi:10.3389/fpsyg.2017.00933</a></p>
+    </article>
+  </div>
+  <p class="col noshow"><span class="vi">Hướng của hiệu ứng khác nhau tuỳ bối cảnh, nhưng điểm chung là cùng một bài, đặt ở vị trí khác trong dãy thì nhận điểm khác. Chuyện cô Hoa đơn giản hoá điều đó thành một cặp bài để dễ hình dung.</span><span class="en">The direction of the effect differs by setting, but in every case the same piece, placed elsewhere in the sequence, gets a different score. The story of Ms. Hoa simplifies that into one pair so it is easy to picture.</span></p>
+</section>
+
+<section class="stack" aria-labelledby="h-llm">
+  <div class="col stack-s">
+    <span class="eyebrow"><span class="vi">Phần 2 · LLM</span><span class="en">Part 2 · LLMs</span></span>
+    <h2 id="h-llm"><span class="vi">LLM judge cũng đổi ý khi đổi thứ tự</span><span class="en">LLM judges also change their minds when the order changes</span></h2>
+    <p><span class="vi">Zheng et al. (NeurIPS 2023) cho ba LLM chấm cùng một cặp câu trả lời rất giống nhau theo hai thứ tự. "Nhất quán" là tỉ lệ cặp mà judge giữ nguyên phán quyết sau khi đổi chỗ.</span><span class="en">Zheng et al. (NeurIPS 2023) had three LLMs judge the same pair of very similar answers in both orders. "Consistent" is the share of pairs where the judge kept its verdict after the swap.</span></p>
+  </div>
+  <div class="panel">
+    <span class="tag real"><span class="vi">Zheng et al. 2023, Bảng 2</span><span class="en">Zheng et al. 2023, Table 2</span></span>
+    <div class="sb">
+      <span>Claude-v1</span><div class="sbar"><span class="s-con" style="width:23.8%">23.8%</span><span class="s-first" style="width:75%">75.0%</span><span class="s-err" style="width:1.2%"></span></div>
+      <span>GPT-3.5</span><div class="sbar"><span class="s-con" style="width:46.2%">46.2%</span><span class="s-first" style="width:50%">50.0%</span><span class="s-second" style="width:1.2%"></span><span class="s-err" style="width:2.5%"></span></div>
+      <span>GPT-4</span><div class="sbar"><span class="s-con" style="width:65%">65.0%</span><span class="s-first" style="width:30%">30.0%</span><span class="s-second" style="width:5%">5.0%</span></div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--ink)"></i><span class="vi">nhất quán</span><span class="en">consistent</span></span>
+      <span><i style="background:var(--flip)"></i><span class="vi">thiên về câu đứng trước</span><span class="en">biased toward first</span></span>
+      <span><i style="background:var(--y)"></i><span class="vi">thiên về câu đứng sau</span><span class="en">biased toward second</span></span>
+      <span><i style="background:var(--ok)"></i><span class="vi">lỗi định dạng</span><span class="en">format error</span></span>
+    </div>
+    <p class="note noshow"><span class="vi">Điều kiện thí nghiệm: hai câu trả lời rất giống nhau, tạo bằng cách gọi GPT-3.5 hai lần cho mỗi câu hỏi lượt đầu của MT-bench. Các tác giả ghi rõ đây là bài thử khó vì hai câu đôi khi không phân biệt được ngay cả với người.</span><span class="en">Test conditions: two very similar answers, made by calling GPT-3.5 twice per first-turn MT-bench question. The authors note the test is hard because the answers are sometimes indistinguishable even to humans.</span></p>
+  </div>
+  <div class="evid">
+    <article>
+      <span class="tag real"><span class="vi">Wang et al. 2023</span><span class="en">Wang et al. 2023</span></span>
+      <span class="big">66 / 80</span>
+      <p><span class="vi">Chỉ bằng cách thay đổi thứ tự xuất hiện của các câu trả lời, Vicuna-13B có thể "thắng" ChatGPT ở 66 trên 80 câu hỏi, với ChatGPT làm giám khảo.</span><span class="en">Just by altering the order in which responses appear, Vicuna-13B could "beat" ChatGPT on 66 of 80 queries, with ChatGPT as the evaluator.</span></p>
+      <p class="src">Wang et al. (2023), Large Language Models are not Fair Evaluators. <a href="https://arxiv.org/abs/2305.17926">arXiv:2305.17926</a></p>
+    </article>
+    <article>
+      <span class="tag real"><span class="vi">Zheng et al. 2023, Bảng 11</span><span class="en">Zheng et al. 2023, Table 11</span></span>
+      <h3><span class="vi">GPT-4 chấm ba cặp mô hình: chênh lệch càng rõ, càng nhất quán</span><span class="en">GPT-4 judging three model pairs: the clearer the gap, the more consistent</span></h3>
+      <div class="sb">
+        <span>GPT-3.5 vs Claude-v1</span><div class="sbar"><span class="s-con" style="width:67.5%">67.5%</span></div>
+        <span>GPT-3.5 vs Vicuna-13B</span><div class="sbar"><span class="s-con" style="width:73.8%">73.8%</span></div>
+        <span>GPT-3.5 vs LLaMA-13B</span><div class="sbar"><span class="s-con" style="width:98.8%">98.8%</span></div>
+      </div>
+      <p class="noshow"><span class="vi">Tỉ lệ nhất quán của GPT-4 khi chấm ba cặp mô hình. Khi hai mô hình gần ngang nhau thì thiên vị vị trí rõ; khi một bên hơn hẳn thì nó gần như biến mất.</span><span class="en">GPT-4's consistency when judging three model pairs. Position bias is noticeable when the models are close and almost disappears when one is far better.</span></p>
+      <p class="src">Zheng et al. (2023). <a href="https://arxiv.org/abs/2306.05685">arXiv:2306.05685</a></p>
+    </article>
+  </div>
+</section>
+
+<section class="stack" aria-labelledby="h-demo">
+  <div class="col stack-s">
+    <span class="tag illu"><span class="vi">Minh hoạ</span><span class="en">Illustration</span></span>
+    <h2 id="h-demo"><span class="vi">Bây giờ thay cô Hoa bằng một AI</span><span class="en">Now replace Ms. Hoa with an AI</span></h2>
+    <p>
+      <span class="vi">Judge nhận một câu hỏi và hai câu trả lời trong cùng một prompt, rồi chọn câu tốt hơn. Mỗi cặp được chấm hai lần, giống hai buổi sáng của cô Hoa. Nội dung không đổi, chỉ đổi câu nào được đặt ở vị trí A. Judge công bằng phải chọn cùng một câu ở cả hai lần.</span>
+      <span class="en">The judge gets one question and two answers in a single prompt and picks the better one. Each pair is judged twice, like Ms. Hoa's two mornings. The content is unchanged; only which answer sits in position A changes. A fair judge picks the same answer both times.</span>
+    </p>
+  </div>
+
+  <div class="stage">
+    <div class="passage stack-s">
+      <p><b><span class="vi">Đoạn văn:</span><span class="en">Passage:</span></b> Thư viện trường mở cửa từ 7 giờ 30 đến 17 giờ, từ thứ Hai đến thứ Sáu. Mỗi sinh viên được mượn tối đa 5 cuốn sách trong 14 ngày. Giới hạn này giúp nhiều người có cơ hội đọc cùng một đầu sách.</p>
+      <p><b><span class="vi">Câu hỏi:</span><span class="en">Question:</span></b> Vì sao thư viện giới hạn số sách được mượn? <span class="en muted small">(Why does the library limit how many books can be borrowed?)</span></p>
+    </div>
+
+    <div class="answers swapped" id="answers">
+      <article class="ans ans-x" id="ansX">
+        <header><span class="pos" id="posX">B</span><span class="who"><span class="vi">Câu trả lời X</span><span class="en">Answer X</span></span></header>
+        <p>Để sách được luân chuyển, nhiều sinh viên cùng có cơ hội đọc.</p>
+        <p class="en muted small">So books circulate and more students get a chance to read them.</p>
+      </article>
+      <article class="ans ans-y win" id="ansY">
+        <header><span class="pos" id="posY">A</span><span class="who"><span class="vi">Câu trả lời Y</span><span class="en">Answer Y</span></span></header>
+        <p>Vì thư viện muốn nhiều người được đọc cùng một đầu sách hơn.</p>
+        <p class="en muted small">Because the library wants more people to read the same title.</p>
+      </article>
+    </div>
+
+    <div class="judge" id="judge">
+      <div class="judge-name">
+        <span><span class="vi">LLM judge</span><span class="en">LLM judge</span></span>
+        <span class="note" id="runLabel"></span>
+      </div>
+      <div class="bars">
+        <div class="bar"><span>P("A")</span><div class="track"><div class="fill" id="barA" style="width:54%"></div></div><span class="v" id="valA">0.54</span></div>
+        <div class="bar"><span>P("B")</span><div class="track"><div class="fill" id="barB" style="width:46%"></div></div><span class="v" id="valB">0.46</span></div>
+      </div>
+      <p class="verdict" id="verdict"></p>
+    </div>
+
+    <ol class="log">
+      <li id="log1"><span class="vi">Lần 1 · A = X, B = Y · judge chọn A → thắng: </span><span class="en">Run 1 · A = X, B = Y · judge picks A → winner: </span><span class="xc">X</span></li>
+      <li id="log2"><span class="vi">Lần 2 · A = Y, B = X · judge chọn A → thắng: </span><span class="en">Run 2 · A = Y, B = X · judge picks A → winner: </span><span class="yc">Y</span></li>
+    </ol>
+    <p class="flipflag" id="flipflag">
+      <span class="vi">Cùng hai câu trả lời, hai người thắng khác nhau. Judge đang chọn <span class="fc">vị trí A</span>, không phải chọn nội dung. Đây là một <span class="fc">flip</span>.</span>
+      <span class="en">Same two answers, two different winners. The judge is picking <span class="fc">position A</span>, not the content. This is a <span class="fc">flip</span>.</span>
+    </p>
+    <div class="controls">
+      <button class="btn" type="button" id="play"><span class="vi">Chạy lại</span><span class="en">Replay</span></button>
+      <span class="note"><span class="vi">Ví dụ minh hoạ, không phải đầu ra của mô hình.</span><span class="en">Illustrative example, not model output.</span></span>
+    </div>
+  </div>
+
+  <p class="col">
+    <span class="vi">Hai thanh xác suất gần 50/50 nghĩa là judge không chắc. Đồ án kiểm tra xem flip có hay rơi đúng vào những lúc như vậy không.</span>
+    <span class="en">Probability bars near 50/50 mean the judge is unsure. The project tests whether flips tend to happen exactly at such moments.</span>
+  </p>
+</section>
+
+<section class="stack" aria-labelledby="h-machine">
+  <div class="col stack-s">
+    <span class="eyebrow"><span class="vi">Phần 3 · Nguyên nhân</span><span class="en">Part 3 · Causes</span></span>
+    <h2 id="h-machine"><span class="vi">Vì sao thứ tự chi phối được cả người lẫn máy?</span><span class="en">Why can order sway both people and machines?</span></h2>
+    <p><span class="vi">Ở cả hai phía, nguyên nhân chưa được xác định chắc chắn. Dưới đây là các giải thích do chính tác giả của những nghiên cứu trên đề xuất.</span><span class="en">On both sides the cause is not settled. Below are the explanations proposed by the authors of those studies.</span></p>
+  </div>
+  <div class="evid">
+    <article>
+      <span class="tag real"><span class="vi">Ở người</span><span class="en">In humans</span></span>
+      <ul class="plain onlyshow">
+        <li><span class="vi">Ấn tượng hình thành dần qua từng thí sinh, không chỉ do trí nhớ (Bruine de Bruin, 2005)</span><span class="en">Impressions build up candidate by candidate, not memory alone (Bruine de Bruin, 2005)</span></li>
+        <li><span class="vi">Người chấm tự căn thang điểm dọc theo dãy bài (Unkelbach et al., 2012)</span><span class="en">Judges calibrate their scale along the series (Unkelbach et al., 2012)</span></li>
+        <li><span class="vi">Chấm bán tự động, điểm trôi theo bài trước (Attali, 2011; Zhao et al., 2017)</span><span class="en">Semi-automatic rating, scores drift toward the previous essay (Attali, 2011; Zhao et al., 2017)</span></li>
+      </ul>
+      <ul class="plain small noshow">
+        <li><span class="vi"><b>Không chỉ do trí nhớ.</b> Hiệu ứng vẫn xuất hiện khi giám khảo chấm ngay sau từng tiết mục. Tác giả cho rằng ấn tượng ban đầu được hình thành dần qua từng thí sinh (Bruine de Bruin, 2005).</span><span class="en"><b>Not memory alone.</b> The effect remains when judges score right after each performance. The author suggests initial impressions are formed step by step across candidates (Bruine de Bruin, 2005).</span></li>
+        <li><span class="vi"><b>Hiệu chỉnh thang điểm.</b> Người chấm phải tự căn thang điểm qua một dãy bài, nên dè dặt với điểm cực đoan ở đầu dãy; càng về sau điểm càng cực đoan hơn (Unkelbach et al., 2012).</span><span class="en"><b>Scale calibration.</b> Judges must calibrate their scale over a series, so they avoid extreme scores early on; judgments become more extreme later in the series (Unkelbach et al., 2012).</span></li>
+        <li><span class="vi"><b>Chấm gần như tự động.</b> Người chấm chuyên nghiệp chấm một cách bán tự động, nên điểm dễ trôi theo bài trước. Các bài cùng đề giống nhau, khó phân biệt chất lượng (Attali, 2011; Zhao et al., 2017).</span><span class="en"><b>Near-automatic rating.</b> Professional raters judge semi-automatically, so scores drift toward the previous essay. Essays on one topic look alike and are hard to tell apart (Attali, 2011; Zhao et al., 2017).</span></li>
+      </ul>
+    </article>
+    <article>
+      <span class="tag real"><span class="vi">Ở LLM</span><span class="en">In LLMs</span></span>
+      <ul class="plain onlyshow">
+        <li><span class="vi">Dữ liệu huấn luyện, hoặc kiến trúc đọc từ trái sang phải (Zheng et al., 2023)</span><span class="en">Training data, or the left-to-right architecture (Zheng et al., 2023)</span></li>
+        <li><span class="vi">Mô hình có sẵn thói quen chọn nhãn "A" hơn "B", bất kể nội dung (token bias; Zheng et al., 2024)</span><span class="en">Models habitually prefer the label "A" over "B", regardless of content (token bias; Zheng et al., 2024)</span></li>
+        <li><span class="vi">Thông tin ở đầu và cuối ngữ cảnh được dùng tốt hơn ở giữa (Liu et al., TACL)</span><span class="en">Information at the start and end of the context is used better than the middle (Liu et al., TACL)</span></li>
+      </ul>
+      <ul class="plain small noshow">
+        <li><span class="vi"><b>Dữ liệu huấn luyện hoặc kiến trúc.</b> Nhóm đo ra hiện tượng ngờ nó bắt nguồn từ dữ liệu huấn luyện, hoặc từ kiến trúc đọc từ trái sang phải của causal transformer, và để lại cho nghiên cứu sau (Zheng et al., 2023).</span><span class="en"><b>Training data or architecture.</b> The authors who measured the effect suspect the training data, or the left-to-right architecture of causal transformers, and leave it to future work (Zheng et al., 2023).</span></li>
+        <li><span class="vi"><b>Thiên vị nhãn.</b> Trên câu hỏi trắc nghiệm, LLM ưa một số ký hiệu như "Option A", do mô hình gán sẵn xác suất cao hơn cho một số token nhãn (Zheng et al., 2024).</span><span class="en"><b>Label preference.</b> On multiple-choice questions LLMs favour IDs such as "Option A", because the model gives certain label tokens more prior probability (Zheng et al., 2024).</span></li>
+        <li><span class="vi"><b>Vị trí trong ngữ cảnh.</b> LLM dùng thông tin ở đầu và cuối ngữ cảnh tốt hơn thông tin ở giữa (Liu et al., TACL).</span><span class="en"><b>Position in context.</b> LLMs use information at the start and end of the context better than information in the middle (Liu et al., TACL).</span></li>
+      </ul>
+    </article>
+  </div>
+  <p class="flipflag"><span class="vi"><b>Điểm gặp nhau.</b> Ở cả hai phía, thứ tự chi phối mạnh nhất khi hai thứ cần so khó phân biệt<span class="noshow">: các bài luận cùng đề giống nhau ở người, các câu trả lời rất giống nhau hoặc hai mô hình ngang sức ở LLM</span>. Đồ án sẽ kiểm tra đúng điều này trên tiếng Việt. Giống nhau về điều kiện không có nghĩa là cùng một cơ chế.</span><span class="en"><b>Where they meet.</b> On both sides, order matters most when the two things compared are hard to tell apart<span class="noshow">: same-topic essays for humans, very similar answers or evenly matched models for LLMs</span>. The project tests exactly this for Vietnamese. Sharing a condition does not mean sharing a mechanism.</span></p>
+  <div class="evid noshow">
+    <article>
+      <span class="tag real"><span class="vi">Thiên vị nhãn</span><span class="en">Label preference</span></span>
+      <h3><span class="vi">LLM ưa một số ký hiệu đáp án</span><span class="en">LLMs prefer certain option labels</span></h3>
+      <p><span class="vi">Trên câu hỏi trắc nghiệm, LLM dễ đổi đáp án khi các lựa chọn bị đổi vị trí, và có xu hướng chọn những ký hiệu nhất định như "Option A". Các tác giả cho rằng nguyên nhân chính là token bias: mô hình gán sẵn xác suất cao hơn cho một số token nhãn.</span><span class="en">On multiple-choice questions, LLMs are vulnerable to option position changes and prefer specific option IDs such as "Option A". The authors attribute this mainly to token bias: the model assigns more prior probability to certain label tokens.</span></p>
+      <p class="src">Zheng et al. (ICLR 2024), Large Language Models Are Not Robust Multiple Choice Selectors. <a href="https://arxiv.org/abs/2309.03882">arXiv:2309.03882</a></p>
+    </article>
+    <article>
+      <span class="tag real"><span class="vi">Vị trí trong ngữ cảnh</span><span class="en">Position in context</span></span>
+      <h3><span class="vi">Thông tin nằm ở đâu cũng ảnh hưởng</span><span class="en">Where information sits matters</span></h3>
+      <p><span class="vi">Kết quả của LLM thường cao nhất khi thông tin cần dùng nằm ở đầu hoặc cuối ngữ cảnh, và giảm rõ khi nó nằm ở giữa. Bối cảnh ở đây là ngữ cảnh dài chứ không phải chấm cặp, nhưng nó cho thấy mô hình không xử lý mọi vị trí như nhau.</span><span class="en">LLM performance is often highest when the relevant information is at the beginning or end of the context, and degrades when it is in the middle. The setting is long contexts rather than pairwise judging, but it shows models do not treat all positions alike.</span></p>
+      <p class="src">Liu et al. (TACL), Lost in the Middle: How Language Models Use Long Contexts. <a href="https://arxiv.org/abs/2307.03172">arXiv:2307.03172</a></p>
+    </article>
+  </div>
+  <div class="col stack noshow">
+    <span class="tag illu"><span class="vi">Minh hoạ</span><span class="en">Illustration</span></span>
+    <p>
+      <span class="vi">Có thể xem phán quyết của judge là tổng của hai lực, <b>lực nội dung</b> (câu nào thật sự hay hơn) và một <b>lực vị trí</b> nhỏ luôn kéo về câu đứng trước. Kéo thanh trượt để đổi độ chênh chất lượng giữa X và Y.</span>
+      <span class="en">The judge's verdict can be seen as the sum of two forces, a <b>content force</b> (which answer is truly better) and a small <b>position force</b> that always pulls toward the answer shown first. Drag the slider to change the quality gap between X and Y.</span>
+    </p>
+  </div>
+  <div class="panel noshow">
+    <div class="slider">
+      <label for="gap" class="small"><span class="vi">Độ chênh chất lượng:</span><span class="en">Quality gap:</span> <b id="gapVal"></b></label>
+      <input type="range" id="gap" min="-3" max="3" step="0.05" value="0.2">
+    </div>
+    <div class="force" aria-hidden="true">
+      <div class="half l"></div><div class="half r"></div><div class="mid"></div>
+      <div class="link" id="fLink"></div>
+      <div class="fd" id="fd1">1</div><div class="fd" id="fd2">2</div>
+    </div>
+    <div class="force-lab"><span class="yc"><span class="vi">← judge chọn Y</span><span class="en">← judge picks Y</span></span><span class="xc"><span class="vi">judge chọn X →</span><span class="en">judge picks X →</span></span></div>
+    <p class="result" id="forceResult"></p>
+    <p class="note">
+      <span class="vi">Chấm 1: X đứng trước. Chấm 2: Y đứng trước. Khoảng cách giữa hai chấm là lực vị trí. Hai chấm nằm hai bên vạch giữa thì đó là flip.</span>
+      <span class="en">Dot 1: X first. Dot 2: Y first. The distance between them is the position force. Dots on opposite sides of the middle line mean a flip.</span>
+    </p>
+  </div>
+</section>
+
+<section class="stack" aria-labelledby="h-origin">
+  <div class="col stack-s">
+    <span class="eyebrow"><span class="vi">Phần 4 · Ý tưởng</span><span class="en">Part 4 · The idea</span></span>
+    <h2 id="h-origin"><span class="vi">Từ các dẫn chứng đó đến đề tài này</span><span class="en">From that evidence to this project</span></h2>
+    <p><span class="vi">Xếp các dẫn chứng theo thứ tự thì thấy một chỗ còn trống.</span><span class="en">Lining up the evidence reveals one spot left empty.</span></p>
+  </div>
+  <ol class="trail">
+    <li>
+      <svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="11" r="4"></circle><path d="M6 40h36M10 40V29h9v11M19 40V21h10v19M29 40V31h9v9"></path></svg>
+      <span class="k"><span class="vi">Đã biết · con người</span><span class="en">Known · humans</span></span>
+      <h3><span class="vi">Thứ tự chi phối người chấm</span><span class="en">Order sways human graders</span></h3>
+      <p><span class="vi">Điểm ban giám khảo tăng theo thứ tự biểu diễn; điểm bài luận bị kéo theo bài trước (Bruine de Bruin, 2005; Zhao et al., 2017).</span><span class="en">Jury scores rise with serial position; essay scores are pulled toward the previous one (Bruine de Bruin, 2005; Zhao et al., 2017).</span></p>
+    </li>
+    <li>
+      <svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6h18l8 8v28H12zM30 6v8h8M17 22h14M17 28h14M17 34h9"></path></svg>
+      <span class="k"><span class="vi">Đã biết · LLM tiếng Anh</span><span class="en">Known · LLMs in English</span></span>
+      <h3><span class="vi">LLM judge cũng flip</span><span class="en">LLM judges flip too</span></h3>
+      <p><span class="vi">GPT-4 chỉ nhất quán ở 65% số cặp rất giống nhau. Cách khắc phục được đề xuất: chấm cả hai thứ tự (Zheng et al., 2023; Wang et al., 2023).</span><span class="en">GPT-4 was consistent on only 65% of very similar pairs. The proposed fix: judge in both orders (Zheng et al., 2023; Wang et al., 2023).</span></p>
+    </li>
+    <li>
+      <svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 30 30 8l10 10-22 22zM14 28l3 3M19 23l3 3M24 18l3 3M29 13l3 3"></path></svg>
+      <span class="k"><span class="vi">Đã biết · đa ngôn ngữ</span><span class="en">Known · multilingual</span></span>
+      <h3><span class="vi">Đổi ngôn ngữ thì judge kém ổn định</span><span class="en">Judges are less stable across languages</span></h3>
+      <p><span class="vi">Trên 25 ngôn ngữ, độ nhất quán của LLM judge giữa các ngôn ngữ chỉ đạt Fleiss&#39; kappa khoảng 0.3, và kém nhất ở ngôn ngữ ít tài nguyên (Fu &amp; Liu, 2025).</span><span class="en">Across 25 languages, LLM judges reach a Fleiss&#39; kappa of only about 0.3 between languages, worst for low-resource ones (Fu &amp; Liu, 2025).</span></p>
+    </li>
+    <li>
+      <svg class="ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="21" cy="21" r="12"></circle><path d="M30 30l11 11"></path><text x="21" y="25.5" text-anchor="middle" font-size="11" font-weight="700" font-family="monospace" fill="currentColor" stroke="none">VI</text></svg>
+      <span class="k"><span class="vi">Khoảng trống</span><span class="en">The gap</span></span>
+      <h3><span class="vi">Tiếng Việt: chưa tìm thấy ai đo</span><span class="en">Vietnamese: no measurement found</span></h3>
+      <p><span class="vi">Chưa tìm thấy nghiên cứu nào đo position bias trên câu trả lời dài tiếng Việt và đối chiếu với người chấm (việc tìm kiếm chưa toàn diện). Đề tài này lấp chỗ đó.</span><span class="en">No study was found measuring position bias on long Vietnamese answers against human ratings (the search was not exhaustive). This project fills that spot.</span></p>
+    </li>
+  </ol>
+</section>
+
+<section class="stack" aria-labelledby="h-why">
+  <div class="col stack-s">
+    <span class="eyebrow"><span class="vi">Phần 5 · Đề tài</span><span class="en">Part 5 · The project</span></span>
+    <h2 id="h-why"><span class="vi">Vì sao phải dùng LLM để chấm</span><span class="en">Why use an LLM as the judge at all</span></h2>
+    <p>
+      <span class="vi">Chấm một câu trả lời là bài toán so sánh văn bản. Cách đơn giản nhất trong môn học là đếm từ trùng với đáp án (word-overlap F1). Thử bên dưới: câu đúng nhưng diễn đạt khác bị điểm thấp, còn câu sai chỉ đảo hai con số lại được điểm tuyệt đối.</span>
+      <span class="en">Grading an answer is a text-comparison problem. The simplest method from the course counts words shared with the reference (word-overlap F1). Try it below: a correct paraphrase scores low, while a wrong answer that only swaps two numbers gets a perfect score.</span>
+    </p>
+  </div>
+
+  <div class="panel">
+    <div class="field">
+      <label><span class="vi">Đáp án chuẩn</span><span class="en">Reference answer</span></label>
+      <p id="f1-ref">Sinh viên được mượn tối đa 5 cuốn sách trong 14 ngày.</p>
+    </div>
+    <div class="controls">
+      <button class="btn ghost" type="button" data-preset="0"><span class="vi">Câu đúng, diễn đạt khác</span><span class="en">Correct, reworded</span></button>
+      <button class="btn ghost" type="button" data-preset="1"><span class="vi">Câu sai, đảo hai con số</span><span class="en">Wrong, numbers swapped</span></button>
+    </div>
+    <div class="field">
+      <label for="f1-input"><span class="vi">Câu trả lời cần chấm</span><span class="en">Answer to grade</span></label>
+      <input type="text" id="f1-input" value="Sinh viên được mượn tối đa 14 cuốn sách trong 5 ngày.">
+    </div>
+    <div class="toks" id="f1-toks" aria-label="tokens"></div>
+    <div class="metrics">
+      <div class="metric"><span class="n" id="f1-f">1.00</span><span class="l">F1</span></div>
+      <div class="metric"><span class="n" id="f1-p">1.00</span><span class="l">Precision</span></div>
+      <div class="metric"><span class="n" id="f1-r">1.00</span><span class="l">Recall</span></div>
+      <span class="human" id="f1-human"></span>
+    </div>
+    <p class="note"><span class="vi">F1 tính theo từng tiếng. Ô tô màu là tiếng trùng với đáp án.</span><span class="en">F1 on whitespace tokens. Highlighted tokens also appear in the reference.</span></p>
+  </div>
+
+  <p class="col">
+    <span class="vi">Baseline thứ hai là cosine giữa embedding của hai câu. Nó hiểu được từ đồng nghĩa, nhưng hai câu gần như giống hệt nhau và chỉ khác một chi tiết sai vẫn có vector rất gần nhau. LLM judge đọc hiểu được nội dung nên chấm tốt hơn. Câu hỏi của đồ án là: nó có chấm ổn định không.</span>
+    <span class="en">The second baseline is cosine similarity between sentence embeddings. It handles synonyms, but two near-identical sentences that differ in one wrong detail still land very close together. An LLM judge can read for meaning, so it grades better. The project asks whether it grades consistently.</span>
+  </p>
+  <figure style="max-width:480px">
+    <svg viewBox="0 0 420 250" role="img" aria-label="Schematic embedding space: the wrong answer sits closer to the reference than the correct paraphrase">
+      <path class="st" d="M40 20v190h360"></path>
+      <line class="vec-x" x1="40" y1="210" x2="190" y2="60"></line>
+      <line class="vec-ref" x1="40" y1="210" x2="300" y2="80"></line>
+      <line class="vec-f" x1="40" y1="210" x2="312" y2="100"></line>
+      <circle class="pt-x" cx="190" cy="60" r="6"></circle>
+      <circle class="pt-ref" cx="300" cy="80" r="6"></circle>
+      <circle class="pt-f" cx="312" cy="100" r="6"></circle>
+      <text class="svgx" x="182" y="44" text-anchor="middle"><tspan class="vi">đúng, diễn đạt khác</tspan><tspan class="en">correct, reworded</tspan></text>
+      <text class="svgl" x="310" y="70"><tspan class="vi">đáp án chuẩn</tspan><tspan class="en">reference</tspan></text>
+      <text class="svgf" x="322" y="144" text-anchor="middle"><tspan class="vi">sai, đảo hai số</tspan><tspan class="en">wrong, numbers swapped</tspan></text>
+      <text class="svgt" x="400" y="232" text-anchor="end"><tspan class="vi">không gian embedding (sơ đồ)</tspan><tspan class="en">embedding space (schematic)</tspan></text>
+    </svg>
+    <figcaption><span class="vi">Sơ đồ minh hoạ. Góc càng nhỏ thì cosine càng cao: câu sai nằm sát đáp án hơn cả câu đúng.</span><span class="en">Schematic. A smaller angle means a higher cosine: the wrong answer sits closer to the reference than the correct one.</span></figcaption>
+  </figure>
+</section>
+
+<section class="stack" aria-labelledby="h-sim">
+  <div class="col stack-s">
+    <h2 id="h-sim"><span class="vi">Từ một cặp đến 150 cặp</span><span class="en">From one pair to 150 pairs</span></h2>
+    <p>
+      <span class="vi">Mỗi chấm bên dưới là một cặp câu trả lời, xếp theo độ chênh điểm mà người chấm cho hai câu. Giả thuyết của đồ án: flip dồn về bên trái, nơi hai câu gần ngang nhau. Kéo thanh trượt để tăng độ thiên vị vị trí của judge.</span>
+      <span class="en">Each dot below is one answer pair, placed by the score gap human annotators gave the two answers. The project's hypothesis: flips pile up on the left, where the two answers are close. Drag the slider to raise the judge's position bias.</span>
+    </p>
+  </div>
+
+  <div class="panel">
+    <div class="slider">
+      <label for="bias" class="small"><span class="vi">Độ thiên vị về vị trí A của judge:</span><span class="en">Judge's bias toward position A:</span> <b id="biasVal">0.50</b></label>
+      <input type="range" id="bias" min="0" max="2" step="0.05" value="0.5">
+    </div>
+    <div class="plot">
+      <svg id="sim" viewBox="0 0 720 250" role="img" aria-label="150 simulated answer pairs by human score gap">
+        <line class="axis" x1="24" y1="196" x2="696" y2="196"></line>
+        <g id="ticks"></g>
+        <g id="dots"></g>
+        <text class="svgt vi" x="24" y="242">← hai câu gần ngang nhau</text>
+        <text class="svgt en" x="24" y="242">← answers close in quality</text>
+        <text class="svgt vi" x="696" y="242" text-anchor="end">một câu hơn hẳn →</text>
+        <text class="svgt en" x="696" y="242" text-anchor="end">one answer clearly better →</text>
+        <text class="svgt vi" x="360" y="226" text-anchor="middle">độ chênh điểm của người chấm (thang 1–5)</text>
+        <text class="svgt en" x="360" y="226" text-anchor="middle">human score gap (1–5 scale)</text>
+      </svg>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--flip)"></i><span class="vi">flip: đổi người thắng khi đảo thứ tự</span><span class="en">flip: winner changes after the swap</span></span>
+      <span><i style="background:var(--ok)"></i><span class="vi">nhất quán</span><span class="en">consistent</span></span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><span class="n fc" id="m-flip">–</span><span class="l"><span class="vi">Tỉ lệ flip</span><span class="en">Flip rate</span></span></div>
+      <div class="metric"><span class="n" id="m-single">–</span><span class="l"><span class="vi">Khớp người chấm · chấm 1 lượt</span><span class="en">Agrees with humans · one order</span></span></div>
+      <div class="metric"><span class="n" id="m-both">–</span><span class="l"><span class="vi">Khớp người chấm · chỉ giữ cặp nhất quán</span><span class="en">Agrees with humans · consistent only</span></span></div>
+      <div class="metric"><span class="n" id="m-kept">–</span><span class="l"><span class="vi">Số cặp giữ lại</span><span class="en">Pairs kept</span></span></div>
+    </div>
+    <div class="controls">
+      <button class="btn ghost" type="button" id="resim"><span class="vi">Tạo lại</span><span class="en">Resample</span></button>
+      <span class="note"><span class="vi">Số liệu mô phỏng, không phải kết quả thí nghiệm.</span><span class="en">Simulated numbers, not experimental results.</span></span>
+    </div>
+  </div>
+
+  <p class="col">
+    <span class="vi">Mô phỏng cũng cho thấy cái giá của cách khắc phục: chấm cả hai thứ tự và bỏ các cặp flip làm phần còn lại khớp với người chấm hơn, nhưng số cặp có phán quyết giảm đi. Đồ án sẽ kiểm tra điều này trên dữ liệu thật.</span>
+    <span class="en">The simulation also shows the price of the fix: judging both orders and dropping flipped pairs makes the rest agree with humans more, but fewer pairs get a verdict. The project will test this on real data.</span>
+  </p>
+</section>
+
+<section class="stack" aria-labelledby="h-rq">
+  <span class="eyebrow onlyshow"><span class="vi">Phần 5 · Đề tài</span><span class="en">Part 5 · The project</span></span>
+  <h2 id="h-rq"><span class="vi">Bốn câu hỏi nghiên cứu</span><span class="en">Four research questions</span></h2>
+  <div class="rqg onlyshow">
+    <div>
+      <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="4" y="10" width="24" height="18" rx="4" fill="var(--x-soft)" stroke="var(--x)" stroke-width="2"></rect><rect x="36" y="10" width="24" height="18" rx="4" fill="var(--y-soft)" stroke="var(--y)" stroke-width="2"></rect><rect x="4" y="38" width="24" height="18" rx="4" fill="var(--y-soft)" stroke="var(--y)" stroke-width="2"></rect><rect x="36" y="38" width="24" height="18" rx="4" fill="var(--x-soft)" stroke="var(--x)" stroke-width="2"></rect><path d="M32 30v6" stroke="var(--flip)" stroke-width="3" stroke-linecap="round"></path></svg>
+      <b><span class="vi">1. Judge flip thường xuyên đến mức nào?</span><span class="en">1. How often does the judge flip?</span></b>
+      <span class="m"><span class="vi">Đo bằng: tỉ lệ flip trên toàn bộ các cặp</span><span class="en">Measured by: flip rate over all pairs</span></span>
+    </div>
+    <div>
+      <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M4 56h56" stroke="var(--line)" stroke-width="2"></path><circle cx="10" cy="48" r="4" fill="var(--flip)"></circle><circle cx="20" cy="48" r="4" fill="var(--flip)"></circle><circle cx="10" cy="38" r="4" fill="var(--flip)"></circle><circle cx="20" cy="38" r="4" fill="var(--ok)"></circle><circle cx="34" cy="48" r="4" fill="var(--flip)"></circle><circle cx="34" cy="38" r="4" fill="var(--ok)"></circle><circle cx="48" cy="48" r="4" fill="var(--ok)"></circle><circle cx="58" cy="48" r="4" fill="var(--ok)"></circle><circle cx="48" cy="38" r="4" fill="var(--ok)"></circle><circle cx="10" cy="28" r="4" fill="var(--flip)"></circle></svg>
+      <b><span class="vi">2. Flip có dồn vào các cặp gần ngang nhau?</span><span class="en">2. Do flips pile up on close pairs?</span></b>
+      <span class="m"><span class="vi">Đo bằng: flip theo độ chênh điểm của người chấm</span><span class="en">Measured by: flips by human score gap</span></span>
+    </div>
+    <div>
+      <svg viewBox="0 0 64 64" aria-hidden="true"><text x="4" y="25" font-family="monospace" font-size="12" font-weight="700" fill="var(--ink)">A</text><rect x="16" y="15" width="30" height="12" rx="3" fill="var(--ink)"></rect><text x="4" y="49" font-family="monospace" font-size="12" font-weight="700" fill="var(--ink)">B</text><rect x="16" y="39" width="27" height="12" rx="3" fill="var(--ink)"></rect><path d="M52 8v50" stroke="var(--flip)" stroke-width="2" stroke-dasharray="3 3"></path></svg>
+      <b><span class="vi">3. Lúc flip, judge có đang lưỡng lự?</span><span class="en">3. Is the judge unsure when it flips?</span></b>
+      <span class="m"><span class="vi">Đo bằng: xác suất judge gán cho "A" và "B"</span><span class="en">Measured by: the judge's probabilities for "A" and "B"</span></span>
+    </div>
+    <div>
+      <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M6 10h52L38 34v18l-12 6V34z" fill="var(--sunk)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"></path><path d="M24 22l5 5 10-10" stroke="var(--x)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <b><span class="vi">4. Chỉ giữ phán quyết nhất quán thì có khớp người chấm hơn?</span><span class="en">4. Does keeping only consistent verdicts agree with humans more?</span></b>
+      <span class="m"><span class="vi">Đo bằng: độ đồng thuận trước và sau khi lọc</span><span class="en">Measured by: agreement before and after filtering</span></span>
+    </div>
+  </div>
+  <div class="tbl noshow">
+    <table>
+      <thead><tr><th><span class="vi">Câu hỏi</span><span class="en">Question</span></th><th><span class="vi">Đo bằng gì</span><span class="en">How it is measured</span></th><th><span class="vi">Nói theo chuyện cô Hoa</span><span class="en">In Ms. Hoa's terms</span></th></tr></thead>
+      <tbody>
+        <tr><td><span class="vi">Judge flip thường xuyên đến mức nào khi đảo thứ tự hai câu trả lời tiếng Việt?</span><span class="en">How often does the judge flip when two Vietnamese answers are swapped?</span></td><td><span class="vi">Tỉ lệ flip trên toàn bộ các cặp</span><span class="en">Flip rate over all pairs</span></td><td><span class="vi">Cô đổi ý nhiều không?</span><span class="en">How often does she change her mind?</span></td></tr>
+        <tr><td><span class="vi">Flip có tập trung ở các cặp mà người chấm cho điểm gần nhau không?</span><span class="en">Are flips concentrated on pairs humans rate as close?</span></td><td><span class="vi">Tỉ lệ flip theo độ chênh điểm của người chấm</span><span class="en">Flip rate by human score gap</span></td><td><span class="vi">Cô đổi ý khi hai bài ngang nhau, hay cả khi một bài hơn hẳn?</span><span class="en">Does she waver only when the essays are close, or even when one is clearly better?</span></td></tr>
+        <tr><td><span class="vi">Flip có đi kèm độ tự tin thấp của judge không?</span><span class="en">Do flips coincide with low judge confidence?</span></td><td><span class="vi">Xác suất token judge gán cho "A" và "B"</span><span class="en">Token probabilities the judge assigns to "A" and "B"</span></td><td><span class="vi">Lúc đổi ý, cô có đang lưỡng lự không?</span><span class="en">When she changes her mind, was she hesitating?</span></td></tr>
+        <tr><td><span class="vi">Chấm cả hai thứ tự và chỉ giữ phán quyết nhất quán có khớp người chấm hơn không?</span><span class="en">Does judging both orders and keeping consistent verdicts improve agreement with humans?</span></td><td><span class="vi">Độ đồng thuận với người chấm, trước và sau khi lọc</span><span class="en">Agreement with humans, before and after filtering</span></td><td><span class="vi">Bắt cô chấm cả hai thứ tự và chỉ công nhận khi hai lần trùng nhau, thì kết quả có giống hội đồng hơn không?</span><span class="en">If she must grade in both orders and only matching verdicts count, does she agree with the panel more?</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="col muted"><span class="vi">Điều kiện phụ: so tỉ lệ flip trên cùng nội dung ở tiếng Việt và tiếng Anh.</span><span class="en">Secondary condition: compare the flip rate on the same content in Vietnamese and in English.</span></p>
+</section>
+
+<section class="stack" aria-labelledby="h-method">
+  <span class="eyebrow onlyshow"><span class="vi">Phần 5 · Đề tài</span><span class="en">Part 5 · The project</span></span>
+  <h2 id="h-method"><span class="vi">Hướng tiếp cận</span><span class="en">Approach</span></h2>
+  <figure class="onlyshow pipe">
+    <svg viewBox="0 0 1000 300" role="img" aria-label="Pipeline: 150 UIT-ViQuAD questions, answers from several models paired up, graded in parallel by two humans and an LLM judge in both orders, then analysed">
+      <defs><marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fill-ink" d="M0 0 10 5 0 10z"></path></marker></defs>
+      <text class="pl-h" x="0" y="16"><tspan class="vi">1 · Dữ liệu</tspan><tspan class="en">1 · Data</tspan></text>
+      <text class="pl-h" x="215" y="16"><tspan class="vi">2 · Tạo cặp</tspan><tspan class="en">2 · Pairs</tspan></text>
+      <text class="pl-h" x="450" y="16"><tspan class="vi">3 · Chấm song song</tspan><tspan class="en">3 · Grade in parallel</tspan></text>
+      <text class="pl-h" x="740" y="16"><tspan class="vi">4 · Phân tích</tspan><tspan class="en">4 · Analysis</tspan></text>
+
+      <rect class="pl-box" x="0" y="105" width="175" height="110" rx="10"></rect>
+      <text class="pl-t" x="16" y="137">UIT-ViQuAD 2.0</text>
+      <text class="pl-s" x="16" y="163"><tspan class="vi">150 câu hỏi</tspan><tspan class="en">150 questions</tspan></text>
+      <text class="pl-s" x="16" y="186"><tspan class="vi">"vì sao", "thế nào"</tspan><tspan class="en">"why", "how"</tspan></text>
+
+      <rect class="pl-box" x="215" y="105" width="185" height="110" rx="10"></rect>
+      <text class="pl-t" x="231" y="137"><tspan class="vi">Mô hình trả lời</tspan><tspan class="en">Models answer</tspan></text>
+      <text class="pl-s" x="231" y="163"><tspan class="vi">chất lượng khác nhau</tspan><tspan class="en">of varied quality</tspan></text>
+      <text class="pl-s" x="231" y="186"><tspan class="vi">ghép cặp </tspan><tspan class="en">paired as </tspan>(<tspan class="pl-x">X</tspan>, <tspan class="pl-y">Y</tspan>)</text>
+
+      <rect class="pl-hum" x="450" y="34" width="240" height="105" rx="10"></rect>
+      <text class="pl-t" x="466" y="64"><tspan class="vi">Hai người chấm</tspan><tspan class="en">Two annotators</tspan></text>
+      <text class="pl-s" x="466" y="90"><tspan class="vi">độc lập, thang 1–5</tspan><tspan class="en">independent, 1–5 scale</tspan></text>
+      <text class="pl-s" x="466" y="113"><tspan class="vi">đồng thuận: </tspan><tspan class="en">agreement: </tspan>Cohen's κ</text>
+
+      <rect class="pl-jud" x="450" y="166" width="240" height="118" rx="10"></rect>
+      <text class="pl-t" x="466" y="196">LLM judge · Qwen2.5</text>
+      <text class="pl-s" x="466" y="222"><tspan class="vi">lượt 1: </tspan><tspan class="en">run 1: </tspan>A = <tspan class="pl-x">X</tspan>, B = <tspan class="pl-y">Y</tspan></text>
+      <text class="pl-s" x="466" y="245"><tspan class="vi">lượt 2: </tspan><tspan class="en">run 2: </tspan>A = <tspan class="pl-y">Y</tspan>, B = <tspan class="pl-x">X</tspan></text>
+      <text class="pl-s" x="466" y="268"><tspan class="vi">lưu </tspan><tspan class="en">save </tspan>P("A"), P("B")</text>
+
+      <rect class="pl-box" x="740" y="34" width="260" height="250" rx="10"></rect>
+      <text class="pl-t" x="756" y="66"><tspan class="vi">So sánh</tspan><tspan class="en">Compare</tspan></text>
+      <text class="pl-s" x="756" y="96"><tspan class="vi">• tỉ lệ flip</tspan><tspan class="en">• flip rate</tspan></text>
+      <text class="pl-s" x="756" y="122"><tspan class="vi">• flip theo độ chênh điểm</tspan><tspan class="en">• flips by score gap</tspan></text>
+      <text class="pl-s" x="756" y="148"><tspan class="vi">• flip theo độ tự tin</tspan><tspan class="en">• flips by confidence</tspan></text>
+      <text class="pl-s" x="756" y="174"><tspan class="vi">• khớp người chấm</tspan><tspan class="en">• agreement with humans</tspan></text>
+      <text class="pl-s" x="756" y="226"><tspan class="vi">baseline: F1, cosine</tspan><tspan class="en">baselines: F1, cosine</tspan></text>
+      <text class="pl-s" x="756" y="252"><tspan class="vi">không huấn luyện mô hình</tspan><tspan class="en">no model training</tspan></text>
+
+      <path class="st" d="M175 160H209" marker-end="url(#arr2)"></path>
+      <path class="st" d="M400 160H422V86H444M422 160V225H444" marker-end="url(#arr2)"></path>
+      <path class="st" d="M422 160V86H444" marker-end="url(#arr2)"></path>
+      <path class="st" d="M690 86H734M690 225H734" marker-end="url(#arr2)"></path>
+      <path class="st" d="M690 86H734" marker-end="url(#arr2)"></path>
+    </svg>
+  </figure>
+  <ol class="flow noshow">
+    <li><div><h3><span class="vi">Dữ liệu</span><span class="en">Data</span></h3>
+      <p><span class="vi">150 câu hỏi có đáp án lấy từ tập validation của UIT-ViQuAD 2.0 (VLSP 2021, bản công khai trên Hugging Face), ưu tiên câu "vì sao", "như thế nào" để câu trả lời đủ dài, trải đều qua nhiều bài viết. Đáp án gốc giúp người chấm đối chiếu.</span><span class="en">150 answerable questions from the UIT-ViQuAD 2.0 validation split (VLSP 2021, public on Hugging Face), favouring "why" and "how" questions so answers are long enough, spread across many articles. The gold answer helps the annotators.</span></p></div></li>
+    <li><div><h3><span class="vi">Tạo cặp câu trả lời</span><span class="en">Build answer pairs</span></h3>
+      <p><span class="vi">Mỗi câu hỏi được trả lời bởi các mô hình có chất lượng khác nhau, rồi ghép thành cặp.</span><span class="en">Each question is answered by models of different quality, then paired.</span></p></div></li>
+    <li><div><h3><span class="vi">Chấm song song</span><span class="en">Grade in parallel</span></h3>
+      <div class="fork">
+        <div><h3><span class="vi">Người chấm</span><span class="en">Human reference</span></h3><p class="small"><span class="vi">Hai người chấm độc lập, thang 1–5 theo rubric, không biết mô hình nào viết và không biết phán quyết của judge. Độ đồng thuận báo cáo bằng Cohen's kappa.</span><span class="en">Two annotators rate independently on a 1–5 rubric, blind to the source model and the judge's verdict. Agreement reported with Cohen's kappa.</span></p></div>
+        <div><h3><span class="vi">LLM judge</span><span class="en">LLM judge</span></h3><p class="small"><span class="vi">Mô hình mã mở instruction-tuned (ứng viên: Qwen2.5-Instruct) chạy trên Google Colab. Mỗi cặp chấm hai thứ tự, lưu xác suất token của phán quyết. Không huấn luyện mô hình nào.</span><span class="en">An open-weight instruction-tuned model (candidate: Qwen2.5-Instruct) on Google Colab. Each pair judged in both orders, verdict token probabilities saved. No model training.</span></p></div>
+      </div></div></li>
+    <li><div><h3><span class="vi">Phân tích</span><span class="en">Analysis</span></h3>
+      <p><span class="vi">Tỉ lệ flip, flip theo độ chênh chất lượng, flip theo độ tự tin, và độ đồng thuận với người chấm. Word-overlap F1 và cosine embedding làm baseline đối chiếu.</span><span class="en">Flip rate, flips by quality gap, flips by confidence, and agreement with humans. Word-overlap F1 and embedding cosine serve as context baselines.</span></p></div></li>
+  </ol>
+</section>
+
+<section class="stack" aria-labelledby="h-tech">
+  <span class="eyebrow"><span class="vi">Phần 5 · Đề tài</span><span class="en">Part 5 · The project</span></span>
+  <h2 id="h-tech"><span class="vi">Lựa chọn kỹ thuật</span><span class="en">Technical choices</span></h2>
+  <div class="tbl tech">
+    <table>
+      <thead><tr><th><span class="vi">Kỹ thuật</span><span class="en">Technique</span></th><th><span class="vi">Dùng để</span><span class="en">Used to</span></th><th><span class="vi">Vì sao chọn</span><span class="en">Why this one</span></th></tr></thead>
+      <tbody>
+        <tr><td><b><span class="vi">Chấm theo cặp, cả hai thứ tự</span><span class="en">Pairwise judging, both orders</span></b></td><td><span class="vi">Đo flip</span><span class="en">Measure flips</span></td><td><span class="vi">Thiên vị vị trí chỉ lộ ra khi có hai vị trí để đổi; chấm từng câu riêng lẻ không đo được. Đây là cách đo của Zheng et al. (2023).</span><span class="en">Position bias only shows when there are two positions to swap; single-answer grading cannot measure it. This is how Zheng et al. (2023) measure it.</span></td></tr>
+        <tr><td><b><span class="vi">Judge mã mở: Qwen2.5-Instruct</span><span class="en">Open-weight judge: Qwen2.5-Instruct</span></b></td><td><span class="vi">Làm giám khảo</span><span class="en">Act as the judge</span></td><td><span class="vi">Lấy được đầy đủ xác suất token, chạy được trên Colab, có hỗ trợ tiếng Việt. Không phải API trả phí nào cũng trả về xác suất token.</span><span class="en">Full access to token probabilities, runs on Colab, supports Vietnamese. Not every paid API returns token probabilities.</span></td></tr>
+        <tr><td><b><span class="vi">Xác suất token "A" / "B"</span><span class="en">Token probabilities of "A" / "B"</span></b></td><td><span class="vi">Đo độ tự tin</span><span class="en">Measure confidence</span></td><td><span class="vi">Đọc thẳng từ đầu ra của decoder trong cùng lần chấm, không tốn thêm lần chạy và không dựa vào việc mô hình tự khai độ tin.</span><span class="en">Read directly from the decoder output of the same run, with no extra runs and no reliance on the model stating its own confidence.</span></td></tr>
+        <tr><td><b>Balanced Position Calibration</b></td><td><span class="vi">Giảm thiểu</span><span class="en">Mitigate</span></td><td><span class="vi">Gộp kết quả của hai thứ tự đã chấm sẵn, không cần huấn luyện. Đề xuất bởi Wang et al. (2023).</span><span class="en">Combines the two orders already judged, with no training. Proposed by Wang et al. (2023).</span></td></tr>
+        <tr><td><b><span class="vi">Hai người chấm + Cohen's kappa</span><span class="en">Two annotators + Cohen's kappa</span></b></td><td><span class="vi">Làm mốc tham chiếu</span><span class="en">Provide the reference</span></td><td><span class="vi">Kappa trừ đi phần đồng ý do ngẫu nhiên, nên cho biết rubric có đủ rõ để làm mốc không.</span><span class="en">Kappa removes chance agreement, so it shows whether the rubric is clear enough to serve as the reference.</span></td></tr>
+        <tr><td><b>Word-overlap F1, cosine embedding</b></td><td>Baseline</td><td><span class="vi">F1 là thước đo chuẩn của các bộ đọc hiểu kiểu SQuAD. Hai baseline dùng lại biểu diễn đã học trong môn và cho thấy vì sao cần LLM judge.</span><span class="en">F1 is the standard metric for SQuAD-style reading comprehension. Both reuse course representations and show why an LLM judge is needed.</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="col muted small"><span class="vi">Không làm: huấn luyện hay fine-tune judge (ngoài phạm vi), dùng API trả phí làm judge chính.</span><span class="en">Out of scope: training or fine-tuning the judge, using a paid API as the main judge.</span></p>
+</section>
+
+<section class="stack" aria-labelledby="h-plan">
+  <span class="eyebrow"><span class="vi">Phần 5 · Đề tài</span><span class="en">Part 5 · The project</span></span>
+  <h2 id="h-plan"><span class="vi">Tóm tắt đề tài</span><span class="en">Topic at a glance</span></h2>
+  <div class="tbl card">
+    <table><tbody>
+        <tr><th><span class="vi">Tên chủ đề</span><span class="en">Topic</span></th><td><span class="vi">Thiên vị vị trí của giám khảo LLM: phân tích và kiểm chứng trên tiếng Việt <i class="noshow">(Position Bias in LLM-as-a-Judge: Analysis and a Vietnamese Case Study)</i></span><span class="en">Position Bias in LLM-as-a-Judge: Analysis and a Vietnamese Case Study</span></td></tr>
+        <tr><th><span class="vi">Nhóm chủ đề</span><span class="en">Area</span></th><td><span class="vi">Đánh giá NLP (NLP Evaluation)</span><span class="en">NLP Evaluation</span></td></tr>
+        <tr><th><span class="vi">Mô tả &amp; phạm vi</span><span class="en">Scope</span></th><td><span class="vi">Phân tích vì sao LLM dùng làm giám khảo đổi phán quyết khi chỉ đổi thứ tự hai câu trả lời: cách đo, nguyên nhân, cách giảm thiểu; kiểm chứng bằng thí nghiệm nhỏ trên câu trả lời đọc hiểu tiếng Việt.</span><span class="en">Why an LLM judge changes its verdict when only the order of two answers changes: how to measure it, its causes, and mitigations; checked with a small experiment on Vietnamese reading-comprehension answers.</span></td></tr>
+        <tr><th><span class="vi">Nội dung kỹ thuật</span><span class="en">Technical content</span></th><td><span class="vi"><ul><li>Pairwise comparison vs. single-answer grading; đo độ nhất quán khi đảo thứ tự (flip rate).</li><li>Position bias, verbosity bias, self-enhancement bias; token bias của nhãn "A"/"B".</li><li>Giảm thiểu: chấm cả hai thứ tự, Balanced Position Calibration; độ tự tin từ xác suất token.</li></ul></span><span class="en"><ul><li>Pairwise comparison vs. single-answer grading; consistency under swapping (flip rate).</li><li>Position, verbosity and self-enhancement bias; label token bias for "A"/"B".</li><li>Mitigation: judging both orders, Balanced Position Calibration; confidence from token probabilities.</li></ul></span></td></tr>
+        <tr><th><span class="vi">Mô hình / phương pháp</span><span class="en">Models / methods</span></th><td><span class="vi">Prompt chấm theo cặp của MT-Bench, Balanced Position Calibration, Qwen2.5-Instruct (judge mã mở); baseline word-overlap F1, cosine embedding câu.</span><span class="en">MT-Bench pairwise judge prompt, Balanced Position Calibration, Qwen2.5-Instruct (open-weight judge); baselines word-overlap F1, sentence-embedding cosine.</span></td></tr>
+        <tr><th><span class="vi">Dữ liệu / benchmark</span><span class="en">Data / benchmark</span></th><td><span class="vi">MT-Bench, Vicuna-80 (số liệu từ các bài gốc); UIT-ViQuAD 2.0 cho thí nghiệm của nhóm (tiếng Việt, 150 câu, hai người chấm).</span><span class="en">MT-Bench, Vicuna-80 (figures from the original papers); UIT-ViQuAD 2.0 for the team's experiment (Vietnamese, 150 questions, two annotators).</span></td></tr>
+        <tr><th><span class="vi">Đầu ra dự kiến</span><span class="en">Expected outcome</span></th><td><span class="vi"><ul><li>Tỉ lệ flip đo được trên tiếng Việt, so với tiếng Anh.</li><li>Phân tích flip xảy ra khi nào: theo độ chênh chất lượng và theo độ tự tin của judge.</li><li>Khuyến nghị dùng LLM judge (chấm hai thứ tự có đáng không), kiểm chứng bằng điểm người chấm.</li><li>Demo trực tiếp: judge đổi phán quyết khi đảo hai câu trả lời.</li></ul></span><span class="en"><ul><li>A measured flip rate for Vietnamese, compared with English.</li><li>When flips occur: by quality gap and by judge confidence.</li><li>A recommendation for using LLM judges (is judging both orders worth it), tested against human ratings.</li><li>A live demo of the judge reversing its verdict after a swap.</li></ul></span></td></tr>
+        <tr><th><span class="vi">Câu hỏi mở</span><span class="en">Open question</span></th><td><span class="vi">Làm sao biết khi nào phán quyết của LLM judge đáng tin, nhất là với ngôn ngữ ít tài nguyên như tiếng Việt?</span><span class="en">How can we tell when an LLM judge&#39;s verdict is trustworthy, especially for a lower-resource language such as Vietnamese?</span></td></tr>
+        <tr><th><span class="vi">Tài liệu tham khảo</span><span class="en">References</span></th><td><span class="vi">1. Zheng et al. (NeurIPS 2023 - MT-Bench) arXiv:2306.05685<br>2. Wang et al. (2023 - LLMs are not Fair Evaluators) arXiv:2305.17926</span><span class="en">1. Zheng et al. (NeurIPS 2023 - MT-Bench) arXiv:2306.05685<br>2. Wang et al. (2023 - LLMs are not Fair Evaluators) arXiv:2305.17926</span></td></tr>
+    </tbody></table>
+  </div>
+</section>
+
+<section class="stack col" aria-labelledby="h-use">
+  <h2 id="h-use"><span class="vi">Ai dùng được kết quả này</span><span class="en">Who can use the result</span></h2>
+  <p><span class="vi">Một nhóm làm chatbot tiếng Việt sửa prompt và nhờ LLM so 500 cặp câu trả lời của bản cũ và bản mới. Nếu bản mới luôn nằm ở vị trí A và judge thiên về A, con số "bản mới thắng" có thể chỉ do vị trí.</span><span class="en">A team building a Vietnamese chatbot edits its prompt and asks an LLM to compare 500 answer pairs from the old and new versions. If the new version always sits in position A and the judge favours A, the "new version wins" number may come from position alone.</span></p>
+</section>
+
+<section class="stack col" aria-labelledby="h-course">
+  <h2 id="h-course"><span class="vi">Liên hệ với môn học</span><span class="en">Link to the course</span></h2>
+  <p><span class="vi">Chấm câu trả lời là bước "so sánh vector" trong pipeline của môn. Hai baseline dùng lại biểu diễn bag-of-words và embedding. Phần phân tích judge dựa trên cách Transformer decoder sinh token từ một phân phối xác suất, và trên thông tin vị trí trong đầu vào của nó.</span><span class="en">Grading an answer is the "vector comparison" step of the course pipeline. The baselines reuse bag-of-words and embedding representations. The judge analysis relies on how a Transformer decoder generates tokens from a probability distribution, and on positional information in its input.</span></p>
+  <figure>
+    <div class="wide">
+    <svg viewBox="0 0 720 180" role="img" aria-label="The judge prompt as a token sequence entering a Transformer decoder that outputs probabilities for A and B">
+      <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fill-ink" d="M0 0 10 5 0 10z"></path></marker></defs>
+      <rect class="tokbox" x="10" y="40" width="110" height="44" rx="6"></rect>
+      <rect class="tokbox first" x="130" y="40" width="150" height="44" rx="6"></rect>
+      <rect class="tokbox" x="290" y="40" width="150" height="44" rx="6"></rect>
+      <rect class="tokbox" x="450" y="40" width="140" height="44" rx="6"></rect>
+      <text class="svgl" x="65" y="67" text-anchor="middle"><tspan class="vi">Câu hỏi</tspan><tspan class="en">Question</tspan></text>
+      <text class="svgl" x="205" y="67" text-anchor="middle"><tspan class="vi">A · đứng trước</tspan><tspan class="en">A · shown first</tspan></text>
+      <text class="svgl" x="365" y="67" text-anchor="middle"><tspan class="vi">B · đứng sau</tspan><tspan class="en">B · shown second</tspan></text>
+      <text class="svgl" x="520" y="67" text-anchor="middle"><tspan class="vi">Câu nào hơn?</tspan><tspan class="en">Which is better?</tspan></text>
+      <line class="st" x1="10" y1="106" x2="586" y2="106" marker-end="url(#arr)"></line>
+      <text class="svgt" x="10" y="126"><tspan class="vi">thứ tự token: mỗi token mang thông tin vị trí của nó</tspan><tspan class="en">token order: every token carries its position</tspan></text>
+      <text class="svgt" x="10" y="146"><tspan class="vi">đảo A và B = cùng nội dung, khác vị trí</tspan><tspan class="en">swapping A and B = same content, different positions</tspan></text>
+      <line class="st" x1="592" y1="62" x2="608" y2="62" marker-end="url(#arr)"></line>
+      <rect class="decbox" x="612" y="34" width="100" height="56" rx="8"></rect>
+      <text class="svgl" x="662" y="58" text-anchor="middle">Transformer</text>
+      <text class="svgl" x="662" y="76" text-anchor="middle">decoder</text>
+      <line class="st" x1="662" y1="92" x2="662" y2="110" marker-end="url(#arr)"></line>
+      <text class="svgl" x="612" y="134">A</text><rect class="fill-ink" x="630" y="124" width="56" height="10" rx="3"></rect><text class="svgt" x="690" y="134">.56</text>
+      <text class="svgl" x="612" y="156">B</text><rect class="fill-ink" x="630" y="146" width="44" height="10" rx="3"></rect><text class="svgt" x="678" y="156">.44</text>
+    </svg>
+    </div>
+    <figcaption><span class="vi">Judge đọc prompt như một dãy token rồi sinh ra phân phối xác suất cho token kế tiếp ("A" hoặc "B"). Con số .56 và .44 là ví dụ.</span><span class="en">The judge reads the prompt as a token sequence and produces a probability distribution for the next token ("A" or "B"). The .56 and .44 are examples.</span></figcaption>
+  </figure>
+</section>
+
+<section class="stack col" aria-labelledby="h-lim">
+  <h2 id="h-lim"><span class="vi">Giới hạn</span><span class="en">Limitations</span></h2>
+  <ul class="plain">
+    <li><span class="vi">Khoảng 150 câu hỏi và hai người chấm chỉ đủ cho kết luận sơ bộ.</span><span class="en">About 150 questions and two annotators support preliminary conclusions only.</span></li>
+    <li><span class="vi">Position bias đã được ghi nhận ở tiếng Anh. Đóng góp ở đây là bối cảnh tiếng Việt và phân tích khi nào, vì sao flip xảy ra.</span><span class="en">Position bias is already documented for English. The contribution is the Vietnamese setting and the analysis of when and why flips occur.</span></li>
+    <li><span class="vi">So sánh Việt–Anh phụ thuộc chất lượng bản dịch, nên khác biệt có thể một phần do dịch.</span><span class="en">The Vietnamese–English comparison depends on translation quality, so differences may partly reflect translation.</span></li>
+    <li><span class="vi">Tìm kiếm tài liệu chưa thấy nghiên cứu nào đo bias này so với điểm người chấm trên câu trả lời dài tiếng Việt, nhưng việc tìm kiếm chưa toàn diện.</span><span class="en">A literature search found no study of this bias against human ratings on long Vietnamese answers, but the search was not exhaustive.</span></li>
+  </ul>
+</section>
+
+<section class="stack col refs" aria-labelledby="h-ref">
+  <h2 id="h-ref"><span class="vi">Tài liệu tham khảo</span><span class="en">References</span></h2>
+  <ul class="plain">
+    <li>Bruine de Bruin, W. (2005). Save the last dance for me: unwanted serial position effects in jury evaluations. <i>Acta Psychologica</i> 118(3), 245–260. <a href="https://doi.org/10.1016/j.actpsy.2004.08.005">doi:10.1016/j.actpsy.2004.08.005</a></li>
+    <li>Zhao, H., Andersson, B., Guo, B., &amp; Xin, T. (2017). Sequential Effects in Essay Ratings: Evidence of Assimilation Effects Using Cross-Classified Models. <i>Frontiers in Psychology</i> 8:933. <a href="https://doi.org/10.3389/fpsyg.2017.00933">doi:10.3389/fpsyg.2017.00933</a></li>
+    <li>Unkelbach, C., Ostheimer, V., Fasold, F., &amp; Memmert, D. (2012). A calibration explanation of serial position effects in evaluative judgments. <i>Organizational Behavior and Human Decision Processes</i> 119, 103–113.</li>
+    <li>Attali, Y. (2011). Sequential effects in essay ratings. <i>Educational and Psychological Measurement</i> 71, 68–79. <a href="https://doi.org/10.1177/0013164410387344">doi:10.1177/0013164410387344</a></li>
+    <li>Zheng et al. Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena. NeurIPS 2023 Datasets and Benchmarks. <a href="https://arxiv.org/abs/2306.05685">arXiv:2306.05685</a></li>
+    <li>Wang et al. Large Language Models are not Fair Evaluators. 2023. <a href="https://arxiv.org/abs/2305.17926">arXiv:2305.17926</a></li>
+    <li>Zheng et al. Large Language Models Are Not Robust Multiple Choice Selectors. ICLR 2024. <a href="https://arxiv.org/abs/2309.03882">arXiv:2309.03882</a></li>
+    <li>Liu et al. Lost in the Middle: How Language Models Use Long Contexts. TACL. <a href="https://arxiv.org/abs/2307.03172">arXiv:2307.03172</a></li>
+    <li>Fu and Liu. How Reliable is Multilingual LLM-as-a-Judge? Findings of EMNLP 2025. <a href="https://arxiv.org/abs/2505.12201">arXiv:2505.12201</a></li>
+    <li>Gu et al. A Survey on LLM-as-a-Judge. <a href="https://arxiv.org/abs/2411.15594">arXiv:2411.15594</a></li>
+    <li>Nguyen, K. V., Tran, S. Q., Nguyen, L. T., Huynh, T. V., Luu, S. T., &amp; Nguyen, N. L.-T. (2022). VLSP 2021 - ViMRC Challenge: Vietnamese Machine Reading Comprehension. <a href="https://arxiv.org/abs/2203.11400">arXiv:2203.11400</a>. Dataset: <a href="https://huggingface.co/datasets/taidng/UIT-ViQuAD2.0">huggingface.co/datasets/taidng/UIT-ViQuAD2.0</a></li>
+  </ul>
+</section>
+
+</div>
+
+<div class="pbar" id="pbar">
+  <button class="btn ghost" type="button" id="p-exit"><span class="vi">Thoát</span><span class="en">Exit</span></button>
+  <div class="dots" id="p-dots" aria-hidden="true"></div>
+  <span id="p-count"></span>
+  <div class="controls">
+    <button class="btn ghost" type="button" id="p-prev" aria-label="Previous">←</button>
+    <button class="btn" type="button" id="p-next" aria-label="Next">→</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement, $=function(id){return document.getElementById(id)};
+  var T=function(vi,en){return '<span class="vi">'+vi+'</span><span class="en">'+en+'</span>'};
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* language */
+  function setLang(l){
+    root.setAttribute('data-lang',l);
+    $('lang-vi').setAttribute('aria-pressed',l==='vi'); $('lang-en').setAttribute('aria-pressed',l==='en');
+    try{localStorage.setItem('lang',l)}catch(e){}
+  }
+  $('lang-vi').onclick=function(){setLang('vi')}; $('lang-en').onclick=function(){setLang('en')};
+  var saved=null; try{saved=localStorage.getItem('lang')}catch(e){}
+  setLang(saved==='en'?'en':'vi');
+
+  /* 5-minute talk: ten stops, suggested seconds per stop (total 300) */
+  var stops=[['header',15],['h-teacher',30],['h-human',25],['h-llm',50],['h-machine',25],['h-origin',25],['h-rq',35],['h-method',30],['h-tech',40],['h-plan',25]]
+    .map(function(a){return {el:a[0]==='header'?document.querySelector('.wrap>header'):document.querySelector('[aria-labelledby="'+a[0]+'"]'),sec:a[1]}});
+  var cur=-1, dots='';
+  stops.forEach(function(){dots+='<i></i>'}); $('p-dots').innerHTML=dots;
+  function show(i){
+    cur=Math.max(0,Math.min(stops.length-1,i));
+    stops.forEach(function(s,k){s.el.classList.toggle('cur',k===cur); $('p-dots').children[k].classList.toggle('on',k<=cur)});
+    $('p-count').textContent=(cur+1)+' / '+stops.length;
+    $('p-prev').disabled=cur===0; $('p-next').disabled=cur===stops.length-1; window.scrollTo(0,0);
+  }
+  function present(on,i){document.body.classList.toggle('present',on); if(on) show(i||0); else {stops.forEach(function(s){s.el.classList.remove('cur')}); cur=-1}}
+  $('present').onclick=function(){present(cur<0,0)};
+  $('p-exit').onclick=function(){present(false)};
+  $('p-prev').onclick=function(){show(cur-1)}; $('p-next').onclick=function(){show(cur+1)};
+  document.addEventListener('keydown',function(e){
+    if(cur<0||/^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+    if(e.key==='ArrowRight'||e.key==='PageDown'){show(cur+1); e.preventDefault()}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){show(cur-1); e.preventDefault()}
+    else if(e.key==='Escape') present(false);
+  });
+  var hm=/^#present(?:-(\d+))?$/.exec(location.hash); if(hm) present(true,hm[1]?+hm[1]-1:0);
+
+  /* swap demo */
+  var answers=$('answers'), judge=$('judge'), ansX=$('ansX'), ansY=$('ansY'), token=0;
+  function sleep(ms,t){return new Promise(function(res,rej){setTimeout(function(){t===token?res():rej()},reduce?0:ms)})}
+  function bars(a){ $('barA').style.width=(a*100)+'%'; $('barB').style.width=((1-a)*100)+'%';
+    $('valA').textContent=a.toFixed(2); $('valB').textContent=(1-a).toFixed(2); }
+  function arrange(swapped,animate){
+    var els=[ansX,ansY], before=els.map(function(e){return e.getBoundingClientRect()});
+    answers.classList.toggle('swapped',swapped);
+    $('posX').textContent=swapped?'B':'A'; $('posY').textContent=swapped?'A':'B';
+    if(!animate||reduce||!ansX.animate) return;
+    els.forEach(function(e,i){var a=e.getBoundingClientRect();
+      e.animate([{transform:'translate('+(before[i].left-a.left)+'px,'+(before[i].top-a.top)+'px)'},{transform:'none'}],{duration:800,easing:'cubic-bezier(.6,0,.2,1)'});});
+  }
+  function showRun(n){
+    $('runLabel').innerHTML=n===1?T('Lần 1','Run 1'):T('Lần 2 · đã đảo thứ tự','Run 2 · order swapped');
+  }
+  function verdict(n){
+    ansX.classList.toggle('win',n===1); ansY.classList.toggle('win',n===2);
+    $('verdict').innerHTML=n===1
+      ?T('Judge chọn A → câu thắng là <span class="xc">X</span>','Judge picks A → the winner is <span class="xc">X</span>')
+      :T('Judge chọn A → câu thắng là <span class="yc">Y</span>','Judge picks A → the winner is <span class="yc">Y</span>');
+  }
+  function think(on){judge.classList.toggle('thinking',on); if(on){$('verdict').innerHTML=T('Đang chấm…','Judging…'); ansX.classList.remove('win'); ansY.classList.remove('win'); bars(.5);}}
+  function finalState(){arrange(true,false); showRun(2); bars(.54); verdict(2); think(false); verdict(2); bars(.54);
+    $('log1').classList.remove('wait'); $('log2').classList.remove('wait'); $('flipflag').hidden=false; $('play').disabled=false;}
+  finalState();
+  $('play').onclick=function(){
+    var t=++token; $('play').disabled=true;
+    arrange(false,false); showRun(1); $('log1').classList.add('wait'); $('log2').classList.add('wait'); $('flipflag').hidden=true; think(true);
+    sleep(1100,t).then(function(){think(false); bars(.56); verdict(1); $('log1').classList.remove('wait'); return sleep(1700,t)})
+    .then(function(){ansX.classList.remove('win'); $('verdict').innerHTML=T('Đảo thứ tự…','Swapping order…'); arrange(true,true); showRun(2); return sleep(1200,t)})
+    .then(function(){think(true); return sleep(1100,t)})
+    .then(function(){think(false); bars(.54); verdict(2); $('log2').classList.remove('wait'); return sleep(900,t)})
+    .then(function(){$('flipflag').hidden=false; $('play').disabled=false})
+    .catch(function(){});
+  };
+
+  /* content force vs position force: verdict logit = FS*gap ± FB */
+  var FS=1.6, FB=0.9, FR=6.4;
+  function force(){
+    var g=+$('gap').value, a=FS*g+FB, b=FS*g-FB, pc=function(v){return Math.max(3,Math.min(97,50+v/FR*50))};
+    $('fd1').style.left=pc(a)+'%'; $('fd2').style.left=pc(b)+'%';
+    $('fLink').style.left=pc(b)+'%'; $('fLink').style.width=(pc(a)-pc(b))+'%';
+    var ag=Math.abs(g).toFixed(2);
+    $('gapVal').innerHTML=Math.abs(g)<0.03?T('hai câu ngang nhau','the answers are equal'):(g>0?T('X hơn Y '+ag+' điểm','X is better by '+ag):T('Y hơn X '+ag+' điểm','Y is better by '+ag));
+    var r=$('forceResult'), fl=a>0!==b>0; r.classList.toggle('is-flip',fl);
+    r.innerHTML=fl?T('Lần 1 chọn X, lần 2 chọn Y: <span class="fc">flip</span>. Lực vị trí đang quyết định kết quả.','Run 1 picks X, run 2 picks Y: <span class="fc">flip</span>. The position force decides the outcome.')
+      :(a>0?T('Cả hai lần đều chọn <span class="xc">X</span>: nhất quán. Nội dung đủ mạnh để thắng lực vị trí.','Both runs pick <span class="xc">X</span>: consistent. Content outweighs the position force.')
+           :T('Cả hai lần đều chọn <span class="yc">Y</span>: nhất quán. Nội dung đủ mạnh để thắng lực vị trí.','Both runs pick <span class="yc">Y</span>: consistent. Content outweighs the position force.'));
+  }
+  $('gap').addEventListener('input',force); force();
+
+  /* F1 */
+  var presets=[
+    {text:'Mỗi lần có thể giữ sách hai tuần, không quá năm quyển.',ok:true},
+    {text:'Sinh viên được mượn tối đa 14 cuốn sách trong 5 ngày.',ok:false}
+  ];
+  function tok(s){return s.toLowerCase().normalize('NFC').replace(/[^\p{L}\p{N}\s]/gu,' ').split(/\s+/).filter(Boolean)}
+  var refToks=tok($('f1-ref').textContent);
+  function f1(){
+    var val=$('f1-input').value, c=tok(val), left={}, hit=0, html='';
+    refToks.forEach(function(w){left[w]=(left[w]||0)+1});
+    c.forEach(function(w){var h=left[w]>0; if(h){left[w]--; hit++} html+='<span class="tok'+(h?' hit':'')+'">'+w+'</span>'});
+    var p=c.length?hit/c.length:0, r=hit/refToks.length, f=p+r?2*p*r/(p+r):0;
+    $('f1-toks').innerHTML=html; $('f1-f').textContent=f.toFixed(2); $('f1-p').textContent=p.toFixed(2); $('f1-r').textContent=r.toFixed(2);
+    var m=presets.filter(function(x){return x.text===val.trim()})[0], h=$('f1-human');
+    h.hidden=!m; if(m) h.innerHTML=m.ok?T('Người chấm: đúng','Human: correct'):T('Người chấm: sai','Human: wrong');
+  }
+  $('f1-input').addEventListener('input',f1);
+  Array.prototype.forEach.call(document.querySelectorAll('[data-preset]'),function(b){
+    b.onclick=function(){$('f1-input').value=presets[+b.getAttribute('data-preset')].text; f1()}});
+  f1();
+
+  /* 150-pair toy model: judge logit for X = S*gap ± bias + noise; flip when the two orders disagree */
+  var N=150, S=1.6, seed=7, pairs=[];
+  function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+  function gen(){var r=rng(seed), n=function(){return (r()+r()+r()-1.5)*0.3}; pairs=[];
+    for(var i=0;i<N;i++){var m=0.03+2.95*Math.pow(r(),1.6); pairs.push({g:(r()<.5?-1:1)*m,e1:n(),e2:n()})}}
+  var ticks=''; for(var k=0;k<=3;k++){var x=24+k*224; ticks+='<line class="axis" x1="'+x+'" y1="196" x2="'+x+'" y2="202"></line><text class="svgt" x="'+x+'" y="214" text-anchor="middle">'+k+'</text>'}
+  $('ticks').innerHTML=ticks;
+  function draw(anim){
+    var b=+$('bias').value, bins=[], flips=0, okSingle=0, kept=0, okKept=0;
+    pairs.forEach(function(p){
+      var w1=S*p.g+b+p.e1>0, w2=S*p.g-b+p.e2>0, human=p.g>0, fl=w1!==w2;
+      if(fl) flips++; else {kept++; if(w1===human) okKept++}
+      if(w1===human) okSingle++;
+      var bi=Math.min(11,Math.floor(Math.abs(p.g)/0.25)); (bins[bi]=bins[bi]||[]).push(fl);
+    });
+    var html='', idx=0;
+    for(var i=0;i<12;i++){var arr=(bins[i]||[]).sort(function(a,c){return c-a});
+      arr.forEach(function(fl,j){var cx=24+i*56+9+(j%4)*13, cy=188-Math.floor(j/4)*13;
+        html+='<circle class="'+(fl?'dot-flip':'dot-ok')+'" cx="'+cx+'" cy="'+cy+'" r="5"'+(anim?' style="animation-delay:'+(idx*7)+'ms"':'')+'></circle>'; idx++;});}
+    var svg=$('sim'); svg.classList.toggle('anim',!!anim&&!reduce); $('dots').innerHTML=html;
+    var pct=function(a,c){return c?Math.round(100*a/c)+'%':'–'};
+    $('biasVal').textContent=b.toFixed(2); $('m-flip').textContent=pct(flips,N); $('m-single').textContent=pct(okSingle,N);
+    $('m-both').textContent=pct(okKept,kept); $('m-kept').textContent=kept+'/'+N;
+  }
+  gen(); draw(false);
+  $('bias').addEventListener('input',function(){draw(false)});
+  $('resim').onclick=function(){seed=(seed*31+11)%100003; gen(); draw(true)};
+})();
+</script>
+</body>
+</html>
