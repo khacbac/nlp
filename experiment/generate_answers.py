@@ -1,9 +1,17 @@
 """Generate answers to the selected questions with one of the three answer models.
 
 Every model gets the same prompt (2-4 sentences, no formatting) and
-temperature 0. Answers are appended to data/answers.jsonl one line at a
-time; rerunning skips (qid, model) pairs that are already there, so a run
-cut off by a rate limit or a Colab disconnect just continues.
+temperature 0. Answers are appended to data/answers_<model>.jsonl one line
+at a time (one file per model, so two models can run at the same time).
+
+The script is safe to stop and rerun at any point:
+- a rerun skips questions that already have a non-empty answer;
+- a question that fails (blocked, bad response, network) is logged and
+  skipped, and the next rerun tries it again;
+- when a daily quota runs out, the script stops at once with a message,
+  instead of retrying for minutes;
+- a half-written last line (run killed while writing) is ignored;
+- Qwen answers are written in chunks of 50, not only at the end.
 
 Usage (one model per run):
     # Qwen2.5-7B-Instruct on a Colab / Kaggle T4 GPU (needs: pip install vllm)
@@ -19,11 +27,17 @@ Usage (one model per run):
 
     # try any model on 3 questions first
     python generate_answers.py --model gemini --limit 3
+
+    # keep the answers somewhere that survives a Colab reset
+    python generate_answers.py --model gemini --out-dir /content/drive/MyDrive/nlp-answers
+
+Exit code 2 means a quota ran out; rerun later.
 """
 
 import argparse
 import json
 import os
+import sys
 import time
 import urllib.error
 import urllib.request
@@ -62,6 +76,14 @@ def messages(q: dict) -> list[dict]:
     ]
 
 
+class QuotaExhausted(Exception):
+    """Daily quota is used up, or rate limits persist; stop and rerun later."""
+
+
+# Words providers use in a 429 body when the per-day quota, not the per-minute one, ran out.
+DAILY_QUOTA_HINTS = ("per day", "perday", "daily", "tpd", "rpd")
+
+
 def post_json(url: str, body: dict, headers: dict, retries: int = 6) -> dict:
     """POST with exponential backoff on rate limits and server errors."""
     data = json.dumps(body).encode()
@@ -71,8 +93,13 @@ def post_json(url: str, body: dict, headers: dict, retries: int = 6) -> dict:
             with urllib.request.urlopen(req, timeout=120) as resp:
                 return json.load(resp)
         except urllib.error.HTTPError as e:
+            detail = e.read().decode(errors="replace")[:500]
+            if e.code == 429 and any(h in detail.lower() for h in DAILY_QUOTA_HINTS):
+                raise QuotaExhausted(detail) from e
+            if e.code == 429 and attempt == retries - 1:
+                raise QuotaExhausted(detail) from e
             if e.code not in (429, 500, 502, 503, 504) or attempt == retries - 1:
-                raise RuntimeError(f"HTTP {e.code}: {e.read().decode(errors='replace')[:500]}") from e
+                raise RuntimeError(f"HTTP {e.code}: {detail}") from e
         except (urllib.error.URLError, TimeoutError):
             if attempt == retries - 1:
                 raise
@@ -102,18 +129,37 @@ def answer_gemini(q: dict) -> tuple[str, str, str]:
         "generationConfig": {"temperature": 0, "maxOutputTokens": MAX_TOKENS},
     }
     resp = post_json(GEMINI_URL.format(model=GEMINI_MODEL), body, {"x-goog-api-key": os.environ["GEMINI_API_KEY"]})
+    if not resp.get("candidates"):  # prompt blocked by a safety filter
+        raise RuntimeError(f"no candidates: {json.dumps(resp.get('promptFeedback', resp))[:300]}")
     cand = resp["candidates"][0]
     text = "".join(p.get("text", "") for p in cand.get("content", {}).get("parts", []))
     return text, cand.get("finishReason", ""), GEMINI_MODEL
 
 
-def answer_qwen_batch(questions: list[dict]) -> list[tuple[str, str, str]]:
+def answer_qwen_chunks(questions: list[dict], size: int = 50):
+    """Yield (question, result) in chunks, so a disconnect loses at most one chunk."""
     from vllm import LLM, SamplingParams  # only needed on the GPU machine
 
     llm = LLM(QWEN_MODEL, quantization="awq", dtype="half", max_model_len=4096, gpu_memory_utilization=0.9)
     params = SamplingParams(temperature=0, max_tokens=MAX_TOKENS)
-    outputs = llm.chat([messages(q) for q in questions], params)
-    return [(o.outputs[0].text, o.outputs[0].finish_reason or "", QWEN_MODEL) for o in outputs]
+    for start in range(0, len(questions), size):
+        chunk = questions[start:start + size]
+        outputs = llm.chat([messages(q) for q in chunk], params, use_tqdm=False)
+        for q, o in zip(chunk, outputs):
+            yield q, (o.outputs[0].text, o.outputs[0].finish_reason or "", QWEN_MODEL)
+        print(f"  [{start + len(chunk)}/{len(questions)}]")
+
+
+def read_jsonl(path: Path) -> list[dict]:
+    """Read a JSONL file, skipping a half-written line left by a killed run."""
+    rows = []
+    if path.exists():
+        for line in path.open(encoding="utf-8"):
+            try:
+                rows.append(json.loads(line))
+            except json.JSONDecodeError:
+                print(f"  skipping a broken line in {path.name}")
+    return rows
 
 
 def main() -> None:
@@ -124,15 +170,18 @@ def main() -> None:
     parser.add_argument("--interval", type=float, default=4.5,
                         help="seconds between API calls (Gemini free tier allows ~15/minute)")
     parser.add_argument("--questions", type=Path, default=DATA / "questions.jsonl")
-    parser.add_argument("--out", type=Path, default=DATA / "answers.jsonl")
+    parser.add_argument("--out-dir", type=Path, default=DATA,
+                        help="where answers_<model>.jsonl lives (e.g. a Google Drive folder)")
     args = parser.parse_args()
+    out_path = args.out_dir / f"answers_{args.model}.jsonl"
 
-    questions = [json.loads(line) for line in args.questions.open(encoding="utf-8")][: args.limit]
-    done = set()
-    if args.out.exists():
-        done = {(r["qid"], r["model"]) for r in map(json.loads, args.out.open(encoding="utf-8"))}
+    questions = read_jsonl(args.questions)[: args.limit]
+    # Empty answers do not count as done, so a rerun tries them again.
+    done = {(r["qid"], r["model"]) for r in read_jsonl(out_path) if r.get("answer")}
     todo = [q for q in questions if (q["qid"], args.model) not in done]
-    print(f"{args.model}: {len(todo)} to answer, {len(questions) - len(todo)} already done")
+    print(f"{args.model}: {len(todo)} to answer, {len(questions) - len(todo)} already done -> {out_path}")
+    if not todo:
+        return
 
     def write(out, q, text, finish, model_id):
         text = text.strip()
@@ -149,20 +198,42 @@ def main() -> None:
         if not text or str(finish).lower() in ("length", "max_tokens"):
             print(f"  WARNING {q['qid']}: empty or cut-off answer ({finish})")
 
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    with args.out.open("a", encoding="utf-8") as out:
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    failed = []
+    with out_path.open("a", encoding="utf-8") as out:
+        # A killed run may leave a line without "\n"; start on a fresh line.
+        if out.tell() > 0:
+            with out_path.open("rb") as f:
+                f.seek(-1, os.SEEK_END)
+                if f.read(1) != b"\n":
+                    out.write("\n")
         if args.model == "qwen":
-            for q, result in zip(todo, answer_qwen_batch(todo)):
+            for q, result in answer_qwen_chunks(todo):
                 write(out, q, *result)
-            return
-        for i, q in enumerate(todo, 1):
-            if args.model == "gemini":
-                result = answer_gemini(q)
-            else:
-                result = answer_gpt_oss(q, args.provider)
-            write(out, q, *result)
-            print(f"  [{i}/{len(todo)}] {q['qid']}")
-            time.sleep(args.interval)
+        else:
+            for i, q in enumerate(todo, 1):
+                try:
+                    if args.model == "gemini":
+                        result = answer_gemini(q)
+                    else:
+                        result = answer_gpt_oss(q, args.provider)
+                except QuotaExhausted as e:
+                    print(f"\nQuota exhausted after {i - 1} answers this run: {e}")
+                    print("Rerun later (e.g. tomorrow); finished answers are saved.")
+                    sys.exit(2)
+                except Exception as e:  # one bad question must not stop the run
+                    print(f"  FAILED {q['qid']}: {e}")
+                    failed.append(q["qid"])
+                else:
+                    write(out, q, *result)
+                    print(f"  [{i}/{len(todo)}] {q['qid']}")
+                time.sleep(args.interval)
+
+    answered = {r["qid"] for r in read_jsonl(out_path) if r.get("answer")}
+    remaining = sum(q["qid"] not in answered for q in todo)
+    print(f"done; {remaining} still without an answer" + (f" (failed: {failed[:10]})" if failed else ""))
+    if remaining:
+        print("Rerun the same command to retry them.")
 
 
 if __name__ == "__main__":

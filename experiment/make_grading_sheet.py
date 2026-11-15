@@ -47,6 +47,19 @@ def shuffle_apart(rows: list[dict], rng: random.Random) -> list[dict]:
     raise RuntimeError("could not separate answers to the same question")
 
 
+def read_jsonl(path: Path) -> list[dict]:
+    """Read a JSONL file, skipping a half-written line left by a killed run."""
+    if not path.exists():
+        return []
+    rows = []
+    for line in path.open(encoding="utf-8"):
+        try:
+            rows.append(json.loads(line))
+        except json.JSONDecodeError:
+            pass
+    return rows
+
+
 def write_csv(path: Path, rows: list[dict], columns: list[str]) -> None:
     # utf-8-sig so Excel also shows Vietnamese correctly; Google Sheets ignores the BOM.
     with path.open("w", encoding="utf-8-sig", newline="") as f:
@@ -58,21 +71,24 @@ def write_csv(path: Path, rows: list[dict], columns: list[str]) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--questions", type=Path, default=DATA / "questions.jsonl")
-    parser.add_argument("--answers", type=Path, default=DATA / "answers.jsonl")
+    parser.add_argument("--answers-dir", type=Path, default=DATA,
+                        help="folder with answers_qwen.jsonl, answers_gpt-oss.jsonl, answers_gemini.jsonl")
     parser.add_argument("--annotators", nargs="+", default=["A", "B", "C", "D"])
     args = parser.parse_args()
 
-    questions = {q["qid"]: q for q in map(json.loads, args.questions.open(encoding="utf-8"))}
+    questions = {q["qid"]: q for q in read_jsonl(args.questions)}
     answers = {}
-    for a in map(json.loads, args.answers.open(encoding="utf-8")):
-        answers[(a["qid"], a["model"])] = a  # a rerun's later line wins
+    for m in MODELS:
+        for a in read_jsonl(args.answers_dir / f"answers_{m}.jsonl"):
+            if a.get("answer") or (a["qid"], m) not in answers:
+                answers[(a["qid"], m)] = a  # a later non-empty answer wins
 
     missing = [(qid, m) for qid in questions for m in MODELS if (qid, m) not in answers]
     if missing:
         raise SystemExit(f"{len(missing)} answers missing, e.g. {missing[:3]}; run generate_answers.py first.")
     empty = [k for k in answers if k[0] in questions and not answers[k]["answer"]]
     if empty:
-        raise SystemExit(f"{len(empty)} empty answers, e.g. {empty[:3]}; delete those lines and regenerate.")
+        raise SystemExit(f"{len(empty)} empty answers, e.g. {empty[:3]}; rerun generate_answers.py to retry them.")
 
     # Not seeded on purpose: the ids must not be reproducible from the repo.
     rng = random.Random(secrets.randbits(64))

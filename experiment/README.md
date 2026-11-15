@@ -1,11 +1,15 @@
 # Experiment pipeline
 
 ```
-select_questions.py   ->  data/questions.jsonl     (500 questions, committed)
-generate_answers.py   ->  data/answers.jsonl       (1500 answers, 3 models)
-make_grading_sheet.py ->  data/grading_sheet_A.csv ... _D.csv (one per annotator)
-                          data/key.csv              (git-ignored, keep private)
+select_questions.py     ->  data/questions.jsonl        (500 questions, committed)
+generate_answers.ipynb  ->  Drive: answers_qwen.jsonl, answers_gpt-oss.jsonl, answers_gemini.jsonl
+ (runs generate_answers.py on Colab)
+make_grading_sheet.py   ->  data/grading_sheet_A.csv ... _D.csv (one per annotator)
+                            data/key.csv                 (keep private)
 ```
+
+Answer files, grading sheets and `key.csv` are git-ignored: the repo is public
+and they reveal which model wrote each answer.
 
 ## 1. Questions
 
@@ -23,34 +27,34 @@ at most one question per passage and 15 per article; all 500 are
 
 ## 2. Answers (Google Colab)
 
-Open a Colab notebook with a **T4 GPU** runtime, put the API keys in
-Colab *Secrets* (key icon on the left), then run:
+Open the notebook straight from GitHub:
+<https://colab.research.google.com/github/khacbac/nlp/blob/main/experiment/generate_answers.ipynb>
 
-```python
-!git clone https://github.com/khacbac/nlp.git
-%cd nlp/experiment
-!pip install -q vllm
+Edit the notebook and scripts locally and push; each run pulls the latest
+`main`. Put the API keys in Colab *Secrets* (key icon on the left):
+`GEMINI_API_KEY` (aistudio.google.com), `GROQ_API_KEY` (console.groq.com),
+optionally `OPENROUTER_API_KEY`.
 
-import os
-from google.colab import userdata
-os.environ["GROQ_API_KEY"] = userdata.get("GROQ_API_KEY")      # console.groq.com
-os.environ["GEMINI_API_KEY"] = userdata.get("GEMINI_API_KEY")  # aistudio.google.com
+| Model | Runtime | Time |
+|---|---|---|
+| Gemini Flash-Lite | CPU | ~40 min, but ~500 requests/day: 1-2 days |
+| gpt-oss-20b (Groq) | CPU | ~40 min |
+| Qwen2.5-7B-Instruct (vLLM) | T4 GPU | ~10 min + ~5 min install |
 
-!python generate_answers.py --model gemini --limit 3   # trial run, read the output
-!python generate_answers.py --model qwen               # ~10 min on a T4
-!python generate_answers.py --model gpt-oss            # ~40 min
-!python generate_answers.py --model gemini             # ~40 min, ~500 requests/day: 1-2 days
-```
+Answers go to `MyDrive/nlp-answers/answers_<model>.jsonl`, one line per
+answer, so they survive a Colab reset. **After any error (quota, rate
+limit, disconnect), just run the notebook again from the top**: answered
+questions are skipped, failed or empty ones are retried, a daily quota
+stops the run at once, and a half-written last line is ignored. One file
+per model means two models can run in parallel sessions.
 
-Download `data/answers.jsonl` before the Colab session ends, and upload it
-again in the next session. Rerunning a command skips answers that already
-exist, so a run cut off by a daily quota just continues the next day.
-If Groq's free quota runs out, use `--model gpt-oss --provider openrouter`
-with `OPENROUTER_API_KEY`.
-
-Annotators should not open `answers.jsonl`: it names the model of each answer.
+If Groq's free quota runs out, set `PROVIDER = "openrouter"` in the gpt-oss
+cell. Annotators should not open the answer files: they name the model of
+each answer.
 
 ## 3. Grading sheets
+
+Download the three `answers_*.jsonl` files from Drive into `data/`, then:
 
 ```bash
 python make_grading_sheet.py

@@ -1,2 +1,6 @@
 experiment/data/key.csv
+# The repo is public and these name the model of each answer; keep them off GitHub.
+experiment/data/answers*.jsonl
+experiment/data/grading_sheet_*.csv
 __pycache__/
+.ipynb_checkpoints/
