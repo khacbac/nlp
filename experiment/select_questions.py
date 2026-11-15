@@ -1,12 +1,13 @@
-"""Select the 300 UIT-ViQuAD 2.0 questions used in the experiment.
+"""Select the 1000 UIT-ViQuAD 2.0 questions used in the experiment.
 
 Rules (see proposal.md, Approach step 1):
-- validation split, answerable questions only (is_impossible = false);
+- train split, answerable questions only (is_impossible = false); no model
+  is trained, and the validation split has too few passages (557) and
+  why/how questions (469) for 1000 items;
 - "why"/"how" questions first, because their answers are long enough to compare;
 - at most one question per passage and --per-title per article, so no
-  passage or topic dominates (the validation split has only 19 articles
-  but 557 passages);
-- a fixed seed, so every team member gets the same 300 questions.
+  passage or topic dominates (138 articles, 4101 passages);
+- a fixed seed, so every team member gets the same questions.
 
 Usage:
     pip install datasets
@@ -37,13 +38,13 @@ def is_why_how(question: str) -> bool:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--n", type=int, default=300)
-    parser.add_argument("--per-title", type=int, default=30)
+    parser.add_argument("--n", type=int, default=1000)
+    parser.add_argument("--per-title", type=int, default=15)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--out", type=Path, default=Path(__file__).parent / "data/questions.jsonl")
     args = parser.parse_args()
 
-    rows = [r for r in load_dataset(DATASET, split="validation") if not r["is_impossible"]]
+    rows = [r for r in load_dataset(DATASET, split="train") if not r["is_impossible"]]
     rng = random.Random(args.seed)
     rng.shuffle(rows)
 

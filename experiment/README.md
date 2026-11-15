@@ -1,9 +1,9 @@
 # Experiment pipeline
 
 ```
-select_questions.py   ->  data/questions.jsonl     (300 questions, committed)
-generate_answers.py   ->  data/answers.jsonl       (900 answers, 3 models)
-make_grading_sheet.py ->  data/grading_sheet_A.csv, data/grading_sheet_B.csv
+select_questions.py   ->  data/questions.jsonl     (1000 questions, committed)
+generate_answers.py   ->  data/answers.jsonl       (3000 answers, 3 models)
+make_grading_sheet.py ->  data/grading_sheet_A.csv ... _D.csv (one per annotator)
                           data/key.csv              (git-ignored, keep private)
 ```
 
@@ -16,9 +16,10 @@ pip install datasets
 python select_questions.py
 ```
 
-The validation split has 2,653 answerable questions from only 19 articles
-(557 passages), so the script takes at most one question per passage and
-30 per article. 275 of the 300 are "why/how" questions.
+Questions come from the train split (no model is trained; the validation
+split has only 557 passages and 469 why/how questions). The script takes
+at most one question per passage and 15 per article; all 1000 are
+"why/how" questions, from 130 articles.
 
 ## 2. Answers (Google Colab)
 
@@ -36,13 +37,14 @@ os.environ["GROQ_API_KEY"] = userdata.get("GROQ_API_KEY")      # console.groq.co
 os.environ["GEMINI_API_KEY"] = userdata.get("GEMINI_API_KEY")  # aistudio.google.com
 
 !python generate_answers.py --model gemini --limit 3   # trial run, read the output
-!python generate_answers.py --model qwen               # ~5 min on a T4
-!python generate_answers.py --model gpt-oss            # ~25 min (rate limit)
-!python generate_answers.py --model gemini             # ~25 min (rate limit)
+!python generate_answers.py --model qwen               # ~15 min on a T4
+!python generate_answers.py --model gpt-oss            # ~1.5 h, may hit the daily quota
+!python generate_answers.py --model gemini             # ~1.5 h, ~500 requests/day: 2 days
 ```
 
-Download `data/answers.jsonl` before the Colab session ends. Rerunning a
-command skips answers that already exist, so a cut-off run just continues.
+Download `data/answers.jsonl` before the Colab session ends, and upload it
+again in the next session. Rerunning a command skips answers that already
+exist, so a run cut off by a daily quota just continues the next day.
 If Groq's free quota runs out, use `--model gpt-oss --provider openrouter`
 with `OPENROUTER_API_KEY`.
 
@@ -54,10 +56,15 @@ Annotators should not open `answers.jsonl`: it names the model of each answer.
 python make_grading_sheet.py
 ```
 
-Import `grading_sheet_A.csv` and `grading_sheet_B.csv` into two separate
-Google Sheets, one per annotator, and add a 1-5 dropdown on the `score`
-column (Data > Data validation). The two annotators do not see each
-other's sheet. Only the person who ran the script keeps `key.csv`.
+Each question goes to one of the 6 pairs of the 4 annotators (A+B, A+C,
+..., C+D), and both rate all three of its answers, so every answer gets two
+ratings and each annotator gets about 1500 rows (~25 hours).
+
+Import each `grading_sheet_X.csv` into its own Google Sheet and share it
+with that annotator only; add a 1-5 dropdown on the `score` column
+(Data > Data validation). Annotators do not see each other's sheets. Only
+the person who ran the script keeps `key.csv`; it records which pair rated
+each answer, for Cohen's kappa per pair and Krippendorff's alpha overall.
 
 ## Rubric (draft, agree on it before grading)
 
@@ -71,5 +78,6 @@ Score each answer against the passage and the gold answer:
 | 2 | Mostly wrong, with only a small correct element. |
 | 1 | Wrong, off-topic, or contradicts the passage. |
 
-Grade the content, not the length or style. Before the real grading, both
-annotators grade the same 20 answers, compare, and settle disagreements.
+Grade the content, not the length or style. Before the real grading, all
+four annotators grade the same 20 answers, compare, and settle
+disagreements.

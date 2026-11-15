@@ -1,16 +1,23 @@
-"""Build the blinded grading sheets for the two human annotators.
+"""Build the blinded grading sheets for the four human annotators.
 
-Each row is one answer (300 questions x 3 models = 900 rows). Annotators
-see the passage, the question, the gold answer and the model answer, and
-fill in a 1-5 score. They never see which model wrote the answer:
+1000 questions x 3 models = 3000 answers, and every answer is rated by two
+annotators. Each question goes to one of the 6 pairs of annotators (A+B,
+A+C, ..., C+D) in turn, so each annotator rates about 500 questions, i.e.
+1500 answers. Both annotators of a pair rate all three answers to the
+question, so the score gap inside every answer pair comes from the same
+two people.
+
+Each row is one answer. Annotators see the passage, the question, the gold
+answer and the model answer, and fill in a 1-5 score. They never see which
+model wrote the answer:
 
 - every answer gets a random id, unrelated to the model or the question;
 - rows are shuffled, and the three answers to one question are never
   placed next to each other;
-- each annotator gets their own shuffle (grading_sheet_A.csv, _B.csv).
+- each annotator gets their own sheet (grading_sheet_A.csv ... _D.csv).
 
-The mapping answer_id -> (qid, model) goes to data/key.csv, which is
-git-ignored and must not be shared with the annotators.
+The mapping answer_id -> (qid, model, annotators) goes to data/key.csv,
+which is git-ignored and must not be shared with the annotators.
 
 Usage:
     python make_grading_sheet.py
@@ -20,6 +27,7 @@ Then import each CSV into its own Google Sheet (File > Import), and add a
 
 import argparse
 import csv
+import itertools
 import json
 import random
 import secrets
@@ -51,7 +59,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--questions", type=Path, default=DATA / "questions.jsonl")
     parser.add_argument("--answers", type=Path, default=DATA / "answers.jsonl")
-    parser.add_argument("--annotators", nargs="+", default=["A", "B"])
+    parser.add_argument("--annotators", nargs="+", default=["A", "B", "C", "D"])
     args = parser.parse_args()
 
     questions = {q["qid"]: q for q in map(json.loads, args.questions.open(encoding="utf-8"))}
@@ -68,9 +76,13 @@ def main() -> None:
 
     # Not seeded on purpose: the ids must not be reproducible from the repo.
     rng = random.Random(secrets.randbits(64))
-    ids = rng.sample(range(1000, 10000), len(questions) * len(MODELS))
+    ids = rng.sample(range(10000, 100000), len(questions) * len(MODELS))
+    pairs = list(itertools.combinations(args.annotators, 2))
+    qids = list(questions)
+    rng.shuffle(qids)
     rows = []
-    for qid, q in questions.items():
+    for i, qid in enumerate(qids):
+        q, pair = questions[qid], pairs[i % len(pairs)]
         for m in MODELS:
             a = answers[(qid, m)]
             rows.append({
@@ -82,16 +94,18 @@ def main() -> None:
                 "gold_answer": " | ".join(dict.fromkeys(q["gold_answers"])),
                 "answer": a["answer"],
                 "num_words": a["num_words"],
+                "annotators": "+".join(pair),
                 "score": "",
                 "note": "",
             })
 
     write_csv(DATA / "key.csv", sorted(rows, key=lambda r: r["answer_id"]),
-              ["answer_id", "qid", "model", "num_words"])
+              ["answer_id", "qid", "model", "annotators", "num_words"])
     for name in args.annotators:
+        mine = [r for r in rows if name in r["annotators"].split("+")]
         path = DATA / f"grading_sheet_{name}.csv"
-        write_csv(path, shuffle_apart(list(rows), rng), COLUMNS)
-        print(f"wrote {path} ({len(rows)} rows)")
+        write_csv(path, shuffle_apart(mine, rng), COLUMNS)
+        print(f"wrote {path} ({len(mine)} rows)")
     print(f"wrote {DATA / 'key.csv'} (keep private)")
 
 

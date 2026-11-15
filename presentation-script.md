@@ -105,9 +105,9 @@ Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không
 
 > Hướng tiếp cận gồm bốn bước, đi từ trái sang phải.
 >
-> Một: lấy 300 câu hỏi có đáp án từ tập validation của UIT-ViQuAD 2.0, bộ đọc hiểu tiếng Việt của VLSP 2021. Nhóm ưu tiên câu "vì sao", "như thế nào" để câu trả lời đủ dài.
-> Hai: cho ba mô hình dùng miễn phí là Qwen, gpt-oss và Gemini trả lời cùng các câu hỏi đó. Mỗi câu có ba câu trả lời, ghép thành ba cặp X và Y, tổng cộng 900 cặp.
-> Ba: chấm song song. Hai người chấm cho điểm độc lập. LLM judge chấm mỗi cặp hai lượt: lượt đầu X ở vị trí A, lượt sau đổi chỗ, Y ở vị trí A. Mỗi lượt lưu lại xác suất "A" và "B".
+> Một: lấy 1000 câu hỏi "vì sao", "như thế nào" có đáp án từ UIT-ViQuAD 2.0, bộ đọc hiểu tiếng Việt của VLSP 2021, mỗi đoạn văn chỉ lấy một câu.
+> Hai: cho ba mô hình dùng miễn phí là Qwen, gpt-oss và Gemini trả lời cùng các câu hỏi đó. Mỗi câu có ba câu trả lời, ghép thành ba cặp X và Y, tổng cộng 3000 cặp.
+> Ba: chấm song song. Bốn người chấm, mỗi câu trả lời do hai người cho điểm độc lập. LLM judge chấm mỗi cặp hai lượt: lượt đầu X ở vị trí A, lượt sau đổi chỗ, Y ở vị trí A. Mỗi lượt lưu lại xác suất "A" và "B".
 > Bốn: đánh giá theo sáu tiêu chí trong ô cuối, từ tỉ lệ flip, độ ưa vị trí đầu, độ tự tin, đến độ khớp với người chấm sau khi cân bằng hai thứ tự. Nhóm không huấn luyện mô hình nào.
 
 ## Màn 9 · Vì sao 3 mô hình, không phải 2 (20 giây)
@@ -130,7 +130,7 @@ Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không
 > **Judge mã mở Qwen2.5:** nhóm cần xác suất token, mà không phải API trả phí nào cũng trả về. Qwen chạy được trên Colab và có hỗ trợ tiếng Việt.
 > **Xác suất token "A" và "B":** đọc thẳng từ đầu ra của Transformer decoder trong cùng lần chấm. Đây chính là bước sinh token đã học trong môn.
 > **Balanced Position Calibration** của Wang và cộng sự: gộp kết quả hai thứ tự đã chấm sẵn, không cần huấn luyện.
-> **Cohen's kappa:** trừ đi phần đồng ý do ngẫu nhiên, nên cho biết rubric có đủ rõ không.
+> **Cohen's kappa và Krippendorff's alpha:** trừ đi phần đồng ý do ngẫu nhiên, nên cho biết rubric có đủ rõ không. Alpha dùng được khi bốn người mỗi người chỉ chấm một phần.
 > Cuối cùng, **F1 và cosine embedding** là hai baseline so sánh văn bản, dùng lại biểu diễn của môn học.
 >
 > Nhóm không fine-tune judge và không dùng API trả phí làm judge chính.
@@ -169,7 +169,7 @@ Nhóm làm trên tiếng Việt, đối chiếu với người chấm, và phân
 Mô hình mã mở cho lấy trực tiếp xác suất token "A" và "B", điều mà câu hỏi 3 cần. Ngoài ra, chạy trên Colab thì không tốn phí API và người khác tái lập được thí nghiệm.
 
 **Câu trả lời do mô hình nào sinh ra?**
-Ba mô hình dùng miễn phí: Qwen2.5-7B-Instruct chạy trên Colab, gpt-oss-20b, mô hình mã mở của OpenAI, và Gemini Flash-Lite qua free tier của Google AI Studio, khoảng 500 request mỗi ngày nên chạy xong trong một ngày. Cả ba nhận cùng một prompt, yêu cầu trả lời 2–4 câu, không định dạng. gpt-oss-20b chạy với reasoning effort thấp và chỉ lấy phần trả lời cuối. Mỗi câu hỏi có ba câu trả lời, ghép thành ba cặp, tổng 900 cặp.
+Ba mô hình dùng miễn phí: Qwen2.5-7B-Instruct chạy trên Colab, gpt-oss-20b, mô hình mã mở của OpenAI, và Gemini Flash-Lite qua free tier của Google AI Studio, khoảng 500 request mỗi ngày nên chạy trong khoảng hai ngày. Cả ba nhận cùng một prompt, yêu cầu trả lời 2–4 câu, không định dạng. gpt-oss-20b chạy với reasoning effort thấp và chỉ lấy phần trả lời cuối. Mỗi câu hỏi có ba câu trả lời, ghép thành ba cặp, tổng 3000 cặp.
 
 **Qwen vừa trả lời vừa làm judge, có bị thiên vị không?**
 Có thể. Judge có thể ưa câu trả lời của chính họ mình (self-enhancement bias). Nhưng điều này không tạo ra flip, vì cùng một cặp được chấm ở cả hai thứ tự; nó chỉ có thể làm lệch người thắng. Nhóm báo cáo riêng các cặp có Qwen để thấy ảnh hưởng này.
@@ -186,11 +186,14 @@ Chưa có bảng điểm tiếng Việt chung cho đúng ba bản này. Một đ
 **Câu dài có được judge ưa hơn không?**
 Có thể, đó là verbosity bias. Nhóm giới hạn câu trả lời 2–4 câu trong prompt và ghi lại độ dài từng câu, để kiểm tra flip có đi kèm chênh lệch độ dài hay không.
 
-**Sao không dùng hết bộ dữ liệu, chỉ lấy 300 câu?**
-Giới hạn nằm ở người chấm, không ở máy. Mỗi người chấm phải đọc đoạn văn, đối chiếu đáp án gốc và chấm 900 câu trả lời. 300 câu là mức hai người làm cẩn thận được, và đủ để thấy hiệu ứng lớn như 46% so với 5% của Wang et al. Nhóm cặp gần ngang nhau có thể vẫn ít, nên kết luận về nhóm này chỉ là sơ bộ; nhóm đã ghi điều này trong phần giới hạn.
+**Sao không dùng hết bộ dữ liệu, chỉ lấy 1000 câu?**
+Giới hạn nằm ở người chấm, không ở máy. 1000 câu cho 3000 câu trả lời, mỗi câu cần hai người chấm, tức 6000 lượt chấm. Chia cho bốn người, mỗi người khoảng 1500 câu trả lời, tầm 25 giờ. Đó là mức tối đa nhóm làm cẩn thận được. Đổi lại, nhóm cặp gần ngang nhau, nơi flip xảy ra nhiều nhất, có đủ số cặp để kết luận.
+
+**Sao lấy câu từ tập train, không phải validation?**
+Nhóm không huấn luyện mô hình nào nên tập train không bị "dùng" vào việc gì khác. Tập validation chỉ có 557 đoạn văn và 469 câu "vì sao", "như thế nào", không đủ 1000 câu.
 
 **Judge có thể đã thấy UIT-ViQuAD lúc huấn luyện không?**
-Có thể. Đây là bộ dữ liệu phổ biến. Việc nhóm chọn tập validation thay vì tập train chỉ giảm được rủi ro này, không loại bỏ được. Tuy vậy, thứ được chấm là câu trả lời do mô hình sinh ra, không phải đáp án gốc, nên ảnh hưởng đến việc đo flip là hạn chế.
+Có thể. Đây là bộ dữ liệu công khai, và cả tập train lẫn validation đều có trên mạng. Tuy vậy, thứ được chấm là câu trả lời do mô hình sinh ra, không phải đáp án gốc, nên ảnh hưởng đến việc đo flip là hạn chế. Nhóm đã ghi điều này trong phần giới hạn.
 
 **Balanced Position Calibration là gì?**
 Đây là một cách giảm thiểu trong Wang et al. (2023): chấm cặp câu trả lời theo cả hai thứ tự, rồi lấy trung bình điểm của hai lần.
@@ -202,4 +205,4 @@ Judge trả lời bằng một token, "A" hoặc "B". Ngoài phần xác suất 
 Mỗi cặp được chấm hai lần, lần hai đổi chỗ hai câu trả lời. Nếu câu thắng ở hai lần khác nhau thì cặp đó là một flip. Tỉ lệ flip bằng số cặp flip chia cho tổng số cặp.
 
 **Vì sao so với tiếng Anh?**
-Để biết hiện tượng này có nặng hơn ở tiếng Việt không. Phần tiếng Anh là bản dịch máy của cùng 300 câu, nên khác biệt giữa hai ngôn ngữ có thể một phần do chất lượng bản dịch.
+Để biết hiện tượng này có nặng hơn ở tiếng Việt không. Phần tiếng Anh là bản dịch máy của cùng 1000 câu, nên khác biệt giữa hai ngôn ngữ có thể một phần do chất lượng bản dịch.
