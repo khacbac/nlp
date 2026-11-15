@@ -105,7 +105,7 @@ Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không
 > Hướng tiếp cận gồm bốn bước, đi từ trái sang phải.
 >
 > Một: lấy 150 câu hỏi có đáp án từ tập validation của UIT-ViQuAD 2.0, bộ đọc hiểu tiếng Việt của VLSP 2021. Nhóm ưu tiên câu "vì sao", "như thế nào" để câu trả lời đủ dài.
-> Hai: cho ba mô hình dùng miễn phí là Qwen, ChatGPT và Gemini trả lời cùng các câu hỏi đó. Mỗi câu có ba câu trả lời, ghép thành ba cặp X và Y, tổng cộng 450 cặp.
+> Hai: cho ba mô hình dùng miễn phí là Qwen, gpt-oss và Gemini trả lời cùng các câu hỏi đó. Mỗi câu có ba câu trả lời, ghép thành ba cặp X và Y, tổng cộng 450 cặp.
 > Ba: chấm song song. Hai người chấm cho điểm độc lập. LLM judge chấm mỗi cặp hai lượt: lượt đầu X ở vị trí A, lượt sau đổi chỗ, Y ở vị trí A. Mỗi lượt lưu lại xác suất "A" và "B".
 > Bốn: đánh giá theo sáu tiêu chí trong ô cuối, từ tỉ lệ flip, độ ưa vị trí đầu, độ tự tin, đến độ khớp với người chấm sau khi cân bằng hai thứ tự. Nhóm không huấn luyện mô hình nào.
 
@@ -115,7 +115,7 @@ Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không
 
 > Mỗi kỹ thuật được chọn vì một lý do cụ thể.
 > **Chấm theo cặp, cả hai thứ tự:** thiên vị vị trí chỉ lộ ra khi có hai vị trí để đổi. Chấm từng câu riêng lẻ thì không đo được.
-> **Ba mô hình free sinh câu trả lời:** Qwen, ChatGPT, Gemini mạnh yếu khác nhau ở tiếng Việt, nên có cả cặp chênh rõ lẫn cặp gần ngang nhau. Đây cũng là các mô hình mà một nhóm ít kinh phí thực sự phải chọn giữa.
+> **Ba mô hình free sinh câu trả lời:** Qwen, gpt-oss, Gemini mạnh yếu khác nhau ở tiếng Việt, nên có cả cặp chênh rõ lẫn cặp gần ngang nhau. Đây cũng là các mô hình mà một nhóm ít kinh phí thực sự phải chọn giữa.
 > **Judge mã mở Qwen2.5:** nhóm cần xác suất token, mà không phải API trả phí nào cũng trả về. Qwen chạy được trên Colab và có hỗ trợ tiếng Việt.
 > **Xác suất token "A" và "B":** đọc thẳng từ đầu ra của Transformer decoder trong cùng lần chấm. Đây chính là bước sinh token đã học trong môn.
 > **Balanced Position Calibration** của Wang và cộng sự: gộp kết quả hai thứ tự đã chấm sẵn, không cần huấn luyện.
@@ -128,7 +128,7 @@ Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không
 
 *[Chỉ vào dòng "Đầu ra dự kiến".]*
 
-> Đồ án sẽ cho ra bốn thứ: sáu tiêu chí đánh giá đo trên tiếng Việt, có so với tiếng Anh; phân tích flip xảy ra khi nào; khuyến nghị có nên chấm hai thứ tự, kèm xếp hạng Qwen, ChatGPT, Gemini trên tiếng Việt; và một demo trực tiếp.
+> Đồ án sẽ cho ra bốn thứ: sáu tiêu chí đánh giá đo trên tiếng Việt, có so với tiếng Anh; phân tích flip xảy ra khi nào; khuyến nghị có nên chấm hai thứ tự, kèm xếp hạng Qwen, gpt-oss, Gemini trên tiếng Việt; và một demo trực tiếp.
 >
 > Qua đó, nhóm muốn góp phần trả lời câu hỏi: khi nào phán quyết của LLM judge đáng tin, nhất là với tiếng Việt. Về lâu dài, một judge đáng tin là nền để xây harness tự chọn mô hình free phù hợp cho từng câu hỏi, vừa trả lời tốt vừa tiết kiệm chi phí.
 
@@ -138,7 +138,7 @@ Phần in nghiêng trong ngoặc vuông là hướng dẫn hành động, không
 
 > Em xin cảm ơn thầy và các bạn. Đây là toàn cảnh quy trình của nhóm. Nhóm sẵn sàng nhận câu hỏi.
 
-*[Để màn này trên màn hình suốt phần hỏi đáp. Khi được hỏi về cách làm, chỉ vào cột tương ứng: cột 2 cho câu trả lời của Qwen, ChatGPT, Gemini, cột 3 cho hai lượt chấm đổi thứ tự, cột 4 cho xác suất token, cột 5 cho cách xác định flip, cột 6 cho người chấm, cột 7 cho các tiêu chí đánh giá. Nếu hỏi các con số trong hình: đó là ví dụ giả định, chưa phải kết quả. Câu hỏi thật ưu tiên dạng "vì sao", "như thế nào". Nếu được hỏi chi tiết cách tính một tiêu chí, nhấn → sang màn 12.]*
+*[Để màn này trên màn hình suốt phần hỏi đáp. Khi được hỏi về cách làm, chỉ vào cột tương ứng: cột 2 cho câu trả lời của Qwen, gpt-oss, Gemini, cột 3 cho hai lượt chấm đổi thứ tự, cột 4 cho xác suất token, cột 5 cho cách xác định flip, cột 6 cho người chấm, cột 7 cho các tiêu chí đánh giá. Nếu hỏi các con số trong hình: đó là ví dụ giả định, chưa phải kết quả. Câu hỏi thật ưu tiên dạng "vì sao", "như thế nào". Nếu được hỏi chi tiết cách tính một tiêu chí, nhấn → sang màn 12.]*
 
 ## Màn 12 · Tiêu chí đánh giá (dự phòng cho hỏi đáp)
 
@@ -158,7 +158,7 @@ Nhóm làm trên tiếng Việt, đối chiếu với người chấm, và phân
 Mô hình mã mở cho lấy trực tiếp xác suất token "A" và "B", điều mà câu hỏi 3 cần. Ngoài ra, chạy trên Colab thì không tốn phí API và người khác tái lập được thí nghiệm.
 
 **Câu trả lời do mô hình nào sinh ra?**
-Ba mô hình dùng miễn phí: Qwen2.5-7B-Instruct chạy trên Colab, ChatGPT bản miễn phí và Gemini Flash qua free tier của Google AI Studio. Cả ba nhận cùng một prompt. Mỗi câu hỏi có ba câu trả lời, ghép thành ba cặp, tổng 450 cặp.
+Ba mô hình dùng miễn phí: Qwen2.5-7B-Instruct chạy trên Colab, gpt-oss-20b, mô hình mã mở của OpenAI, và Gemini Flash qua free tier của Google AI Studio. Cả ba nhận cùng một prompt. Mỗi câu hỏi có ba câu trả lời, ghép thành ba cặp, tổng 450 cặp.
 
 **Qwen vừa trả lời vừa làm judge, có bị thiên vị không?**
 Có thể. Judge có thể ưa câu trả lời của chính họ mình (self-enhancement bias). Nhưng điều này không tạo ra flip, vì cùng một cặp được chấm ở cả hai thứ tự; nó chỉ có thể làm lệch người thắng. Nhóm báo cáo riêng các cặp có Qwen để thấy ảnh hưởng này.
