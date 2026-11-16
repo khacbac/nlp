@@ -90,7 +90,12 @@ def post_json(url: str, body: dict, headers: dict, retries: int = 6) -> dict:
     """POST with exponential backoff on rate limits and server errors."""
     data = json.dumps(body).encode()
     for attempt in range(retries):
-        req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json", **headers})
+        req = urllib.request.Request(url, data=data, headers={
+            "Content-Type": "application/json",
+            # Cloudflare (in front of Groq) rejects urllib's default User-Agent with "error code: 1010".
+            "User-Agent": "answer-generator/1.0",
+            **headers,
+        })
         try:
             with urllib.request.urlopen(req, timeout=120) as resp:
                 return json.load(resp)
