@@ -31,7 +31,8 @@ Usage (one model per run):
     # keep the answers somewhere that survives a Colab reset
     python generate_answers.py --model gemini --out-dir /content/drive/MyDrive/nlp-answers
 
-Exit code 2 means a quota ran out; rerun later.
+Exit code 2 means a quota ran out (rerun later); 3 means 5 failures in a row
+(check the key, model id or account).
 """
 
 import argparse
@@ -65,7 +66,8 @@ GPT_OSS = {
     "groq": ("https://api.groq.com/openai/v1/chat/completions", "openai/gpt-oss-20b", "GROQ_API_KEY"),
     "openrouter": ("https://openrouter.ai/api/v1/chat/completions", "openai/gpt-oss-20b:free", "OPENROUTER_API_KEY"),
 }
-GEMINI_MODEL = "gemini-2.5-flash-lite"
+# gemini-2.5-flash-lite is closed to new projects; 3.5 Flash-Lite has a free tier.
+GEMINI_MODEL = "gemini-3.5-flash-lite"
 GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 
 
@@ -126,13 +128,20 @@ def answer_gemini(q: dict) -> tuple[str, str, str]:
     body = {
         "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
         "contents": [{"role": "user", "parts": [{"text": messages(q)[1]["content"]}]}],
-        "generationConfig": {"temperature": 0, "maxOutputTokens": MAX_TOKENS},
+        # Gemini 3 always thinks a little and counts those tokens in maxOutputTokens,
+        # so keep thinking minimal and leave room for it on top of the answer.
+        "generationConfig": {
+            "temperature": 0,
+            "maxOutputTokens": MAX_TOKENS + 500,
+            "thinkingConfig": {"thinkingLevel": "minimal"},
+        },
     }
     resp = post_json(GEMINI_URL.format(model=GEMINI_MODEL), body, {"x-goog-api-key": os.environ["GEMINI_API_KEY"]})
     if not resp.get("candidates"):  # prompt blocked by a safety filter
         raise RuntimeError(f"no candidates: {json.dumps(resp.get('promptFeedback', resp))[:300]}")
     cand = resp["candidates"][0]
-    text = "".join(p.get("text", "") for p in cand.get("content", {}).get("parts", []))
+    parts = cand.get("content", {}).get("parts", [])
+    text = "".join(p.get("text", "") for p in parts if not p.get("thought"))
     return text, cand.get("finishReason", ""), GEMINI_MODEL
 
 
@@ -200,6 +209,7 @@ def main() -> None:
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     failed = []
+    streak = 0  # consecutive failures; many in a row means a bad key or model, not bad questions
     with out_path.open("a", encoding="utf-8") as out:
         # A killed run may leave a line without "\n"; start on a fresh line.
         if out.tell() > 0:
@@ -224,7 +234,12 @@ def main() -> None:
                 except Exception as e:  # one bad question must not stop the run
                     print(f"  FAILED {q['qid']}: {e}")
                     failed.append(q["qid"])
+                    streak += 1
+                    if streak >= 5:
+                        print("\n5 failures in a row: check the API key, model id and account, then rerun.")
+                        sys.exit(3)
                 else:
+                    streak = 0
                     write(out, q, *result)
                     print(f"  [{i}/{len(todo)}] {q['qid']}")
                 time.sleep(args.interval)
