@@ -6,3 +6,4 @@ experiment/data/ai_graded/
 __pycache__/
 .ipynb_checkpoints/
 .venv/
+.DS_Store
