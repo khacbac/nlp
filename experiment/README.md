@@ -4,7 +4,7 @@
 select_questions.py     ->  data/questions.jsonl        (500 questions, committed)
 generate_answers.ipynb  ->  Drive: answers_qwen.jsonl, answers_gpt-oss.jsonl, answers_gemini.jsonl
  (runs generate_answers.py on Colab)
-make_grading_sheet.py   ->  data/grading_sheet_A.csv ... _D.csv (one per annotator)
+make_grading_sheet.py   ->  data/grading_sheet_A.xlsx ... _D.xlsx (+ .csv; one per annotator)
                             data/key.csv                 (keep private)
 ```
 
@@ -57,8 +57,13 @@ each answer.
 Download the three `answers_*.jsonl` files from Drive into `data/`, then:
 
 ```bash
+pip install openpyxl
 python make_grading_sheet.py
 ```
+
+Run it **once**: every run makes new answer ids and a new `key.csv`, which
+no longer match sheets already handed out. To only rebuild the `.xlsx`
+files from the existing CSVs (same ids), run `python grading_xlsx.py`.
 
 Each question goes to one of the 6 pairs of the 4 annotators (A+B, A+C,
 ..., C+D), and both rate all three of its answers, so every answer gets two
@@ -67,9 +72,11 @@ ratings and each annotator gets about 750 rows (~12-13 hours).
 The sheets drop markdown `*` emphasis (only one model uses it, which would
 reveal it); the answer files keep the raw text.
 
-Import each `grading_sheet_X.csv` into its own Google Sheet and share it
-with that annotator only; add a 1-5 dropdown on the `score` column
-(Data > Data validation). Annotators do not see each other's sheets. Only
+Upload each `grading_sheet_X.xlsx` to Drive, open it with Google Sheets
+(File > Save as Google Sheets) and share it with that annotator only. The
+workbook comes formatted: wrapped text, frozen header, a 1-5 dropdown on
+`score`, the input columns in yellow, and a "Hướng dẫn" tab with the rubric
+in Vietnamese. The CSVs are the same rows, for the analysis scripts. Annotators do not see each other's sheets. Only
 the person who ran the script keeps `key.csv`; it records which pair rated
 each answer, for Cohen's kappa per pair and Krippendorff's alpha overall.
 
