@@ -1,13 +1,17 @@
-"""Turn grading_sheet_X.csv into a ready-to-grade grading_sheet_X.xlsx.
+"""Combine grading_sheet_A.csv ... _D.csv into one workbook, grading_sheets.xlsx.
 
-The workbook has wrapped text, sized columns, a frozen header, a 1-5
-dropdown on "score", highlighted input columns, and a "Hướng dẫn" tab
-with the rubric. Upload it to Google Drive and open it with Google Sheets;
-the formatting and dropdown carry over.
+The workbook has a "Hướng dẫn" tab with the rubric, then one tab per
+annotator (A, B, C, D) with wrapped text, sized columns, a frozen header,
+a 1-5 dropdown on "score" and highlighted input columns. Upload it to
+Google Drive and open it with Google Sheets; the formatting and dropdown
+carry over.
 
-It only reformats the CSV, so answer ids and key.csv stay as they are.
-make_grading_sheet.py calls it; to rebuild the .xlsx files from the
-existing CSVs without new ids:
+Everyone with access can see every tab, so annotators can see each
+other's scores; the team agreed to grade only their own tab.
+
+It only reformats the CSVs, so answer ids and key.csv stay as they are.
+make_grading_sheet.py calls it; to rebuild the workbook from the existing
+CSVs without new ids:
     python grading_xlsx.py
 """
 
@@ -59,15 +63,13 @@ INPUT_FILL = PatternFill("solid", fgColor="FFF2CC")
 WRAP_TOP = Alignment(wrap_text=True, vertical="top")
 
 
-def csv_to_xlsx(csv_path: Path) -> Path:
+def add_grading_tab(wb: Workbook, csv_path: Path, title: str) -> int:
     with csv_path.open(encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f)
         columns = reader.fieldnames
         rows = list(reader)
 
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Chấm điểm"
+    ws = wb.create_sheet(title)
     ws.append([LAYOUT.get(c, (20, c))[1] for c in columns])
     for r in rows:
         ws.append([r[c] for c in columns])
@@ -91,11 +93,18 @@ def csv_to_xlsx(csv_path: Path) -> Path:
                         error="Chọn một điểm từ 1 đến 5.")
     dv.add(f"{letter}2:{letter}{len(rows) + 1}")
     ws.add_data_validation(dv)
+    return len(rows)
 
-    guide = wb.create_sheet("Hướng dẫn")
+
+def add_guide_tab(wb: Workbook, names: list[str]) -> None:
+    guide = wb.active
+    guide.title = "Hướng dẫn"
     guide.column_dimensions["A"].width = 6
     guide.column_dimensions["B"].width = 100
-    for left, right in INSTRUCTIONS:
+    own_tab = (f"Mỗi người chấm đúng tab mang tên mình ({', '.join(names)}); "
+               "không mở hay xem điểm ở tab của người khác.", None)
+    lines = INSTRUCTIONS[:1] + [own_tab] + INSTRUCTIONS[1:]
+    for left, right in lines:
         if right is not None:  # a rubric score and its meaning
             guide.append([left, right])
             guide.cell(row=guide.max_row, column=1).font = Font(bold=True)
@@ -107,7 +116,15 @@ def csv_to_xlsx(csv_path: Path) -> Path:
         for cell in guide[guide.max_row]:
             cell.alignment = WRAP_TOP
 
-    out = csv_path.with_suffix(".xlsx")
+
+def build_workbook(csv_paths: list[Path], out: Path) -> Path:
+    """One tab per grading_sheet_X.csv, named X, after a guide tab."""
+    names = [p.stem.removeprefix("grading_sheet_") for p in csv_paths]
+    wb = Workbook()
+    add_guide_tab(wb, names)
+    for path, name in zip(csv_paths, names):
+        n = add_grading_tab(wb, path, name)
+        print(f"  tab {name}: {n} rows")
     wb.save(out)
     return out
 
@@ -116,8 +133,7 @@ def main() -> None:
     paths = sorted(DATA.glob("grading_sheet_*.csv"))
     if not paths:
         raise SystemExit("no grading_sheet_*.csv in data/; run make_grading_sheet.py first.")
-    for p in paths:
-        print(f"wrote {csv_to_xlsx(p)}")
+    print(f"wrote {build_workbook(paths, DATA / 'grading_sheets.xlsx')}")
 
 
 if __name__ == "__main__":

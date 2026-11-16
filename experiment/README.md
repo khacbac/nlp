@@ -4,7 +4,7 @@
 select_questions.py     ->  data/questions.jsonl        (500 questions, committed)
 generate_answers.ipynb  ->  Drive: answers_qwen.jsonl, answers_gpt-oss.jsonl, answers_gemini.jsonl
  (runs generate_answers.py on Colab)
-make_grading_sheet.py   ->  data/grading_sheet_A.xlsx ... _D.xlsx (+ .csv; one per annotator)
+make_grading_sheet.py   ->  data/grading_sheets.xlsx (one tab per annotator; also grading_sheet_A..D.csv)
                             data/key.csv                 (keep private)
 ```
 
@@ -62,8 +62,8 @@ python make_grading_sheet.py
 ```
 
 Run it **once**: every run makes new answer ids and a new `key.csv`, which
-no longer match sheets already handed out. To only rebuild the `.xlsx`
-files from the existing CSVs (same ids), run `python grading_xlsx.py`.
+no longer match sheets already handed out. To only rebuild the workbook
+from the existing CSVs (same ids), run `python grading_xlsx.py`.
 
 Each question goes to one of the 6 pairs of the 4 annotators (A+B, A+C,
 ..., C+D), and both rate all three of its answers, so every answer gets two
@@ -72,11 +72,16 @@ ratings and each annotator gets about 750 rows (~12-13 hours).
 The sheets drop markdown `*` emphasis (only one model uses it, which would
 reveal it); the answer files keep the raw text.
 
-Upload each `grading_sheet_X.xlsx` to Drive, open it with Google Sheets
-(File > Save as Google Sheets) and share it with that annotator only. The
-workbook comes formatted: wrapped text, frozen header, a 1-5 dropdown on
-`score`, the input columns in yellow, and a "Hướng dẫn" tab with the rubric
-in Vietnamese. The CSVs are the same rows, for the analysis scripts. Annotators do not see each other's sheets. Only
+Upload `grading_sheets.xlsx` to Drive, open it with Google Sheets
+(File > Save as Google Sheets) and share it with the four annotators. It has
+a "Hướng dẫn" tab with the rubric in Vietnamese, then tabs A-D, one per
+annotator, formatted for grading: wrapped text, frozen header, a 1-5
+dropdown on `score`, and the input columns in yellow. The CSVs hold the same
+rows, for the analysis scripts.
+
+Google Sheets cannot hide a tab from one person, so annotators can see each
+other's scores. The team agreed to grade only their own tab; say so in the
+report, since it weakens the independence of the two ratings. Only
 the person who ran the script keeps `key.csv`; it records which pair rated
 each answer, for Cohen's kappa per pair and Krippendorff's alpha overall.
 

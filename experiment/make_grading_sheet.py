@@ -21,8 +21,8 @@ which is git-ignored and must not be shared with the annotators.
 
 Usage:
     python make_grading_sheet.py
-Each sheet is written as .csv and as a formatted .xlsx (see grading_xlsx.py);
-open the .xlsx in Google Sheets and share it with that annotator only.
+The sheets are also combined into one formatted workbook, grading_sheets.xlsx,
+with one tab per annotator (see grading_xlsx.py); open it in Google Sheets.
 """
 
 import argparse
@@ -34,7 +34,7 @@ import re
 import secrets
 from pathlib import Path
 
-from grading_xlsx import csv_to_xlsx  # pip install openpyxl
+from grading_xlsx import build_workbook  # pip install openpyxl
 
 DATA = Path(__file__).parent / "data"
 MODELS = ["qwen", "gpt-oss", "gemini"]
@@ -129,11 +129,14 @@ def main() -> None:
 
     write_csv(DATA / "key.csv", sorted(rows, key=lambda r: r["answer_id"]),
               ["answer_id", "qid", "model", "annotators", "num_words"])
+    paths = []
     for name in args.annotators:
         mine = [r for r in rows if name in r["annotators"].split("+")]
         path = DATA / f"grading_sheet_{name}.csv"
         write_csv(path, shuffle_apart(mine, rng), COLUMNS)
-        print(f"wrote {path} and {csv_to_xlsx(path).name} ({len(mine)} rows)")
+        paths.append(path)
+        print(f"wrote {path} ({len(mine)} rows)")
+    print(f"wrote {build_workbook(paths, DATA / 'grading_sheets.xlsx')}")
     print(f"wrote {DATA / 'key.csv'} (keep private)")
 
 
