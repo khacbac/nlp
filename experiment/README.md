@@ -64,6 +64,9 @@ Each question goes to one of the 6 pairs of the 4 annotators (A+B, A+C,
 ..., C+D), and both rate all three of its answers, so every answer gets two
 ratings and each annotator gets about 750 rows (~12-13 hours).
 
+The sheets drop markdown `*` emphasis (only one model uses it, which would
+reveal it); the answer files keep the raw text.
+
 Import each `grading_sheet_X.csv` into its own Google Sheet and share it
 with that annotator only; add a 1-5 dropdown on the `score` column
 (Data > Data validation). Annotators do not see each other's sheets. Only
@@ -82,6 +85,7 @@ Score each answer against the passage and the gold answer:
 | 2 | Mostly wrong, with only a small correct element. |
 | 1 | Wrong, off-topic, or contradicts the passage. |
 
-Grade the content, not the length or style. Before the real grading, all
+Grade the content, not the length or style. An answer that switches to
+another language part-way is graded on its content; mention it in `note`. Before the real grading, all
 four annotators grade the same 20 answers, compare, and settle
 disagreements.

@@ -30,6 +30,7 @@ import csv
 import itertools
 import json
 import random
+import re
 import secrets
 from pathlib import Path
 
@@ -45,6 +46,15 @@ def shuffle_apart(rows: list[dict], rng: random.Random) -> list[dict]:
         if all(a["qid"] != b["qid"] for a, b in zip(rows, rows[1:])):
             return rows
     raise RuntimeError("could not separate answers to the same question")
+
+
+def strip_emphasis(text: str) -> str:
+    """Drop markdown *italic* / **bold** asterisks.
+
+    Only gpt-oss uses them, so annotators could tell its answers apart.
+    The answer files keep the raw text, which is what the judge sees.
+    """
+    return re.sub(r"(\*{1,2})(\S(?:.*?\S)?)\1", r"\2", text)
 
 
 def read_jsonl(path: Path) -> list[dict]:
@@ -108,7 +118,7 @@ def main() -> None:
                 "context": q["context"],
                 "question": q["question"],
                 "gold_answer": " | ".join(dict.fromkeys(q["gold_answers"])),
-                "answer": a["answer"],
+                "answer": strip_emphasis(a["answer"]),
                 "num_words": a["num_words"],
                 "annotators": "+".join(pair),
                 "score": "",
