@@ -91,11 +91,24 @@ Score each answer against the passage and the gold answer:
 
 | Score | Meaning |
 |---|---|
-| 5 | Correct and complete: contains the gold answer's content, nothing wrong. |
-| 4 | Correct, but with a small omission or some unneeded detail. |
-| 3 | Partly correct: gets part of the gold answer, or is correct but vague. |
-| 2 | Mostly wrong, with only a small correct element. |
-| 1 | Wrong, off-topic, or contradicts the passage. |
+| 5 | Has the main point, and everything it says is in the passage. |
+| 4 | Has the main point, but misses a small detail or adds one inference not in the passage (not contradicting it). |
+| 3 | Only part of the main point, or vague with no specific point, or the main point plus one statement that contradicts the passage. |
+| 2 | Misses the main point; only side points that are true but do not answer the question. |
+| 1 | Wrong, off-topic, made up, or the main point contradicts the passage. |
+
+The main point is what directly answers the question, usually the gold
+answer's idea. Grade in two steps: (1) is the main point there, (2) is the
+rest true to the passage. Extra content found in the passage costs nothing,
+however long; an inference not in the passage caps the score at 4; a
+statement that contradicts the passage caps it at 3. When torn between two
+scores, pick the lower one.
+
+Some gold answers are wrong or unanswerable (e.g. the gold answers a
+different question, or the passage never says). Grade
+those against the passage and write `gold_sai` in `note`, so they can be
+excluded; an answer that correctly says the passage does not cover it
+gets 5.
 
 Grade the content, not the length or style. An answer that switches to
 another language part-way is graded on its content; mention it in `note`. Before the real grading, all
