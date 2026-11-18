@@ -127,7 +127,7 @@ Vietnamese and in English.
 
 Each pair is still two answers judged twice, swapped the second time.
 Three models give 3 pairs per question with different quality gaps, and
-the quality gap is the strongest driver of position bias (Shi et al.,
+position bias is strongly affected by the quality gap (Shi et al.,
 2024). Wang et al. (2023, Table 2) show the size of the effect on 80
 questions: GPT-4 flipped on 46.3% of the close pair (Vicuna-13B vs
 ChatGPT) but only 5.0% of the clear-gap pair (Vicuna-13B vs Alpaca-13B);

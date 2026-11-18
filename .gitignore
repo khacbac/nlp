@@ -7,3 +7,6 @@ __pycache__/
 .ipynb_checkpoints/
 .venv/
 .DS_Store
+
+# Paper PDFs are copyrighted and large; keep them local.
+papers/pdf/
