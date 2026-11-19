@@ -106,3 +106,14 @@ Ngày lập: 2026-11-19. Trạng thái hiện tại:
 - Judge chạy đủ 3000 lần chấm, 0 lỗi format. **86% lần chấm ghi verdict trước rồi mới giải thích**, nên giả định "prompt MT-Bench đã đáp ứng MEC" trong `papers/matrix.md` không đúng với Qwen2.5-7B. Cần ghi vào báo cáo.
 - Judge thiên vị gpt-oss rõ (thắng 67% theo BPC) và thích câu dài hơn (69%). Judge thấy text gốc có `**in đậm**` của gpt-oss, còn người chấm thấy bản đã bỏ. **Thí nghiệm phụ nên chạy:** judge lại trên text đã bỏ in đậm (`strip_emphasis`) để tách hiệu ứng định dạng.
 - RQ1 và RQ3 không cần điểm người nên đã là số cuối. RQ2 và RQ4 đang chạy trên điểm AI (TRIAL), chạy lại `python analyze.py` khi người chấm xong.
+
+## 6. Trạng thái (2026-11-19, cuối ngày)
+
+| Bước | Kết quả |
+|---|---|
+| 1–2 Judge + phân tích | Xong. `experiment/results/` (metrics, summary, 4 biểu đồ) |
+| 3 Demo | Xong. `demo.html` dùng 3 cặp thật và số liệu toàn bộ 500 câu |
+| 4 Báo cáo | Xong bản nháp đầy đủ: `report.md` (~4.400 từ, tiếng Anh) |
+| 5 Slide | Xong 14 slide (Artifact Slides), có ghi chú người nói cho từng slide |
+
+Lưu ý: điểm người chấm hiện lấy từ `data/ai_graded/`. Khi có sheet chấm của nhóm, chạy `python analyze.py` rồi cập nhật số trong báo cáo, demo và slide.
