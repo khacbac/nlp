@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nháp Đôi · Hộp thư CSKH</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F5F7; --panel:#FFFFFF; --panel2:#FAFBFC; --ink:#101820; --ink2:#47515E; --muted:#808A97; --line:#E4E7EB; --line2:#EEF0F3;
+  --brand:#0B7285; --brand-ink:#FFFFFF; --brand-soft:#E3F2F4;
+  --d1:#0B7285; --d1-soft:#E3F2F4; --d2:#A35F00; --d2-soft:#FBF0DF;
+  --ok:#1E7B3C; --ok-soft:#E4F4E8; --flip:#C0245A; --flip-soft:#FCE7EE; --warn:#9A6400; --warn-soft:#FBF1DC;
+  --shadow:0 1px 2px rgba(16,24,32,.06),0 4px 16px rgba(16,24,32,.05);
+  --r:12px; --font:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1318; --panel:#151B22; --panel2:#11171D; --ink:#E8EDF2; --ink2:#AAB5C1; --muted:#7A8694; --line:#243039; --line2:#1C252D;
+  --brand:#3FB8CC; --brand-ink:#06232A; --brand-soft:#123039;
+  --d1:#4CC3D6; --d1-soft:#12313A; --d2:#E2A54A; --d2-soft:#33270F;
+  --ok:#5BCB7E; --ok-soft:#14301E; --flip:#FF6F9C; --flip-soft:#3A1724; --warn:#E8B04E; --warn-soft:#33270F;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0E1318; --panel:#151B22; --panel2:#11171D; --ink:#E8EDF2; --ink2:#AAB5C1; --muted:#7A8694; --line:#243039; --line2:#1C252D;
+  --brand:#3FB8CC; --brand-ink:#06232A; --brand-soft:#123039;
+  --d1:#4CC3D6; --d1-soft:#12313A; --d2:#E2A54A; --d2-soft:#33270F;
+  --ok:#5BCB7E; --ok-soft:#14301E; --flip:#FF6F9C; --flip-soft:#3A1724; --warn:#E8B04E; --warn-soft:#33270F;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25); color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased;overflow:hidden}
+button,select,textarea,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.mono{font-family:var(--mono)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- shell ---------- */
+.app{display:grid;grid-template-rows:56px 1fr;grid-template-columns:minmax(0,1fr);height:100dvh}
+.top{display:flex;align-items:center;gap:14px;padding:0 16px;background:var(--panel);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;letter-spacing:-.2px}
+.logo svg{flex:none}
+.ws{display:flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;color:var(--ink2);font-size:13px;white-space:nowrap}
+.ws i{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.grow{flex:1}
+.switch{display:flex;align-items:center;gap:10px;color:var(--ink2);font-size:13px;user-select:none;cursor:pointer;white-space:nowrap}
+.switch input{appearance:none;width:34px;height:20px;border-radius:999px;background:var(--line);position:relative;margin:0;cursor:pointer;transition:background .2s}
+.switch input::after{content:"";position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .2s}
+.switch input:checked{background:var(--brand)}
+.switch input:checked::after{transform:translateX(14px)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 14px;border-radius:9px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:13.5px;white-space:nowrap;transition:background .15s,border-color .15s,transform .05s}
+.btn:hover{background:var(--panel2);border-color:color-mix(in srgb,var(--line) 60%,var(--ink2))}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.55;cursor:default;transform:none}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.btn.pri:hover{background:color-mix(in srgb,var(--brand) 88%,#000)}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.ghost:hover{background:var(--line2)}
+.btn.icon{width:36px;padding:0}
+.btn.danger{color:var(--flip)}
+.btn svg{flex:none}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite;flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.main{display:grid;grid-template-columns:236px 372px 1fr;min-height:0}
+.side{background:var(--panel2);border-right:1px solid var(--line);padding:14px 10px;display:flex;flex-direction:column;gap:4px;overflow:auto}
+.nav{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:0;background:none;border-radius:8px;color:var(--ink2);font-weight:500;text-align:left}
+.nav:hover{background:var(--line2);color:var(--ink)}
+.nav.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
+.nav .n{margin-left:auto;font:600 12px var(--mono);color:var(--muted)}
+.nav .n.hot{color:#fff;background:var(--flip);padding:1px 7px;border-radius:999px}
+.nav svg{color:var(--muted)}
+.nav.on svg{color:var(--brand)}
+.side h4{margin:14px 10px 4px;font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);font-weight:600}
+.today{margin:8px 4px 0;padding:14px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);display:grid;grid-template-columns:1fr 1fr;gap:12px 8px}
+.today div b{display:block;font:600 22px/1.1 var(--mono);letter-spacing:-.5px}
+.today div span{font-size:12px;color:var(--muted);line-height:1.3;display:block;margin-top:2px}
+.today .wide{grid-column:1/-1;padding-top:10px;border-top:1px dashed var(--line)}
+.today .wide b{color:var(--flip)}
+.side .foot{margin-top:auto;padding:12px 10px 2px;font-size:12px;color:var(--muted);line-height:1.45}
+
+/* ---------- list ---------- */
+.list{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.lh{display:flex;align-items:center;gap:8px;padding:14px 16px 10px;border-bottom:1px solid var(--line2)}
+.lh h2{margin:0;font-size:16px;letter-spacing:-.2px}
+.lh .c{color:var(--muted);font:500 13px var(--mono)}
+.items{overflow:auto;flex:1}
+.it{display:grid;grid-template-columns:36px 1fr;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line2);cursor:pointer;position:relative}
+.it:hover{background:var(--panel2)}
+.it.on{background:var(--brand-soft)}
+.it.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--brand)}
+.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;color:#fff;flex:none}
+.it .r1{display:flex;align-items:baseline;gap:8px}
+.it .nm{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it .tm{margin-left:auto;color:var(--muted);font:500 12px var(--mono);flex:none}
+.it .sj{font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it .sn{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it .r3{display:flex;align-items:center;gap:6px;margin-top:6px}
+.pill{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.pill.new{background:var(--line2);color:var(--ink2)}
+.pill.review{background:var(--flip-soft);color:var(--flip)}
+.pill.ready{background:var(--ok-soft);color:var(--ok)}
+.pill.sent{background:transparent;color:var(--muted);padding:0}
+.pill.busy{background:var(--brand-soft);color:var(--brand)}
+.pill .spin{width:10px;height:10px;border-width:1.5px}
+.chan{font-size:11.5px;color:var(--muted)}
+.empty{padding:48px 24px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
+
+/* ---------- detail ---------- */
+.detail{overflow:auto;min-height:0}
+.dwrap{max-width:980px;margin:0 auto;padding:22px 28px 64px}
+.back{display:none}
+.dh{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.dh h1{margin:0;font-size:20px;letter-spacing:-.3px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border:1px solid var(--line);border-radius:7px;font-size:12px;color:var(--ink2);background:var(--panel)}
+.msg{margin:16px 0 0;display:grid;grid-template-columns:36px 1fr;gap:12px}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:12px 16px;box-shadow:var(--shadow);font-size:15px;line-height:1.6}
+.bubble small{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}
+.sec{margin-top:26px}
+.sech{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.sech h3{margin:0;font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);font-weight:600}
+.sech .grow{height:1px;background:var(--line)}
+
+.start{border:1.5px dashed var(--line);border-radius:16px;padding:28px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;background:var(--panel)}
+.start h4{margin:0 0 6px;font-size:16px}
+.start p{margin:0;color:var(--ink2)}
+.flow{display:flex;gap:8px;align-items:center;margin-top:14px;flex-wrap:wrap;color:var(--muted);font-size:12.5px}
+.flow span{padding:3px 9px;border-radius:999px;background:var(--line2);color:var(--ink2)}
+
+.working{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--panel)}
+.steps{display:grid;gap:12px}
+.stp{display:flex;align-items:center;gap:12px;color:var(--muted)}
+.stp.on{color:var(--ink)}
+.stp.done{color:var(--ok)}
+.stp .dot{width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center;flex:none}
+.stp.on .dot{border-color:var(--brand);color:var(--brand)}
+.sk{height:10px;border-radius:6px;background:linear-gradient(90deg,var(--line2),var(--line),var(--line2));background-size:200% 100%;animation:sh 1.2s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+
+/* verdict banner */
+.ban{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:16px 18px;border-radius:16px;border:1px solid}
+.ban .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center}
+.ban h4{margin:0;font-size:16px;letter-spacing:-.2px}
+.ban p{margin:2px 0 0;color:var(--ink2);font-size:13.5px}
+.ban.agree,.ban.tie{background:var(--ok-soft);border-color:color-mix(in srgb,var(--ok) 35%,transparent)}
+.ban.agree .ic,.ban.tie .ic{background:var(--ok);color:#fff}
+.ban.flip{background:var(--flip-soft);border-color:color-mix(in srgb,var(--flip) 35%,transparent)}
+.ban.flip .ic{background:var(--flip);color:#fff}
+.ban.partial,.ban.invalid{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
+.ban.partial .ic,.ban.invalid .ic{background:var(--warn);color:#fff}
+.naive{margin-top:8px;font-size:12.5px;color:var(--ink2)}
+.naive b{color:var(--flip)}
+
+/* runs */
+.runs{display:grid;gap:8px;margin-top:12px}
+.run{display:grid;grid-template-columns:62px auto 18px auto 1fr;gap:10px;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.run .lbl{font-size:12px;color:var(--muted);font-weight:600}
+.slots{display:flex;gap:4px}
+.slot{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 8px;border-radius:7px;font-size:12px;font-weight:600;border:1px solid transparent}
+.slot i{font:600 11px var(--mono);opacity:.7;font-style:normal}
+.slot.s1{background:var(--d1-soft);color:var(--d1)}
+.slot.s2{background:var(--d2-soft);color:var(--d2)}
+.slot.pick{border-color:currentColor;box-shadow:0 0 0 2px color-mix(in srgb,currentColor 18%,transparent)}
+.arrow{color:var(--muted);text-align:center}
+.vd{font:600 12.5px var(--mono);padding:3px 8px;border-radius:6px;background:var(--line2)}
+.res{justify-self:end;font-size:13px;color:var(--ink2);text-align:right}
+.res b.p1{color:var(--d1)} .res b.p2{color:var(--d2)}
+.res .ms{color:var(--muted);font:500 11.5px var(--mono);margin-left:6px}
+details.why{margin-top:8px}
+details.why summary{cursor:pointer;color:var(--brand);font-size:13px;font-weight:600;list-style:none;display:inline-flex;gap:6px;align-items:center}
+details.why summary::-webkit-details-marker{display:none}
+.whys{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.whys pre{margin:0;white-space:pre-wrap;word-break:break-word;font:12px/1.55 var(--mono);color:var(--ink2);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px;max-height:240px;overflow:auto}
+.whys h5{margin:0 0 6px;font-size:12px;color:var(--muted)}
+
+/* drafts */
+.drafts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.draft{border:1px solid var(--line);border-radius:16px;background:var(--panel);display:flex;flex-direction:column;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.draft.win{border-color:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 16%,transparent)}
+.dhd{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line2)}
+.dhd .tag{font-weight:700;font-size:13.5px}
+.dhd .tag.t1{color:var(--d1)} .dhd .tag.t2{color:var(--d2)}
+.dhd .mdl{color:var(--muted);font-size:12px}
+.badge{margin-left:auto;display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--ok);background:var(--ok-soft);padding:3px 8px;border-radius:999px}
+.draft textarea{border:0;resize:none;background:transparent;padding:14px;font-size:14.5px;line-height:1.6;min-height:180px;outline:none;flex:1}
+.draft textarea:focus{background:var(--panel2)}
+.dft{display:flex;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--line2)}
+.dft .wc{color:var(--muted);font:500 12px var(--mono)}
+.dft .btn{margin-left:auto}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+
+.sent{border:1px solid color-mix(in srgb,var(--ok) 35%,transparent);background:var(--ok-soft);border-radius:16px;padding:16px 18px}
+.sent .hd{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--ok)}
+.sent .hd span{font-weight:500;color:var(--ink2);font-size:13px}
+.sent p{margin:10px 0 0;white-space:pre-wrap;font-size:14.5px;line-height:1.6}
+
+/* ---------- report ---------- */
+.report{grid-column:2/4;overflow:auto;min-height:0}
+.rwrap{max-width:1080px;margin:0 auto;padding:26px 28px 64px}
+.rh h1{margin:0;font-size:24px;letter-spacing:-.4px}
+.rh p{margin:4px 0 0;color:var(--ink2)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.kpi b{display:block;font:600 30px/1 var(--mono);letter-spacing:-1px;margin-top:8px}
+.kpi span{color:var(--muted);font-size:12.5px;font-weight:500}
+.kpi small{display:block;color:var(--ink2);font-size:12px;margin-top:8px;line-height:1.4}
+.kpi.hl{border-color:color-mix(in srgb,var(--flip) 40%,transparent)}
+.kpi.hl b{color:var(--flip)}
+.cards2{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;margin-top:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card h3{margin:0 0 4px;font-size:15px}
+.card .sub{margin:0 0 14px;color:var(--ink2);font-size:13px}
+.stack{display:flex;height:34px;border-radius:8px;overflow:hidden;gap:2px;background:var(--panel)}
+.stack div{min-width:2px;position:relative}
+.stack div:first-child{border-radius:8px 0 0 8px}
+.stack div:last-child{border-radius:0 8px 8px 0}
+.lg{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:12px;font-size:12.5px;color:var(--ink2)}
+.lg span{display:inline-flex;align-items:center;gap:6px}
+.lg i{width:10px;height:10px;border-radius:3px}
+.lg b{font-family:var(--mono);color:var(--ink)}
+.meter{position:relative;height:34px;background:var(--line2);border-radius:8px;overflow:hidden}
+.meter .f{height:100%;background:var(--flip);border-radius:8px 0 0 8px}
+.meter .mid{position:absolute;left:50%;top:-4px;bottom:-4px;border-left:2px dashed var(--ink2)}
+.mlab{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}
+.big2{font:600 34px/1 var(--mono);letter-spacing:-1px}
+.bridge{margin-top:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.bridge div{padding:18px;border-right:1px solid var(--line2)}
+.bridge div:last-child{border-right:0}
+.bridge span{font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--brand);font-weight:700}
+.bridge p{margin:6px 0 0;font-size:13.5px;color:var(--ink2)}
+.bridge p b{color:var(--ink)}
+table.tb{width:100%;border-collapse:collapse;font-size:13px}
+.tb th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;padding:8px 10px;border-bottom:1px solid var(--line)}
+.tb td{padding:9px 10px;border-bottom:1px solid var(--line2)}
+.tb tr{cursor:pointer}
+.tb tr:hover td{background:var(--panel2)}
+.tb .mono{font-size:12px}
+
+/* ---------- sheets ---------- */
+.scrim{position:fixed;inset:0;background:rgba(10,15,20,.38);z-index:20;animation:fade .15s}
+@keyframes fade{from{opacity:0}}
+.sheet{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--panel);z-index:21;box-shadow:-8px 0 32px rgba(0,0,0,.15);display:flex;flex-direction:column;animation:slide .2s ease-out}
+@keyframes slide{from{transform:translateX(24px);opacity:0}}
+.sheet .sh{display:flex;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}
+.sheet .sh h3{margin:0;font-size:16px}
+.sheet .sb{padding:18px;overflow:auto;flex:1;display:grid;gap:16px;align-content:start}
+.fld label{display:block;font-weight:600;font-size:13px;margin-bottom:6px}
+.fld small{display:block;color:var(--muted);font-size:12px;margin-top:5px;line-height:1.4}
+.fld select,.fld input,.fld textarea{width:100%;height:38px;border:1px solid var(--line);border-radius:9px;background:var(--panel);padding:0 10px}
+.fld textarea{height:auto;min-height:120px;padding:10px;resize:vertical;line-height:1.5}
+.policy{white-space:pre-wrap;font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.samples{display:flex;flex-wrap:wrap;gap:6px}
+.samples button{border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:4px 10px;font-size:12px}
+.box{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--panel2);font-size:13px;color:var(--ink2);line-height:1.5}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:13.5px;z-index:40;box-shadow:var(--shadow);max-width:min(560px,calc(100% - 32px));animation:up .2s}
+.toast.err{background:var(--flip);color:#fff}
+@keyframes up{from{transform:translate(-50%,8px);opacity:0}}
+
+/* ---------- responsive ---------- */
+@media (max-width:1180px){
+  .main{grid-template-columns:72px 340px 1fr}
+  .side .lbl-t,.side h4,.today,.side .foot,.nav .n:not(.hot){display:none}
+  .nav{justify-content:center;padding:10px}
+  .nav .n.hot{position:absolute;margin:0;transform:translate(12px,-10px);font-size:10px;padding:0 5px}
+  .nav{position:relative}
+  .side .newb span{display:none}
+  .kpis{grid-template-columns:1fr 1fr}
+}
+@media (max-width:860px){
+  body{overflow:auto}
+  .app{height:auto;min-height:100dvh}
+  .top{position:sticky;top:0;z-index:5;gap:8px;padding:0 12px}
+  .ws,.switch .lbl-t,.top .hide-m{display:none}
+  #runAllT{display:none}
+  #runAll{width:36px;padding:0}
+  .logo{font-size:15px}
+  .main{display:block}
+  .side{flex-direction:row;overflow-x:auto;padding:8px 10px;border-right:0;border-bottom:1px solid var(--line);gap:4px;position:sticky;top:56px;z-index:4}
+  .nav{width:auto;flex:none}
+  .side .newb{margin-left:auto}
+  .list{border-right:0;min-height:calc(100dvh - 112px)}
+  .detail,.report{display:none}
+  body.show-detail .list{display:none}
+  body.show-detail .detail{display:block}
+  body.show-report .list{display:none}
+  body.show-report .report{display:block}
+  .back{display:inline-flex}
+  .dwrap,.rwrap{padding:16px 16px 48px}
+  .drafts,.whys,.cards2,.bridge{grid-template-columns:1fr}
+  .bridge div{border-right:0;border-bottom:1px solid var(--line2)}
+  .start{grid-template-columns:1fr}
+  .run{grid-template-columns:auto 1fr;row-gap:6px}
+  .run .arrow{display:none}
+  .run .res{grid-column:1/-1;justify-self:start;text-align:left}
+  .ban{grid-template-columns:40px 1fr}
+  .ban .ic{width:40px;height:40px}
+  .ban > .btn{grid-column:1/-1}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="2" y="5" width="15" height="18" rx="4" fill="var(--d1)"/><rect x="11" y="5" width="15" height="18" rx="4" fill="var(--d2)" opacity=".9"/><path d="M9 12h10l-2.5-2.5M19 16H9l2.5 2.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Nháp Đôi
+    </div>
+    <div class="ws"><i></i>Quất Store · CSKH</div>
+    <div class="grow"></div>
+    <label class="switch" title="Khi xử lý cả hộp thư: chỉ tự gửi những ticket mà trọng tài chọn giống nhau ở cả hai lượt đổi chỗ.">
+      <input type="checkbox" id="auto"><span class="lbl-t">Tự gửi khi trọng tài nhất quán</span>
+    </label>
+    <button class="btn pri" id="runAll"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.5v11l9-5.5z"/></svg><span id="runAllT">Xử lý hộp thư</span></button>
+    <button class="btn icon ghost hide-m" id="policyB" title="Chính sách cửa hàng" aria-label="Chính sách cửa hàng"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3.5h9a3 3 0 0 1 3 3v10H7a3 3 0 0 1-3-3z"/><path d="M7 7.5h6M7 10.5h6M7 13.5h3"/></svg></button>
+    <button class="btn icon ghost" id="setB" title="Cài đặt mô hình" aria-label="Cài đặt mô hình"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 6h8M15 6h2M3 14h2M9 14h8"/><circle cx="13" cy="6" r="2"/><circle cx="7" cy="14" r="2"/></svg></button>
+    <button class="btn icon ghost" id="themeB" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện sáng/tối"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="6.5"/><path d="M10 3.5a6.5 6.5 0 0 0 0 13z" fill="currentColor"/></svg></button>
+  </header>
+
+  <div class="main">
+    <nav class="side" id="side"></nav>
+    <section class="list" id="list"></section>
+    <section class="detail" id="detail"></section>
+    <section class="report" id="report" hidden></section>
+  </div>
+</div>
+
+<div id="layer"></div>
+<div id="toast" class="toast" hidden></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ICON = {
+  inbox:'<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 11.5 5 4.5h10l2 7v4H3z"/><path d="M3 11.5h4l1 2h4l1-2h4"/></svg>',
+  review:'<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4 3 7l3 3M3 7h10M14 16l3-3-3-3M17 13H7"/></svg>',
+  ready:'<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><path d="m7 10 2 2 4-4"/></svg>',
+  sent:'<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 9.5 17 3l-5 14-2.5-5.5z"/><path d="m9.5 11.5 3-3"/></svg>',
+  all:'<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 5h12M4 10h12M4 15h12"/></svg>',
+  report:'<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 16V9M8 16V4M12 16v-5M16 16V7"/></svg>',
+  plus:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg>',
+  check:'<svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 10.5 3 3 7-7"/></svg>',
+  swap:'<svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3 3 6l3 3M3 6h11M14 17l3-3-3-3M17 14H6"/></svg>',
+  half:'<svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 5v6M10 14.5v.5"/></svg>',
+  eq:'<svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 8h10M5 12h10"/></svg>',
+  back:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3 5 8l5 5"/></svg>',
+  redo:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3v3.5H9.5"/><path d="M12.6 6.5A5 5 0 1 0 13 10"/></svg>',
+  pen:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="m3 13 .6-2.6L10.5 3.5l2 2-6.9 6.9z"/></svg>',
+  send:'<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2.5 7.5 13.5 2.5l-4 11-2-4.5z"/></svg>',
+};
+const STATUS = {
+  new:["new","Mới"], review:["review","Cần bạn chọn"], ready:["ready","Sẵn sàng gửi"], sent:["sent","Đã gửi"],
+};
+const VIEWS = [
+  ["new","Mới",ICON.inbox], ["review","Cần bạn chọn",ICON.review], ["ready","Sẵn sàng gửi",ICON.ready],
+  ["sent","Đã gửi",ICON.sent], ["all","Tất cả",ICON.all],
+];
+const EMPTY = {
+  new:["Hết thư mới.","Khách hôm nay hiền thật."],
+  review:["Không còn ca nào trọng tài lật kèo.","Hiếm đấy. Tận hưởng đi."],
+  ready:["Chưa có nháp nào sẵn sàng.","Bấm “Xử lý hộp thư” để AI viết và chấm."],
+  sent:["Chưa gửi gì.","Khách vẫn đang chờ, nhẹ nhàng thôi."],
+  all:["Hộp thư trống.","Đi pha trà đi."],
+};
+
+let S = null;               // server snapshot
+let view = "new";           // list filter or "report"
+let sel = null;             // selected ticket id
+const busy = new Map();     // ticket id -> "draft" | "judge"
+let bulk = null;            // {done, total} while processing the inbox
+
+const label = id => (S.models.find(m => m.id === id) || {label:id}).label;
+const tk = id => S.tickets.find(t => t.id === id);
+const AVC = ["#0B7285","#A35F00","#6D4BC4","#1E7B3C","#C0245A","#2F6FD0","#7A5C3E","#00897B"];
+const avatar = n => { let h = 0; for (const c of n) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  const ini = n.trim().split(/\s+/).slice(-2).map(w => w[0]).join("").toUpperCase();
+  return `<div class="av" style="background:${AVC[h % AVC.length]}">${esc(ini)}</div>`; };
+const words = s => (s.trim().match(/\S+/g) || []).length;
+
+function toast(msg, err) {
+  const el = $("#toast"); el.textContent = msg; el.className = "toast" + (err ? " err" : ""); el.hidden = false;
+  clearTimeout(toast.t); toast.t = setTimeout(() => el.hidden = true, err ? 6000 : 3500);
+}
+async function api(path, body) {
+  const r = await fetch(path, body === undefined ? {} : {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)});
+  const d = await r.json().catch(() => ({error:"Máy chủ không trả lời."}));
+  if (!r.ok || d.error) throw new Error(d.error || r.statusText);
+  return d;
+}
+async function refresh() { S = await api("/api/state"); render(); }
+function upsert(t) { const i = S.tickets.findIndex(x => x.id === t.id); if (i >= 0) S.tickets[i] = t; else S.tickets.unshift(t); }
+
+/* ---------- render ---------- */
+function render() { renderSide(); renderList(); renderDetail(); renderReport(); renderTop(); }
+
+function renderTop() {
+  $("#auto").checked = !!S.settings.autopilot;
+  const n = S.tickets.filter(t => t.status === "new" && !busy.has(t.id)).length;
+  $("#runAll").disabled = !!bulk || !n;
+  $("#runAllT").textContent = bulk ? `Đang xử lý ${bulk.done}/${bulk.total}…` : n ? `Xử lý hộp thư (${n})` : "Hộp thư đã xử lý";
+  $("#runAll").firstElementChild.outerHTML = bulk ? '<span class="spin"></span>' : '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.5v11l9-5.5z"/></svg>';
+}
+
+function renderSide() {
+  const c = k => k === "all" ? S.tickets.length : S.tickets.filter(t => t.status === k).length;
+  const st = S.stats;
+  $("#side").innerHTML =
+    `<h4>Hộp thư</h4>` +
+    VIEWS.map(([k, l, ic]) => `<button class="nav ${view === k ? "on" : ""}" data-view="${k}" title="${l}">${ic}<span class="lbl-t">${l}</span><span class="n ${k === "review" && c(k) ? "hot" : ""}">${c(k)}</span></button>`).join("") +
+    `<h4>Phân tích</h4><button class="nav ${view === "report" ? "on" : ""}" data-view="report" title="Báo cáo trọng tài">${ICON.report}<span class="lbl-t">Báo cáo trọng tài</span></button>` +
+    `<div class="today">
+      <div><b>${st.auto_sent}</b><span>tự động gửi</span></div>
+      <div><b>${st.partial + st.flip + st.invalid}</b><span>chuyển cho người</span></div>
+      <div class="wide"><b>${st.saved}</b><span>câu trả lời suýt được gửi chỉ vì đứng trước</span></div>
+    </div>
+    <button class="nav newb" id="newB" title="Tin nhắn mới">${ICON.plus}<span class="lbl-t">Tin nhắn mới</span></button>
+    <div class="foot">Trọng tài: <b>${esc(label(S.settings.judge))}</b><br>chấm mỗi cặp nháp hai lượt, đổi chỗ.</div>`;
+}
+
+function pillFor(t) {
+  if (busy.has(t.id)) return `<span class="pill busy"><span class="spin"></span>${busy.get(t.id) === "draft" ? "Đang viết nháp" : "Đang chấm"}</span>`;
+  if (t.status === "sent") return `<span class="pill sent">✓ ${t.sent.by === "auto" ? "Tự động gửi" : "Bạn đã gửi"} · ${esc(t.sent.at)}</span>`;
+  if (t.status === "review") {
+    const s = t.decision.status;
+    return `<span class="pill review">${s === "flip" ? "Trọng tài lật kèo" : s === "partial" ? "Trọng tài lưỡng lự" : "Chấm lỗi định dạng"}</span>`;
+  }
+  return `<span class="pill ${STATUS[t.status][0]}">${STATUS[t.status][1]}</span>`;
+}
+
+function renderList() {
+  const list = $("#list");
+  list.hidden = view === "report";
+  if (view === "report") return;
+  const items = S.tickets.filter(t => view === "all" || t.status === view || (busy.has(t.id) && view === "new"));
+  const title = VIEWS.find(v => v[0] === view)[1];
+  list.innerHTML = `<div class="lh"><h2>${title}</h2><span class="c">${items.length}</span></div>
+    <div class="items">${items.length ? items.map(t => `
+      <div class="it ${t.id === sel ? "on" : ""}" data-id="${t.id}" tabindex="0">
+        ${avatar(t.customer)}
+        <div style="min-width:0">
+          <div class="r1"><span class="nm">${esc(t.customer)}</span><span class="tm">${esc(t.at)}</span></div>
+          <div class="sj">${esc(t.subject)}</div>
+          <div class="sn">${esc(t.message)}</div>
+          <div class="r3">${pillFor(t)}<span class="chan">· ${esc(t.channel)}</span></div>
+        </div>
+      </div>`).join("") : `<div class="empty"><b>${EMPTY[view][0]}</b>${EMPTY[view][1]}</div>`}</div>`;
+}
+
+function slot(n, letter, pick) { return `<span class="slot s${n} ${pick ? "pick" : ""}"><i>${letter}</i>Nháp ${n}</span>`; }
+function pickText(p) { return p === "tie" ? "hoà" : p ? `<b class="p${p}">Nháp ${p}</b>` : "không rõ"; }
+
+function runRow(d, i) {
+  const r = d.runs[i], p = d.picks[i], first = i === 0 ? 1 : 2, second = 3 - first;
+  return `<div class="run">
+    <span class="lbl">Lượt ${i + 1}</span>
+    <span class="slots">${slot(first, "A", p === first)}${slot(second, "B", p === second)}</span>
+    <span class="arrow">→</span>
+    <span class="vd">${r.verdict ? `[[${r.verdict}]]` : "??"}</span>
+    <span class="res">chọn ${pickText(p)}<span class="ms">${(r.ms / 1000).toFixed(1)}s</span></span>
+  </div>`;
+}
+
+function banner(t) {
+  const d = t.decision, w = d.winner;
+  const B = {
+    agree:["agree", ICON.check, `Trọng tài chọn Nháp ${w} ở cả hai lượt`, "Đổi chỗ hai nháp mà quyết định vẫn giữ nguyên, nên đủ tin để gửi."],
+    tie:["tie", ICON.eq, "Hai nháp ngang nhau ở cả hai lượt", "Trọng tài nhất quán: bản nào cũng ổn. Mặc định gửi Nháp 1."],
+    flip:["flip", ICON.swap, "Trọng tài lật kèo", `Cả hai lượt nó đều chọn ô ${d.runs[0].verdict}, dù nháp nằm ở ô đó đã đổi. Nó đang chọn vị trí chứ không chọn nội dung, nên phần này bạn quyết.`],
+    partial:["partial", ICON.half, "Trọng tài lưỡng lự", "Một lượt chọn một nháp, lượt kia lại bảo hoà. Chưa đủ chắc để tự gửi."],
+    invalid:["invalid", ICON.half, "Trọng tài trả lời sai định dạng", "Không đọc được [[A]]/[[B]]/[[C]] ở một lượt. Bạn chọn hoặc bấm chấm lại."],
+  }[d.status];
+  const naive = d.naive && !["agree","tie"].includes(d.status)
+    ? `<div class="naive">⚠ Nếu chỉ chấm một lượt như phần lớn hệ thống, <b>Nháp ${d.naive}</b> đã được gửi thẳng cho khách.</div>` : "";
+  return `<div class="ban ${B[0]}"><div class="ic">${B[1]}</div><div><h4>${B[2]}</h4><p>${B[3]}</p>${naive}</div></div>`;
+}
+
+function renderDetail() {
+  const el = $("#detail");
+  el.hidden = view === "report";
+  if (view === "report") return;
+  const t = sel && tk(sel);
+  if (!t) {
+    el.innerHTML = `<div class="dwrap"><div class="empty" style="padding-top:18vh"><b>Chọn một tin nhắn để bắt đầu</b>AI viết hai bản nháp, trọng tài chấm hai lượt có đổi chỗ.<br>Chỉ quyết định nào đứng vững khi đổi chỗ mới được tự gửi.</div></div>`;
+    return;
+  }
+  const b = busy.get(t.id), d = t.decision;
+  let body = "";
+  if (b) {
+    const st = [["Viết hai bản nháp", "draft"], ["Lượt 1: Nháp 1 đứng trước", "judge"], ["Lượt 2: đổi chỗ, Nháp 2 đứng trước", "judge"]];
+    body = `<div class="working"><div class="steps">${st.map(([l, k], i) => {
+      const cls = b === "draft" ? (k === "draft" ? "on" : "") : (k === "draft" ? "done" : "on");
+      return `<div class="stp ${cls}"><span class="dot">${cls === "done" ? "✓" : cls === "on" ? '<span class="spin" style="width:10px;height:10px;border-width:1.5px"></span>' : i + 1}</span>${l}</div>`;
+    }).join("")}</div><div style="display:grid;gap:8px;margin-top:18px"><div class="sk" style="width:92%"></div><div class="sk" style="width:78%"></div><div class="sk" style="width:85%"></div></div></div>`;
+  } else if (!t.drafts) {
+    body = `<div class="start"><div><h4>Chưa có bản nháp</h4><p>Hai mô hình viết hai câu trả lời theo chính sách cửa hàng. Trọng tài chấm hai lượt, lượt sau đổi chỗ hai nháp.</p>
+      <div class="flow"><span>${esc(label(S.settings.writer1))}</span>+<span>${esc(label(S.settings.writer2))}</span>→<span>Trọng tài ${esc(label(S.settings.judge))} × 2 lượt</span></div></div>
+      <button class="btn pri" data-act="process">${ICON.pen}Viết 2 nháp và chấm</button></div>`;
+  } else {
+    const sent = t.sent;
+    const safe = ["agree","tie"].includes(d.status);
+    body = (sent ? `<div class="sent"><div class="hd">✓ Đã gửi Nháp ${sent.draft}${sent.edited ? " (đã sửa)" : ""} <span>· ${sent.by === "auto" ? "tự động bởi Nháp Đôi" : "bởi bạn"} lúc ${esc(sent.at)}${sent.followed_ai === false ? " · khác lựa chọn của trọng tài" : ""}</span></div><p>${esc(sent.text)}</p></div><div class="sec"></div>` : "") +
+      banner(t) +
+      `<div class="runs">${runRow(d, 0)}${runRow(d, 1)}</div>
+      <details class="why"><summary>Xem lý lẽ của trọng tài ở hai lượt</summary><div class="whys">
+        ${d.runs.map((r, i) => `<div><h5>Lượt ${i + 1} · Nháp ${i + 1} là Assistant A</h5><pre>${esc(r.judgment || "(trống)")}</pre></div>`).join("")}
+      </div></details>
+      <div class="sec"><div class="sech"><h3>Hai bản nháp</h3><div class="grow"></div></div>
+      <div class="drafts">${t.drafts.map((x, i) => {
+        const n = i + 1, win = safe && d.winner === n;
+        return `<div class="draft ${win ? "win" : ""}">
+          <div class="dhd"><span class="tag t${n}">Nháp ${n}</span><span class="mdl">${esc(label(x.model))}</span>${win ? `<span class="badge">✓ Trọng tài chọn</span>` : ""}</div>
+          <textarea data-draft="${n}" ${sent ? "readonly" : ""} aria-label="Nội dung nháp ${n}">${esc(x.text)}</textarea>
+          <div class="dft"><span class="wc">${words(x.text)} từ</span>${sent ? "" : `<button class="btn ${win || (!safe && false) ? "pri" : ""}" data-send="${n}">${ICON.send}Gửi nháp ${n}</button>`}</div>
+        </div>`; }).join("")}</div>
+      ${sent ? "" : `<div class="acts"><button class="btn ghost" data-act="rejudge">${ICON.redo}Chấm lại hai nháp này</button><button class="btn ghost" data-act="redraft">${ICON.pen}Viết lại hai nháp</button></div>`}</div>`;
+  }
+  el.innerHTML = `<div class="dwrap">
+    <button class="btn ghost back" data-act="back">${ICON.back}Hộp thư</button>
+    <div class="dh"><h1>${esc(t.subject)}</h1><span class="chip">${esc(t.channel)}</span>${t.order ? `<span class="chip mono">${esc(t.order)}</span>` : ""}<span class="chip mono">${esc(t.id)}</span></div>
+    <div class="msg">${avatar(t.customer)}<div class="bubble"><small>${esc(t.customer)} · ${esc(t.at)}</small>${esc(t.message)}</div></div>
+    <div class="sec">${body}</div></div>`;
+  el.querySelectorAll("textarea").forEach(autosize);
+}
+function autosize(ta) { ta.style.height = "auto"; ta.style.height = ta.scrollHeight + 2 + "px"; }
+
+function renderReport() {
+  const el = $("#report");
+  el.hidden = view !== "report";
+  document.body.classList.toggle("show-report", view === "report");
+  if (view !== "report") return;
+  const st = S.stats, n = st.judged;
+  const pct = (a, b) => b ? Math.round(100 * a / b) : 0;
+  const human = st.partial + st.flip + st.invalid;
+  const segs = [["agree","Nhất quán, chọn một nháp","var(--ok)"],["tie","Nhất quán, hoà","color-mix(in srgb,var(--ok) 45%,var(--panel))"],
+    ["partial","Lưỡng lự","var(--warn)"],["flip","Lật kèo","var(--flip)"],["invalid","Sai định dạng","var(--muted)"]];
+  const done = S.tickets.filter(t => t.decision);
+  const aShare = pct(st.slot_a, st.slot_picks);
+  el.innerHTML = `<div class="rwrap">
+    <button class="btn ghost back" data-view="new">${ICON.back}Hộp thư</button>
+    <div class="rh"><h1>Báo cáo trọng tài</h1><p>Trọng tài hiện tại: <b>${esc(label(S.settings.judge))}</b>. Số liệu tính trên các ticket đã chấm trong hộp thư này.</p></div>
+    ${n ? `
+    <div class="kpis">
+      <div class="kpi"><span>Đã chấm</span><b>${n}</b><small>${n * 2} lượt gọi trọng tài</small></div>
+      <div class="kpi"><span>Đủ tin để tự gửi</span><b>${pct(st.agree + st.tie, n)}%</b><small>${st.agree + st.tie} ticket giữ nguyên quyết định khi đổi chỗ</small></div>
+      <div class="kpi"><span>Chuyển cho người</span><b>${pct(human, n)}%</b><small>${st.flip} lật kèo · ${st.partial} lưỡng lự · ${st.invalid} lỗi</small></div>
+      <div class="kpi hl"><span>Pha tránh được</span><b>${st.saved}</b><small>ticket mà hệ thống chấm một lượt đã tự gửi đi</small></div>
+    </div>
+    <div class="cards2">
+      <div class="card"><h3>Quyết định sau hai lượt</h3><p class="sub">Mỗi ticket rơi vào đúng một nhóm.</p>
+        <div class="stack" role="img" aria-label="Phân bố quyết định">${segs.filter(s => st[s[0]]).map(s => `<div style="flex:${st[s[0]]};background:${s[2]}" title="${s[1]}: ${st[s[0]]}"></div>`).join("")}</div>
+        <div class="lg">${segs.map(s => `<span><i style="background:${s[2]}"></i>${s[1]} <b>${st[s[0]]}</b></span>`).join("")}</div></div>
+      <div class="card"><h3>Trọng tài thích vị trí A bao nhiêu?</h3><p class="sub">Tỷ lệ lượt chọn Assistant A, trong các lượt có chọn một bên. Công bằng là quanh 50%.</p>
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px"><span class="big2">${aShare}%</span><span style="color:var(--muted);font-size:13px">${st.slot_a}/${st.slot_picks} lượt chọn A</span></div>
+        <div class="meter"><div class="f" style="width:${aShare}%"></div><div class="mid"></div></div>
+        <div class="mlab"><span>luôn chọn B</span><span>50% · công bằng</span><span>luôn chọn A</span></div></div>
+    </div>` : `<div class="card" style="margin-top:20px"><div class="empty" style="padding:28px"><b>Chưa có ticket nào được chấm.</b>Bấm “Xử lý hộp thư” ở góc trên, báo cáo sẽ tự điền.</div></div>`}
+    <div class="bridge">
+      <div><span>Nghiên cứu đo được</span><p>Trên 500 câu hỏi tiếng Việt, judge Qwen2.5-7B <b>đổi ý ở 48,7% cặp</b> khi chỉ đổi thứ tự hai câu trả lời, và cứ 8 lần đổi ý thì 7 lần nghiêng về câu đứng trước.</p></div>
+      <div><span>Sản phẩm làm gì</span><p>Mỗi cặp nháp được chấm <b>hai lượt, đổi chỗ</b>. Chỉ quyết định giữ nguyên ở cả hai lượt mới được tự gửi; còn lại chuyển cho nhân viên.</p></div>
+      <div><span>Khách hàng nhận được</span><p>Không câu trả lời nào được gửi <b>chỉ vì nó đứng trước</b>. Đổi lại, mỗi ticket tốn gấp đôi lượt gọi trọng tài.</p></div>
+    </div>
+    ${n ? `<div class="card" style="margin-top:12px"><h3>Chi tiết từng ticket</h3><p class="sub">Bấm một dòng để mở ticket.</p>
+      <div style="overflow-x:auto"><table class="tb"><thead><tr><th>Ticket</th><th>Khách</th><th>Lượt 1</th><th>Lượt 2</th><th>Kết quả</th><th>Gửi</th></tr></thead><tbody>
+      ${done.map(t => { const d = t.decision; return `<tr data-id="${t.id}"><td class="mono">${t.id}</td><td>${esc(t.customer)}</td>
+        <td>${pickText(d.picks[0])}</td><td>${pickText(d.picks[1])}</td><td>${pillFor(t).replace(/pill sent/, "pill new")}</td>
+        <td>${t.sent ? (t.sent.by === "auto" ? "Tự động" : "Nhân viên") : "—"}</td></tr>`; }).join("")}
+      </tbody></table></div></div>` : ""}
+  </div>`;
+}
+
+/* ---------- actions ---------- */
+function open(id) {
+  sel = id; document.body.classList.add("show-detail");
+  renderList(); renderDetail();
+  if (matchMedia("(max-width:860px)").matches) scrollTo(0, 0);
+}
+
+async function processTicket(id, opts = {}) {
+  const t = tk(id);
+  busy.set(id, opts.redraft || !t.drafts ? "draft" : "judge");
+  render();
+  // the step list moves to "judging" once drafts are typically done
+  const tm = setTimeout(() => { if (busy.get(id) === "draft") { busy.set(id, "judge"); if (sel === id) renderDetail(); renderList(); } }, 2600);
+  try {
+    upsert(await api(`/api/tickets/${id}/process`, opts));
+  } finally {
+    clearTimeout(tm); busy.delete(id);
+  }
+}
+
+async function runAll() {
+  const ids = S.tickets.filter(t => t.status === "new" && !busy.has(t.id)).map(t => t.id);
+  if (!ids.length) return;
+  bulk = {done:0, total:ids.length}; renderTop();
+  let fail = 0;
+  for (const id of ids) {
+    try { await processTicket(id, {autosend: !!S.settings.autopilot}); }
+    catch (e) { fail++; toast(`${id}: ${e.message}`, true); if (/hạn mức/.test(e.message)) break; }
+    bulk.done++;
+    S.stats = (await api("/api/state")).stats;
+    render();
+  }
+  bulk = null;
+  await refresh();
+  const st = S.stats;
+  toast(`Xong. ${st.auto_sent} ticket tự gửi, ${st.partial + st.flip + st.invalid} ticket chờ bạn chọn${fail ? `, ${fail} lỗi` : ""}.`);
+  if (st.partial + st.flip + st.invalid) { view = "review"; render(); }
+}
+
+function sheet(title, html, onMount) {
+  $("#layer").innerHTML = `<div class="scrim" data-close></div><aside class="sheet" role="dialog" aria-label="${esc(title)}"><div class="sh"><h3>${esc(title)}</h3><div class="grow"></div><button class="btn icon ghost" data-close aria-label="Đóng">✕</button></div><div class="sb">${html}</div></aside>`;
+  onMount && onMount($("#layer .sheet"));
+}
+const closeSheet = () => $("#layer").innerHTML = "";
+
+function openSettings() {
+  const opt = cur => S.models.map(m => `<option value="${m.id}" ${m.id === cur ? "selected" : ""}>${esc(m.label)} · ${m.provider}</option>`).join("");
+  sheet("Cài đặt mô hình", `
+    <div class="fld"><label>Người viết Nháp 1</label><select id="w1">${opt(S.settings.writer1)}</select></div>
+    <div class="fld"><label>Người viết Nháp 2</label><select id="w2">${opt(S.settings.writer2)}</select><small>Hai người viết khác nhau cho hai giọng văn khác nhau, giống ba mô hình trả lời trong nghiên cứu.</small></div>
+    <div class="fld"><label>Trọng tài</label><select id="jg">${opt(S.settings.judge)}</select><small>Dùng nguyên prompt MT-Bench pair-v2 của thí nghiệm. Mỗi ticket gọi trọng tài hai lần.</small></div>
+    <div class="box"><b>Quy tắc tự gửi.</b> Khi bật “Tự gửi khi trọng tài nhất quán”, nút “Xử lý hộp thư” chỉ gửi những ticket mà trọng tài chọn cùng một nháp (hoặc cùng bảo hoà) ở cả hai lượt. Lật kèo, lưỡng lự hay sai định dạng đều chuyển sang “Cần bạn chọn”.</div>
+    <button class="btn pri" id="saveSet">Lưu</button>
+    <div style="border-top:1px solid var(--line);padding-top:16px"><button class="btn danger" id="reset">Đặt lại hộp thư</button><div class="fld"><small>Xoá nháp, kết quả chấm và trạng thái gửi; giữ cài đặt mô hình.</small></div></div>`,
+  s => {
+    s.querySelector("#saveSet").onclick = async () => {
+      S = await api("/api/settings", {writer1:$("#w1").value, writer2:$("#w2").value, judge:$("#jg").value});
+      closeSheet(); render(); toast("Đã lưu cài đặt.");
+    };
+    s.querySelector("#reset").onclick = async () => {
+      if (!confirm("Đặt lại toàn bộ hộp thư?")) return;
+      S = await api("/api/reset", {}); sel = null; view = "new"; closeSheet(); render(); toast("Hộp thư đã về như lúc đầu.");
+    };
+  });
+}
+
+const SAMPLES = [
+  ["Hoàng Nam","Shop ơi mình đặt nhầm 2 cái ấm siêu tốc, đơn vẫn đang chờ lấy hàng. Huỷ bớt 1 cái được không?"],
+  ["Thanh Vy","Mã GIAOTRE của mình hết hạn hôm qua rồi, shop gia hạn giúp mình với được không?"],
+  ["Bác Sáu","Tôi ở Hà Nội đặt hôm qua, bao giờ hàng tới? Có giao chủ nhật không?"],
+];
+function openNew() {
+  sheet("Tin nhắn mới", `
+    <div class="fld"><label for="nc">Tên khách</label><input id="nc" placeholder="Ví dụ: Hoàng Nam"></div>
+    <div class="fld"><label for="ns">Tiêu đề (không bắt buộc)</label><input id="ns" placeholder="Tự lấy từ nội dung nếu để trống"></div>
+    <div class="fld"><label for="nm">Nội dung</label><textarea id="nm" placeholder="Dán tin nhắn của khách vào đây"></textarea></div>
+    <div class="fld"><label>Thử nhanh</label><div class="samples">${SAMPLES.map((s, i) => `<button data-s="${i}">${esc(s[0])}</button>`).join("")}</div></div>
+    <button class="btn pri" id="addT">${ICON.plus}Thêm vào hộp thư và chấm</button>`,
+  s => {
+    s.querySelectorAll("[data-s]").forEach(b => b.onclick = () => { const [n, m] = SAMPLES[+b.dataset.s]; $("#nc").value = n; $("#nm").value = m; });
+    s.querySelector("#addT").onclick = async () => {
+      try {
+        const t = await api("/api/tickets", {customer:$("#nc").value, subject:$("#ns").value, message:$("#nm").value});
+        upsert(t); closeSheet(); view = "all"; open(t.id); render();
+        await processTicket(t.id, {}); render();
+      } catch (e) { toast(e.message, true); render(); }
+    };
+    s.querySelector("#nc").focus();
+  });
+}
+
+document.addEventListener("click", async e => {
+  const q = s => e.target.closest(s);
+  if (q("[data-close]")) return closeSheet();
+  const v = q("[data-view]");
+  if (v) { view = v.dataset.view; document.body.classList.remove("show-detail"); if (view !== "report" && sel && !(view === "all" || tk(sel)?.status === view)) sel = null; return render(); }
+  const it = q("[data-id]");
+  if (it) { if (view === "report") view = "all"; open(it.dataset.id); return render(); }
+  if (q("#newB")) return openNew();
+  if (q("#setB")) return openSettings();
+  if (q("#policyB")) return sheet("Chính sách Quất Store", `<div class="policy">${esc(S.policy)}</div><div class="box">Cả người viết nháp lẫn trọng tài đều đọc chính sách này. Cửa hàng và khách hàng là giả lập.</div>`);
+  if (q("#themeB")) {
+    const r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+    r.dataset.theme = dark ? "light" : "dark"; try { localStorage.setItem("nd-theme", r.dataset.theme); } catch {}
+    return;
+  }
+  if (q("#runAll")) return runAll();
+  const a = q("[data-act]");
+  if (a) {
+    const act = a.dataset.act;
+    if (act === "back") { document.body.classList.remove("show-detail"); return; }
+    try { await processTicket(sel, {redraft: act === "redraft"}); } catch (err) { toast(err.message, true); }
+    return render();
+  }
+  const sb = q("[data-send]");
+  if (sb) {
+    const n = +sb.dataset.send, text = $(`textarea[data-draft="${n}"]`).value;
+    try { upsert(await api(`/api/tickets/${sel}/send`, {draft:n, text})); S.stats = (await api("/api/state")).stats; toast(`Đã gửi Nháp ${n} cho ${tk(sel).customer}.`); }
+    catch (err) { toast(err.message, true); }
+    return render();
+  }
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeSheet();
+  if (e.key === "Enter" && e.target.matches(".it")) e.target.click();
+});
+document.addEventListener("input", e => { if (e.target.matches(".draft textarea")) autosize(e.target); });
+$("#auto").addEventListener("change", async e => { S = await api("/api/settings", {autopilot:e.target.checked}); render(); });
+
+try { const th = localStorage.getItem("nd-theme"); if (th) document.documentElement.dataset.theme = th; } catch {}
+refresh().then(() => {
+  // deep links: #report, #review, #T-1046
+  const h = decodeURIComponent(location.hash.slice(1));
+  if (h === "report" || VIEWS.some(v => v[0] === h)) view = h;
+  if (tk(h)) { view = "all"; return open(h), render(); }
+  const first = S.tickets.find(t => view === "all" || t.status === (view === "report" ? "review" : view)) || S.tickets[0];
+  if (first && !matchMedia("(max-width:860px)").matches) sel = first.id;
+  render();
+}).catch(err => {
+  $("#detail").innerHTML = `<div class="dwrap"><div class="empty" style="padding-top:18vh"><b>Không kết nối được máy chủ</b>Chạy <span class="mono">python app/server.py</span> rồi mở lại trang này.<br><span style="font-size:12px">${esc(err.message)}</span></div></div>`;
+});
+</script>
+</body>
+</html>

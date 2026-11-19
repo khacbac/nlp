@@ -22,196 +22,29 @@ not return log-probabilities; then only the verdict is shown.
 
 import argparse
 import json
-import os
 import sys
-import time
-import urllib.error
-import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "experiment"))
+sys.path.insert(0, str(ROOT / "app"))
 
-import generate_answers as gen  # noqa: E402
-import judge as jdg  # noqa: E402
+import llm  # noqa: E402
+from llm import gen, jdg  # noqa: E402
 
 DATA = ROOT / "experiment" / "data"
 EXPERIMENT_MODELS = ["qwen", "gpt-oss", "gemini"]
 
-OPENAI_URLS = {
-    "groq": "https://api.groq.com/openai/v1/chat/completions",
-    "openrouter": "https://openrouter.ai/api/v1/chat/completions",
-}
-KEY_ENV = {"groq": "GROQ_API_KEY", "openrouter": "OPENROUTER_API_KEY", "gemini": "GEMINI_API_KEY"}
-
-# id -> (label, provider, provider model id, kind). The kind picks how to
-# switch reasoning off or down, which differs per model family:
-#   plain   no reasoning settings
-#   gpt-oss reasoning_effort "low" (Groq) / reasoning.effort "low" (OpenRouter)
-#   qwen3   Groq Qwen3: reasoning_effort "none"
-#   g3      Gemini 3.x: thinkingLevel "minimal"
-# Not offered: Gemini 2.5 (closed to new keys), Gemini 3.8 Flash (no "minimal"
-# thinking, timed out) and Gemma 4 (thinking cannot be switched off, ~30 s per call).
-# Models a key cannot reach are dropped at startup (see check_models).
-CATALOG = {
-    "or-qwen2.5-7b": ("Qwen2.5-7B (judge của thí nghiệm)", "openrouter", "qwen/qwen-2.5-7b-instruct", "plain"),
-    "or-gpt-oss-20b": ("gpt-oss-20b", "openrouter", "openai/gpt-oss-20b", "gpt-oss"),
-    "groq-gpt-oss-20b": ("gpt-oss-20b", "groq", "openai/gpt-oss-20b", "gpt-oss"),
-    "groq-gpt-oss-120b": ("gpt-oss-120b", "groq", "openai/gpt-oss-120b", "gpt-oss"),
-    "groq-qwen3.8-27b": ("Qwen3.8 27B", "groq", "qwen/qwen3.8-27b", "qwen3"),
-    "gemini-3.5-flash-lite": ("Gemini 3.5 Flash-Lite", "gemini", gen.GEMINI_MODEL, "g3"),
-    "gemini-3.5-flash": ("Gemini 3.5 Flash", "gemini", "gemini-3.5-flash", "g3"),
-}
-# Providers that rejected logprobs once are not asked again (per model).
-NO_LOGPROBS: set[str] = set()
-# Filled by check_models(); None means "not checked yet, offer everything with a key".
-REACHABLE: set[str] | None = None
-
-
-def load_env() -> None:
-    env = ROOT / ".env"
-    if env.exists():
-        for line in env.read_text().splitlines():
-            if "=" in line and not line.lstrip().startswith("#"):
-                k, v = line.split("=", 1)
-                os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
-
-
-def available() -> dict[str, tuple]:
-    return {k: v for k, v in CATALOG.items()
-            if os.environ.get(KEY_ENV[v[1]]) and (REACHABLE is None or k in REACHABLE)}
-
-
-def check_models() -> None:
-    """Keep only catalog models that each provider lists for this key."""
-    global REACHABLE
-    listed: dict[str, set[str]] = {}
-    sources = {
-        "groq": ("https://api.groq.com/openai/v1/models", "Authorization", "Bearer ", "data", "id"),
-        "openrouter": ("https://openrouter.ai/api/v1/models", "Authorization", "Bearer ", "data", "id"),
-        "gemini": ("https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000",
-                   "x-goog-api-key", "", "models", "name"),
-    }
-    for provider, (url, header, prefix, field, key_field) in sources.items():
-        key = os.environ.get(KEY_ENV[provider])
-        if not key:
-            continue
-        try:
-            req = urllib.request.Request(url, headers={header: prefix + key, "User-Agent": "position-bias-demo/1.0"})
-            with urllib.request.urlopen(req, timeout=20) as resp:
-                listed[provider] = {m[key_field].removeprefix("models/") for m in json.load(resp)[field]}
-        except Exception as e:  # keep the provider's models if the list cannot be read
-            print(f"  could not list {provider} models ({e}); offering all of them")
-    REACHABLE = {k for k, (_, provider, model, _) in CATALOG.items()
-                 if provider not in listed or model in listed[provider]}
-    for k, (label, provider, model, _) in CATALOG.items():
-        if os.environ.get(KEY_ENV[provider]) and k not in REACHABLE:
-            print(f"  skipping {label} ({provider}): {model} is not available for this key")
-
-
-def post(url: str, body: dict, headers: dict, retries: int = 3) -> dict:
-    """POST JSON; retry briefly on overload (503) and rate limits (429)."""
-    req = urllib.request.Request(url, data=json.dumps(body).encode(), headers={
-        "Content-Type": "application/json", "User-Agent": "position-bias-demo/1.0", **headers})
-    for attempt in range(retries):
-        try:
-            with urllib.request.urlopen(req, timeout=120) as resp:
-                return json.load(resp)
-        except urllib.error.HTTPError as e:
-            if e.code not in (429, 503) or attempt == retries - 1:
-                raise ApiError(e.code, e.read().decode(errors="replace")[:400]) from e
-        time.sleep(2 + 3 * attempt)
-    raise AssertionError("unreachable")
-
-
-class ApiError(Exception):
-    def __init__(self, code: int, detail: str):
-        super().__init__(f"HTTP {code}: {detail}")
-        self.code = code
-
-
-def chat(model_id: str, msgs: list[dict], max_tokens: int, want_logprobs: bool) -> tuple[str, list, list]:
-    """Return (text, tokens, top) where tokens/top are empty when logprobs are unavailable."""
-    _, provider, model, kind = CATALOG[model_id]
-    key = os.environ[KEY_ENV[provider]]
-    want_logprobs = want_logprobs and model_id not in NO_LOGPROBS
-
-    if provider == "gemini":
-        cfg = {"temperature": 0, "maxOutputTokens": max_tokens + 500}
-        if kind == "g3":
-            cfg["thinkingConfig"] = {"thinkingLevel": "minimal"}
-        if want_logprobs:
-            cfg.update(responseLogprobs=True, logprobs=jdg.TOP_LOGPROBS)
-        body = {"systemInstruction": {"parts": [{"text": msgs[0]["content"]}]},
-                "contents": [{"role": "user", "parts": [{"text": msgs[1]["content"]}]}],
-                "generationConfig": cfg}
-        try:
-            resp = post(gen.GEMINI_URL.format(model=model), body, {"x-goog-api-key": key})
-        except ApiError as e:
-            if want_logprobs and e.code == 400:
-                NO_LOGPROBS.add(model_id)
-                return chat(model_id, msgs, max_tokens, False)
-            raise
-        if not resp.get("candidates"):
-            raise RuntimeError("Gemini không trả lời (có thể bị bộ lọc an toàn chặn).")
-        cand = resp["candidates"][0]
-        text = "".join(p.get("text", "") for p in cand.get("content", {}).get("parts", []) if not p.get("thought"))
-        lr = cand.get("logprobsResult") or {}
-        chosen, tops = lr.get("chosenCandidates") or [], lr.get("topCandidates") or []
-        if chosen and len(chosen) == len(tops):
-            tokens = [c["token"] for c in chosen]
-            top = [{c["token"]: c["logProbability"] for c in t.get("candidates", [])} for t in tops]
-            return text, tokens, top
-        return text, [], []
-
-    body = {"model": model, "messages": msgs, "temperature": 0,
-            "max_tokens": max_tokens + (1500 if kind in ("gpt-oss", "qwen3") else 0)}
-    if kind == "gpt-oss" and provider == "groq":
-        body["reasoning_effort"] = "low"
-    elif kind == "gpt-oss":
-        body["reasoning"] = {"effort": "low", "exclude": True}
-    elif kind == "qwen3":
-        body["reasoning_effort"] = "none"
-    if want_logprobs:
-        body.update(logprobs=True, top_logprobs=jdg.TOP_LOGPROBS)
-    try:
-        resp = post(OPENAI_URLS[provider], body, {"Authorization": f"Bearer {key}"})
-    except ApiError as e:
-        if want_logprobs and e.code == 400:
-            NO_LOGPROBS.add(model_id)
-            return chat(model_id, msgs, max_tokens, False)
-        raise
-    choice = resp["choices"][0]
-    text = choice["message"].get("content") or ""
-    content = (choice.get("logprobs") or {}).get("content") or []
-    if content:
-        tokens = [c["token"] for c in content]
-        top = [{t["token"]: t["logprob"] for t in c.get("top_logprobs", [])} | {c["token"]: c["logprob"]}
-               for c in content]
-        return text, tokens, top
-    return text, [], []
-
 
 def judge_once(model_id: str, question: str, context: str, a: str, b: str) -> dict:
-    user = jdg.USER_TEMPLATE.format(
-        question=jdg.QUESTION_TEMPLATE.format(context=context, question=question), answer_a=a, answer_b=b)
-    msgs = [{"role": "system", "content": jdg.SYSTEM_PROMPT}, {"role": "user", "content": user}]
-    t0 = time.time()
-    text, tokens, top = chat(model_id, msgs, jdg.MAX_TOKENS, want_logprobs=True)
-    probs = {}
-    if tokens:
-        _, probs = jdg.read_verdict(tokens, top)
-    found = jdg.VERDICT_RE.findall(text)
-    return {"verdict": found[-1] if found else None, "probs": probs or None,
-            "judgment": text.strip(), "ms": int((time.time() - t0) * 1000)}
+    return llm.judge_once(model_id, jdg.QUESTION_TEMPLATE.format(context=context, question=question), a, b)
 
 
 def answer(model_id: str, question: str, context: str) -> dict:
     msgs = [{"role": "system", "content": gen.SYSTEM_PROMPT},
             {"role": "user", "content": gen.USER_PROMPT.format(context=context, question=question)}]
-    text, _, _ = chat(model_id, msgs, gen.MAX_TOKENS, want_logprobs=False)
+    text, _, _ = llm.chat(model_id, msgs, gen.MAX_TOKENS)
     return {"answer": text.strip()}
 
 
@@ -259,7 +92,7 @@ class Handler(SimpleHTTPRequestHandler):
         if self.path in ("/", "/index.html"):
             self.path = "/demo.html"
         if self.path == "/api/models":
-            return self.send_json({"models": [{"id": k, "label": v[0], "provider": v[1]} for k, v in available().items()],
+            return self.send_json({"models": [{"id": k, "label": v[0], "provider": v[1]} for k, v in llm.available().items()],
                                    "questions": len(QUESTIONS)})
         if self.path == "/api/questions":
             return self.send_json([{"qid": q["qid"], "title": q.get("title", ""), "question": q["question"]}
@@ -278,7 +111,7 @@ class Handler(SimpleHTTPRequestHandler):
         try:
             body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
             model = body.get("model")
-            if model not in available():
+            if model not in llm.available():
                 return self.send_json({"error": f"Chưa có API key cho mô hình {model}."}, 400)
             q, ctx = (body.get("question") or "").strip(), (body.get("context") or "").strip()
             if not q or not ctx:
@@ -295,20 +128,17 @@ class Handler(SimpleHTTPRequestHandler):
                     r2 = pool.submit(judge_once, model, q, ctx, y, x)
                     return self.send_json({"runs": [r1.result(), r2.result()]})
             return self.send_json({"error": "not found"}, 404)
-        except ApiError as e:
-            msg = "Hết hạn mức của nhà cung cấp, thử lại sau ít phút." if e.code == 429 else str(e)
-            return self.send_json({"error": msg}, 502)
         except Exception as e:  # surface provider errors to the page instead of a dropped connection
-            return self.send_json({"error": str(e)}, 500)
+            return self.send_json({"error": llm.error_message(e)}, 502 if isinstance(e, llm.ApiError) else 500)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--port", type=int, default=8000)
     args = parser.parse_args()
-    load_env()
-    check_models()
-    models = available()
+    llm.load_env()
+    llm.check_models()
+    models = llm.available()
     print(f"Loaded {len(QUESTIONS)} questions, {len(ANSWERS)} recorded answers, {len(PAIRS)} recorded pairs.")
     print("Models: " + (", ".join(v[0] + f" ({v[1]})" for v in models.values()) or "none — add keys to .env"))
     print(f"Open http://localhost:{args.port}")

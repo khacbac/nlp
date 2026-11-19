@@ -17,3 +17,6 @@ papers/pdf/
 
 # API keys for the live demo.
 .env
+
+# Local inbox state of the support app.
+app/data/state.json
