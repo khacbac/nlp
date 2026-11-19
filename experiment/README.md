@@ -6,6 +6,8 @@ generate_answers.ipynb  ->  Drive: answers_qwen.jsonl, answers_gpt-oss.jsonl, an
  (runs generate_answers.py on Colab)
 make_grading_sheet.py   ->  data/grading_sheets.xlsx (one tab per annotator; also grading_sheet_A..D.csv)
                             data/key.csv                 (keep private)
+judge.ipynb             ->  Drive: judgments_vi.jsonl   (runs judge.py on a Colab T4)
+analyze.py              ->  results/metrics_vi.json, summary_vi.md, figures/
 ```
 
 Answer files, grading sheets and `key.csv` are git-ignored: the repo is public
@@ -114,3 +116,32 @@ Grade the content, not the length or style. An answer that switches to
 another language part-way is graded on its content; mention it in `note`. Before the real grading, all
 four annotators grade the same 20 answers, compare, and settle
 disagreements.
+
+## 4. Judge (Google Colab, T4 GPU)
+
+Open <https://colab.research.google.com/github/khacbac/nlp/blob/main/experiment/judge.ipynb>
+and run all cells. Qwen2.5-7B-Instruct (AWQ, greedy) judges each of the 1500
+pairs twice, once in each order, with the MT-Bench pairwise prompt (tie
+`[[C]]` allowed) and the passage added to the question. The judge sees the
+raw answers, not the gold answer. For each run it saves the verdict and the
+probabilities of `A`/`B`/`C` at the verdict token; `p_x`/`p_y` are A/B
+renormalised and mapped back to the two answers. A rerun skips finished
+judgments. Download `judgments_vi.jsonl` from Drive into `data/` (git-ignored).
+
+## 5. Analysis
+
+```bash
+pip install numpy matplotlib            # sentence-transformers: optional cosine baseline
+python analyze.py                       # human scores from data/grading_sheet_A..D.csv
+python analyze.py --scores-dir data/ai_graded   # trial run on AI scores -> results/trial/
+```
+
+It writes every criterion with a 95% bootstrap interval (resampling
+questions, since the 3 pairs of one question are not independent) to
+`results/metrics_vi.json`, a readable `results/summary_vi.md`, and the charts
+in `results/figures/`. Questions with `gold_sai` in an annotator note are left
+out of the human-based criteria. `data/pairs_vi.jsonl` keeps one row per pair
+for picking demo examples (git-ignored: it names the models).
+
+`test_judge.py` guards the A/B -> X/Y mapping and verdict reading
+(`pytest test_judge.py`).

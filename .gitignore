@@ -3,6 +3,10 @@ experiment/data/key.csv
 experiment/data/answers*.jsonl
 experiment/data/grading_sheet*
 experiment/data/ai_graded/
+experiment/data/judgments*.jsonl
+experiment/data/pairs*.jsonl
+# Analysis run on AI stand-in scores, not the annotators'.
+experiment/results/trial/
 __pycache__/
 .ipynb_checkpoints/
 .venv/
