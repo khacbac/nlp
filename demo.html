@@ -33,6 +33,7 @@
   --flip:#F0679A; --flip-soft:#4A1729; --ok:#6CCB82; --ok-soft:#163222; color-scheme:dark}
 
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--body);-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
@@ -215,6 +216,47 @@ footer h4{margin:0 0 10px;font:600 13px/1 var(--body);letter-spacing:.1em;text-t
 footer ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 @media (max-width:760px){footer .wrap{grid-template-columns:1fr}}
 
+/* live lab */
+.lab{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:clamp(18px,2.4vw,28px);display:grid;gap:14px;align-content:start;min-width:0}
+.panel.full{grid-column:1/-1}
+.step-h{display:flex;align-items:baseline;gap:12px}
+.step-h .k{font:700 13px/1 var(--mono);color:var(--muted)}
+.seg{display:inline-flex;background:var(--sunk);border-radius:999px;padding:4px;gap:4px;justify-self:start}
+.seg button{font:600 14px/1 var(--body);border:0;background:transparent;color:var(--muted);padding:9px 14px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+label.f{display:grid;gap:6px;font-size:13px;font-weight:600;color:var(--muted)}
+.inp,select.inp,textarea.inp{font:400 15px/1.5 var(--body);color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;width:100%;min-width:0}
+textarea.inp{resize:vertical;min-height:96px}
+.inp:focus{outline:none;border-color:var(--x)}
+.qline{display:flex;gap:8px}
+.qline .inp{flex:1}
+.btn.sm{padding:10px 14px;font-size:14px}
+.btn[disabled]{opacity:.5;cursor:progress;transform:none}
+.qcard{background:var(--sunk);border-radius:14px;padding:14px 16px;display:grid;gap:8px}
+.qcard .q{font:600 17px/1.4 var(--body)}
+.qcard .t{font-size:13px;color:var(--muted)}
+.qcard details{font-size:14px;color:var(--muted)}
+.qcard summary{cursor:pointer;font-weight:600;color:var(--ink)}
+.slotbox{border-radius:16px;border:1.5px solid;padding:14px;display:grid;gap:10px}
+.slotbox.sx{border-color:var(--x);background:var(--x-soft)} .slotbox.sy{border-color:var(--y);background:var(--y-soft)}
+.slotbox .hd{display:flex;justify-content:space-between;align-items:center;gap:8px;font:700 13px/1 var(--body);letter-spacing:.08em;text-transform:uppercase}
+.slotbox.sx .hd{color:var(--x)} .slotbox.sy .hd{color:var(--y)}
+.answers2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.judgebar{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
+.judgebar label{flex:1;min-width:220px}
+.err{color:var(--flip);font-size:14px}
+.verdict-big{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.verdict-big .stamp{transform:rotate(-4deg)}
+.jtext{font-size:13px;color:var(--muted);white-space:pre-wrap;max-height:180px;overflow:auto;background:var(--sunk);border-radius:10px;padding:10px 12px}
+.recorded{font-size:15px;background:var(--sunk);border-radius:14px;padding:14px 16px}
+.tally{font-size:14px;color:var(--muted)}
+.offline{display:grid;gap:12px;background:var(--sunk);border-radius:20px;padding:24px}
+.offline code{font:500 14px/1.6 var(--mono);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:block;overflow-x:auto;white-space:pre}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp 0.8s linear infinite;vertical-align:-2px}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (max-width:860px){.lab,.answers2{grid-template-columns:1fr}}
+
 .reveal{transition:opacity .7s,transform .7s}
 .js .reveal.pending{opacity:.001;transform:translateY(24px)}
 #tip{position:fixed;pointer-events:none;z-index:50;background:var(--ink);color:var(--bg);font-size:13px;line-height:1.4;padding:8px 10px;border-radius:8px;max-width:240px;opacity:0;transition:opacity .12s}
@@ -226,6 +268,7 @@ footer ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
   <a class="logo" href="#top"><i aria-hidden="true"><b></b><b></b></i>đứng·trước</a>
   <ul>
    <li><a href="#thi-nghiem">Thí nghiệm</a></li>
+   <li><a href="#thu">Thử trực tiếp</a></li>
    <li><a href="#ho-so">Hồ sơ</a></li>
    <li><a href="#ket-qua">Kết quả</a></li>
    <li><a href="#bai-hoc">Bài học</a></li>
@@ -240,8 +283,8 @@ footer ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
    <h1>Giám khảo AI rất công tâm. Miễn là bạn <em>đứng trước.</em></h1>
    <p class="lead">Nhóm cho một mô hình 7B chấm 1.500 cặp câu trả lời, mỗi cặp hai lượt, lượt sau chỉ đổi chỗ hai câu. Gần một nửa số cặp, judge đổi ý. Thử bấm nút bên cạnh để xem chuyện đó xảy ra thế nào.</p>
    <div class="cta">
-    <a class="btn" href="#ket-qua">Xem kết quả</a>
-    <a class="btn ghost" href="#ho-so">Mở hồ sơ thật</a>
+    <a class="btn" href="#thu">Tự làm giám khảo</a>
+    <a class="btn ghost" href="#ket-qua">Xem kết quả</a>
    </div>
   </div>
 
@@ -290,6 +333,64 @@ footer ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
    <li><span class="big num">1–5</span><h3>So với người chấm</h3><p>Bốn người chấm từng câu trên thang 1–5, không biết câu nào của mô hình nào.</p></li>
   </ol>
   <p class="joke reveal">Judge được xem đoạn văn và câu hỏi, nhưng không được xem đáp án. Giống giám khảo thi hát không có bản nhạc gốc.</p>
+ </div>
+</section>
+
+<section id="thu" style="border-top:1px solid var(--line)">
+ <div class="wrap">
+  <div class="sec-head reveal">
+   <p class="eyebrow">Thử trực tiếp</p>
+   <h2>Đến lượt bạn bắt bài giám khảo</h2>
+   <p class="lead">Chọn một câu hỏi, lấy hai câu trả lời, chọn mô hình làm judge. Trang gửi cặp câu cho judge hai lần, lần sau đổi chỗ, rồi báo judge có giữ ý hay không.</p>
+  </div>
+  <div id="labOffline" class="offline" hidden>
+   <h3>Phần này cần server chạy trên máy</h3>
+   <p class="cap" style="color:var(--muted)">API key của các mô hình nằm trên máy bạn, không nằm trong trang web. Mở terminal ở thư mục repo và chạy:</p>
+   <code>cp .env.example .env      # điền GEMINI_API_KEY, GROQ_API_KEY...
+python demo/server.py     # rồi mở http://localhost:8000/#thu</code>
+   <p class="cap" style="color:var(--muted)">Các phần khác của trang vẫn xem được bình thường mà không cần server.</p>
+  </div>
+  <div id="lab" class="lab" hidden>
+   <div class="panel">
+    <div class="step-h"><span class="k">1</span><h3>Câu hỏi</h3></div>
+    <div class="seg" role="group" aria-label="Nguồn câu hỏi"><button type="button" id="srcBank" aria-pressed="true">Từ 500 câu của thí nghiệm</button><button type="button" id="srcOwn" aria-pressed="false">Tự nhập</button></div>
+    <div id="bankBox" style="display:grid;gap:10px">
+     <div class="qline"><input class="inp" id="qSearch" list="qList" placeholder="Gõ để tìm, ví dụ: chả, Napoleon, Hà Nội…" aria-label="Tìm câu hỏi"><button class="btn sm ghost" type="button" id="qRandom">Ngẫu nhiên</button></div>
+     <datalist id="qList"></datalist>
+    </div>
+    <div id="ownBox" style="display:none;gap:10px">
+     <label class="f" for="ownCtx">Đoạn văn<textarea class="inp" id="ownCtx" rows="5" placeholder="Dán một đoạn văn tiếng Việt…"></textarea></label>
+     <label class="f" for="ownQ">Câu hỏi<input class="inp" id="ownQ" placeholder="Câu hỏi về đoạn văn"></label>
+    </div>
+    <div class="qcard" id="qCard" hidden></div>
+   </div>
+
+   <div class="panel">
+    <div class="step-h"><span class="k">2</span><h3>Hai câu trả lời</h3></div>
+    <div class="answers2">
+     <div class="slotbox sx"><div class="hd"><span>Câu X</span></div>
+      <select class="inp" id="srcX" aria-label="Nguồn câu X"></select>
+      <textarea class="inp" id="ansX" rows="6" placeholder="Câu trả lời X"></textarea>
+     </div>
+     <div class="slotbox sy"><div class="hd"><span>Câu Y</span></div>
+      <select class="inp" id="srcY" aria-label="Nguồn câu Y"></select>
+      <textarea class="inp" id="ansY" rows="6" placeholder="Câu trả lời Y"></textarea>
+     </div>
+    </div>
+    <p class="cap" style="color:var(--muted);font-size:14px">Mẹo: hai câu càng giống nhau, judge càng dễ flip. Thử đặt cùng một câu vào cả X và Y.</p>
+   </div>
+
+   <div class="panel full">
+    <div class="step-h"><span class="k">3</span><h3>Giám khảo</h3></div>
+    <div class="judgebar">
+     <label class="f" for="judgeSel">Mô hình làm judge<select class="inp" id="judgeSel"></select></label>
+     <button class="btn" type="button" id="runJudge">Chấm hai lượt ⇅</button>
+    </div>
+    <p class="err" id="labErr" hidden></p>
+    <div id="labResult" style="display:grid;gap:16px"></div>
+    <p class="tally" id="tally"></p>
+   </div>
+  </div>
  </div>
 </section>
 
@@ -551,6 +652,137 @@ bars('rq4',[
     tip.textContent=t.dataset.tip;tip.style.opacity=1;
     var x=Math.min(e.clientX+14,window.innerWidth-260);tip.style.left=x+'px';tip.style.top=(e.clientY+16)+'px';
   });
+})();
+
+/* ---------- live lab (needs demo/server.py) ---------- */
+(function(){
+  var NAMES={qwen:'Qwen2.5-7B','gpt-oss':'gpt-oss-20b',gemini:'Gemini Flash-Lite'};
+  var models=[],bank=[],cur=null,mode='bank',tries=0,flips=0;
+  function api(path,body){
+    return fetch(path,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{})
+      .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||('HTTP '+r.status));return j})});
+  }
+  function showErr(m){var e=$('labErr');e.textContent=m||'';e.hidden=!m}
+  function opt(v,t){return '<option value="'+v+'">'+esc(t)+'</option>'}
+
+  function fillSources(){
+    ['X','Y'].forEach(function(s,i){
+      var h='';
+      if(mode==='bank'&&cur){Object.keys(cur.answers).forEach(function(m){h+=opt('rec:'+m,'Có sẵn: '+NAMES[m])})}
+      models.forEach(function(m){h+=opt('gen:'+m.id,'Sinh mới: '+m.label)});
+      h+=opt('own','Tự viết');
+      var sel=$('src'+s),prev=sel.value;sel.innerHTML=h;
+      var want=mode==='bank'&&cur?('rec:'+Object.keys(cur.answers)[i===0?0:2]):(models[i]?'gen:'+models[i].id:'own');
+      sel.value=[].some.call(sel.options,function(o){return o.value===prev})&&prev?prev:want;
+      if(!sel.value)sel.selectedIndex=0;
+      applySource(s,false);
+    });
+  }
+  function applySource(s,generate){
+    var v=$('src'+s).value,ta=$('ans'+s);
+    if(v.indexOf('rec:')===0){ta.value=cur.answers[v.slice(4)]||'';ta.dataset.rec=v.slice(4)}
+    else{delete ta.dataset.rec;if(v==='own'){if(generate)ta.value='';ta.focus()}else if(generate){gen(s,v.slice(4))}else if(!ta.value){ta.placeholder='Bấm chọn lại để sinh câu trả lời'}}
+  }
+  function question(){
+    if(mode==='bank')return cur?{question:cur.question,context:cur.context}:null;
+    var c=$('ownCtx').value.trim(),q=$('ownQ').value.trim();return c&&q?{question:q,context:c}:null;
+  }
+  function gen(s,model){
+    var q=question();if(!q){showErr('Chọn hoặc nhập câu hỏi trước.');return}
+    var ta=$('ans'+s);ta.value='';ta.placeholder='Đang sinh câu trả lời…';ta.disabled=true;showErr('');
+    api('/api/answer',{model:model,question:q.question,context:q.context})
+      .then(function(r){ta.value=r.answer}).catch(function(e){showErr(e.message)})
+      .finally(function(){ta.disabled=false;ta.placeholder='Câu trả lời '+s});
+  }
+  function pickQuestion(qid){
+    api('/api/question/'+encodeURIComponent(qid)).then(function(d){
+      cur=d;
+      var gold=d.gold?'<p><b>Đáp án gốc:</b> '+esc(d.gold)+'</p>':'';
+      $('qCard').innerHTML='<span class="t">'+esc(d.title)+' · '+d.qid+'</span><p class="q">'+esc(d.question)+'</p><details><summary>Đoạn văn judge sẽ đọc</summary><p style="margin-top:8px">'+esc(d.context)+'</p>'+gold+'</details>';
+      $('qCard').hidden=false;$('labResult').innerHTML='';fillSources();
+    }).catch(function(e){showErr(e.message)});
+  }
+  function setMode(m){
+    mode=m;$('srcBank').setAttribute('aria-pressed',m==='bank');$('srcOwn').setAttribute('aria-pressed',m==='own');
+    $('bankBox').style.display=m==='bank'?'grid':'none';$('ownBox').style.display=m==='own'?'grid':'none';
+    $('qCard').hidden=m!=='bank'||!cur;$('labResult').innerHTML='';
+    ['X','Y'].forEach(function(s){$('ans'+s).value=''});fillSources();
+  }
+
+  function label(p){if(!p)return null;return p.A>=p.B&&p.A>=p.C?'A':(p.B>=p.C?'B':'C')}
+  function runCard(n,r,nameA,nameB,clsA,clsB){
+    var v=r.verdict, winner=v==='A'?nameA:(v==='B'?nameB:(v==='C'?'hoà':'không rõ'));
+    var wc=v==='A'?'t'+clsA:(v==='B'?'t'+clsB:'');
+    var bars=r.probs?['A','B','C'].map(function(k){
+      var c=k==='A'?clsA:(k==='B'?clsB:'muted'),nm=k==='A'?nameA:(k==='B'?nameB:'hoà');
+      return '<div class="pbar"><span>'+k+' · '+esc(nm)+'</span><span class="tr"><span class="fl" style="background:var(--'+c+');width:'+(r.probs[k]*100)+'%"></span></span><span class="v num">'+fmt(r.probs[k],0)+'</span></div>'}).join('')
+      :'<p class="cap" style="color:var(--muted);font-size:13px">Nhà cung cấp không trả xác suất cho mô hình này, nên chỉ có phán quyết.</p>';
+    return '<div class="run"><div class="run-h"><span>Lượt '+n+' · '+(r.ms/1000).toFixed(1)+' giây</span><span class="order"><span class="o'+clsA+'">A = '+esc(nameA)+'</span><span class="o'+clsB+'">B = '+esc(nameB)+'</span></span></div>'+bars
+      +'<p class="run-v">Judge: <b>“'+(v||'?')+'”</b> → chọn <b class="'+wc+'">'+esc(winner)+'</b></p>'
+      +'<details><summary class="cap" style="cursor:pointer;color:var(--muted);font-size:13px">Lời giải thích của judge</summary><div class="jtext">'+esc(r.judgment||'(trống)')+'</div></details></div>';
+  }
+  function toXY(v,order){if(v==='C')return 'tie';if(v!=='A'&&v!=='B')return null;return (v==='A')===(order===1)?'x':'y'}
+  function recorded(){
+    var rx=$('ansX').dataset.rec,ry=$('ansY').dataset.rec;
+    if(mode!=='bank'||!cur||!rx||!ry||rx===ry)return '';
+    if($('ansX').value!==cur.answers[rx]||$('ansY').value!==cur.answers[ry])return '';
+    var p=cur.pairs.filter(function(p){return (p.x===rx&&p.y===ry)||(p.x===ry&&p.y===rx)})[0];if(!p)return '';
+    var sw=p.x!==rx;
+    function nm(w){if(w==='tie')return 'hoà';var m=w==='x'?p.x:p.y;return NAMES[m]}
+    var hx=sw?p.hy:p.hx,hy=sw?p.hx:p.hy;
+    var con=p.verdict_1===p.verdict_2;
+    return '<div class="recorded"><b>Trong thí nghiệm</b>, Qwen2.5-7B chấm cặp này: lượt 1 chọn <b>'+nm(p.verdict_1)+'</b>, lượt 2 chọn <b>'+nm(p.verdict_2)+'</b> ('+(con?'nhất quán':'flip')+'). '
+      +(hx!=null?'Người chấm: X được <b class="num">'+hx+'</b>, Y được <b class="num">'+hy+'</b> trên thang 5.':'')+'</div>';
+  }
+  $('runJudge').addEventListener('click',function(){
+    var q=question(),x=$('ansX').value.trim(),y=$('ansY').value.trim(),m=$('judgeSel').value;
+    if(!q){showErr('Chọn hoặc nhập câu hỏi trước.');return}
+    if(!x||!y){showErr('Cần đủ hai câu trả lời X và Y.');return}
+    showErr('');var b=this;b.disabled=true;b.innerHTML='<span class="spin"></span> Judge đang chấm hai lượt…';
+    var mlabel=$('judgeSel').selectedOptions[0].textContent;
+    api('/api/judge',{model:m,question:q.question,context:q.context,x:x,y:y}).then(function(res){
+      var r1=res.runs[0],r2=res.runs[1],w1=toXY(r1.verdict,1),w2=toXY(r2.verdict,2);
+      var stamp,msg;
+      if(!w1||!w2){stamp=['s-warn','Sai định dạng'];msg='Judge không ghi phán quyết đúng mẫu [[A]]/[[B]]/[[C]] ở ít nhất một lượt.'}
+      else if(w1===w2&&w1!=='tie'){stamp=['s-ok','Nhất quán'];msg='Judge chọn câu '+(w1==='x'?'X':'Y')+' ở cả hai lượt. Đổi chỗ không làm nó đổi ý.'}
+      else if(w1===w2){stamp=['s-ok','Nhất quán: hoà'];msg='Judge cho hoà ở cả hai lượt.'}
+      else if(w1==='tie'||w2==='tie'){stamp=['s-warn','Nửa flip'];msg='Một lượt judge chọn một câu, lượt kia cho hoà. Thứ tự vẫn ảnh hưởng tới phán quyết.'}
+      else{stamp=['s-flip','Flip!'];msg='Lượt 1 chọn câu '+(w1==='x'?'X':'Y')+', lượt 2 chọn câu '+(w2==='x'?'X':'Y')+'. Nội dung không đổi, chỉ thứ tự đổi.'}
+      var bpc='';
+      if(r1.probs&&r2.probs){
+        var n1=r1.probs.A+r1.probs.B,n2=r2.probs.A+r2.probs.B;
+        if(n1>0&&n2>0){var px=(r1.probs.A/n1+r2.probs.B/n2)/2;
+          bpc='<p class="cap" style="color:var(--muted)">Gộp hai lượt (BPC): P(X tốt hơn) = <b class="num">'+fmt(px)+'</b>, P(Y tốt hơn) = <b class="num">'+fmt(1-px)+'</b>'+(Math.abs(px-.5)<.02?', gần như hoà.':'.')+'</p>'}
+      }
+      tries++;if(stamp[1]==='Flip!')flips++;
+      $('labResult').innerHTML='<div class="verdict-big"><div class="stamp hit '+stamp[0]+'">'+stamp[1]+'</div><p style="font-size:17px;max-width:60ch;min-width:0"><b>'+esc(mlabel)+'</b>: '+msg+'</p></div>'
+        +'<div class="runs">'+runCard(1,r1,'X','Y','x','y')+runCard(2,r2,'Y','X','y','x')+'</div>'+bpc+recorded();
+      $('tally').textContent='Phiên này: bạn đã chấm '+tries+' cặp, judge flip '+flips+' lần.';
+    }).catch(function(e){showErr(e.message)}).finally(function(){b.disabled=false;b.textContent='Chấm hai lượt ⇅'});
+  });
+  $('srcX').addEventListener('change',function(){applySource('X',true)});
+  $('srcY').addEventListener('change',function(){applySource('Y',true)});
+  $('srcBank').addEventListener('click',function(){setMode('bank')});
+  $('srcOwn').addEventListener('click',function(){setMode('own')});
+  $('qRandom').addEventListener('click',function(){if(bank.length){var q=bank[Math.floor(Math.random()*bank.length)];$('qSearch').value=q.title+' · '+q.question;pickQuestion(q.qid)}});
+  $('qSearch').addEventListener('change',function(){
+    var v=this.value,q=bank.filter(function(q){return v===q.title+' · '+q.question})[0];if(q)pickQuestion(q.qid)});
+
+  var ctl=window.AbortController?new AbortController():null;var to=setTimeout(function(){ctl&&ctl.abort()},2500);
+  var live=location.protocol.indexOf('http')===0;
+  (live?fetch('/api/models',ctl?{signal:ctl.signal}:{}).then(function(r){if(!r.ok)throw 0;return r.json()}):Promise.reject())
+   .then(function(d){
+     clearTimeout(to);models=d.models;
+     $('lab').hidden=false;
+     if(!models.length){showErr('Server đang chạy nhưng chưa có API key nào. Điền key vào file .env rồi khởi động lại server.')}
+     var PROV={groq:'Groq',gemini:'Google AI Studio',openrouter:'OpenRouter'};
+     $('judgeSel').innerHTML=models.map(function(m){return opt(m.id,m.label+' · '+PROV[m.provider])}).join('');
+     return api('/api/questions').then(function(qs){
+       bank=qs;$('qList').innerHTML=qs.map(function(q){return '<option value="'+esc(q.title+' · '+q.question).replace(/"/g,'&quot;')+'">'}).join('');
+       if(qs.length){var q=qs.filter(function(q){return q.qid==='0058-0017-0003'})[0]||qs[0];$('qSearch').value=q.title+' · '+q.question;pickQuestion(q.qid)}
+       else{setMode('own')}
+     });
+   }).catch(function(){$('labOffline').hidden=false});
 })();
 
 /* reveal + chart grow: content stays visible if the observer never fires */

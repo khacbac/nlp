@@ -14,3 +14,6 @@ __pycache__/
 
 # Paper PDFs are copyrighted and large; keep them local.
 papers/pdf/
+
+# API keys for the live demo.
+.env
