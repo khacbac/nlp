@@ -46,20 +46,28 @@ OPENAI_URLS = {
 }
 KEY_ENV = {"groq": "GROQ_API_KEY", "openrouter": "OPENROUTER_API_KEY", "gemini": "GEMINI_API_KEY"}
 
-# id -> (label, provider, provider model id, is a reasoning model)
+# id -> (label, provider, provider model id, kind). The kind picks how to
+# switch reasoning off or down, which differs per model family:
+#   plain   no reasoning settings
+#   gpt-oss reasoning_effort "low" (Groq) / reasoning.effort "low" (OpenRouter)
+#   qwen3   Groq Qwen3: reasoning_effort "none"
+#   g3      Gemini 3.x: thinkingLevel "minimal"
+# Not offered: Gemini 2.5 (closed to new keys), Gemini 3.8 Flash (no "minimal"
+# thinking, timed out) and Gemma 4 (thinking cannot be switched off, ~30 s per call).
+# Models a key cannot reach are dropped at startup (see check_models).
 CATALOG = {
-    "or-qwen2.5-7b": ("Qwen2.5-7B (judge của thí nghiệm)", "openrouter", "qwen/qwen-2.5-7b-instruct", False),
-    "or-gpt-oss-20b": ("gpt-oss-20b", "openrouter", "openai/gpt-oss-20b", True),
-    "groq-gpt-oss-20b": ("gpt-oss-20b", "groq", "openai/gpt-oss-20b", True),
-    "groq-gpt-oss-120b": ("gpt-oss-120b", "groq", "openai/gpt-oss-120b", True),
-    "groq-llama-8b": ("Llama 3.1 8B", "groq", "llama-3.1-8b-instant", False),
-    "groq-llama-70b": ("Llama 3.3 70B", "groq", "llama-3.3-70b-versatile", False),
-    "groq-qwen3-32b": ("Qwen3 32B", "groq", "qwen/qwen3-32b", True),
-    "gemini-flash-lite": ("Gemini 3.5 Flash-Lite", "gemini", gen.GEMINI_MODEL, True),
-    "gemini-flash": ("Gemini 3.5 Flash", "gemini", "gemini-3.5-flash", True),
+    "or-qwen2.5-7b": ("Qwen2.5-7B (judge của thí nghiệm)", "openrouter", "qwen/qwen-2.5-7b-instruct", "plain"),
+    "or-gpt-oss-20b": ("gpt-oss-20b", "openrouter", "openai/gpt-oss-20b", "gpt-oss"),
+    "groq-gpt-oss-20b": ("gpt-oss-20b", "groq", "openai/gpt-oss-20b", "gpt-oss"),
+    "groq-gpt-oss-120b": ("gpt-oss-120b", "groq", "openai/gpt-oss-120b", "gpt-oss"),
+    "groq-qwen3.8-27b": ("Qwen3.8 27B", "groq", "qwen/qwen3.8-27b", "qwen3"),
+    "gemini-3.5-flash-lite": ("Gemini 3.5 Flash-Lite", "gemini", gen.GEMINI_MODEL, "g3"),
+    "gemini-3.5-flash": ("Gemini 3.5 Flash", "gemini", "gemini-3.5-flash", "g3"),
 }
 # Providers that rejected logprobs once are not asked again (per model).
 NO_LOGPROBS: set[str] = set()
+# Filled by check_models(); None means "not checked yet, offer everything with a key".
+REACHABLE: set[str] | None = None
 
 
 def load_env() -> None:
@@ -72,17 +80,50 @@ def load_env() -> None:
 
 
 def available() -> dict[str, tuple]:
-    return {k: v for k, v in CATALOG.items() if os.environ.get(KEY_ENV[v[1]])}
+    return {k: v for k, v in CATALOG.items()
+            if os.environ.get(KEY_ENV[v[1]]) and (REACHABLE is None or k in REACHABLE)}
 
 
-def post(url: str, body: dict, headers: dict) -> dict:
+def check_models() -> None:
+    """Keep only catalog models that each provider lists for this key."""
+    global REACHABLE
+    listed: dict[str, set[str]] = {}
+    sources = {
+        "groq": ("https://api.groq.com/openai/v1/models", "Authorization", "Bearer ", "data", "id"),
+        "openrouter": ("https://openrouter.ai/api/v1/models", "Authorization", "Bearer ", "data", "id"),
+        "gemini": ("https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000",
+                   "x-goog-api-key", "", "models", "name"),
+    }
+    for provider, (url, header, prefix, field, key_field) in sources.items():
+        key = os.environ.get(KEY_ENV[provider])
+        if not key:
+            continue
+        try:
+            req = urllib.request.Request(url, headers={header: prefix + key, "User-Agent": "position-bias-demo/1.0"})
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                listed[provider] = {m[key_field].removeprefix("models/") for m in json.load(resp)[field]}
+        except Exception as e:  # keep the provider's models if the list cannot be read
+            print(f"  could not list {provider} models ({e}); offering all of them")
+    REACHABLE = {k for k, (_, provider, model, _) in CATALOG.items()
+                 if provider not in listed or model in listed[provider]}
+    for k, (label, provider, model, _) in CATALOG.items():
+        if os.environ.get(KEY_ENV[provider]) and k not in REACHABLE:
+            print(f"  skipping {label} ({provider}): {model} is not available for this key")
+
+
+def post(url: str, body: dict, headers: dict, retries: int = 3) -> dict:
+    """POST JSON; retry briefly on overload (503) and rate limits (429)."""
     req = urllib.request.Request(url, data=json.dumps(body).encode(), headers={
         "Content-Type": "application/json", "User-Agent": "position-bias-demo/1.0", **headers})
-    try:
-        with urllib.request.urlopen(req, timeout=120) as resp:
-            return json.load(resp)
-    except urllib.error.HTTPError as e:
-        raise ApiError(e.code, e.read().decode(errors="replace")[:400]) from e
+    for attempt in range(retries):
+        try:
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                return json.load(resp)
+        except urllib.error.HTTPError as e:
+            if e.code not in (429, 503) or attempt == retries - 1:
+                raise ApiError(e.code, e.read().decode(errors="replace")[:400]) from e
+        time.sleep(2 + 3 * attempt)
+    raise AssertionError("unreachable")
 
 
 class ApiError(Exception):
@@ -93,12 +134,14 @@ class ApiError(Exception):
 
 def chat(model_id: str, msgs: list[dict], max_tokens: int, want_logprobs: bool) -> tuple[str, list, list]:
     """Return (text, tokens, top) where tokens/top are empty when logprobs are unavailable."""
-    _, provider, model, reasoning = CATALOG[model_id]
+    _, provider, model, kind = CATALOG[model_id]
     key = os.environ[KEY_ENV[provider]]
     want_logprobs = want_logprobs and model_id not in NO_LOGPROBS
 
     if provider == "gemini":
-        cfg = {"temperature": 0, "maxOutputTokens": max_tokens + 500, "thinkingConfig": {"thinkingLevel": "minimal"}}
+        cfg = {"temperature": 0, "maxOutputTokens": max_tokens + 500}
+        if kind == "g3":
+            cfg["thinkingConfig"] = {"thinkingLevel": "minimal"}
         if want_logprobs:
             cfg.update(responseLogprobs=True, logprobs=jdg.TOP_LOGPROBS)
         body = {"systemInstruction": {"parts": [{"text": msgs[0]["content"]}]},
@@ -123,14 +166,14 @@ def chat(model_id: str, msgs: list[dict], max_tokens: int, want_logprobs: bool) 
             return text, tokens, top
         return text, [], []
 
-    body = {"model": model, "messages": msgs, "temperature": 0, "max_tokens": max_tokens + (1500 if reasoning else 0)}
-    if reasoning:
-        if provider == "groq":
-            body["reasoning_effort"] = "low" if "gpt-oss" in model else "none"
-            if "gpt-oss" not in model:
-                body["reasoning_format"] = "hidden"
-        else:
-            body["reasoning"] = {"effort": "low", "exclude": True}
+    body = {"model": model, "messages": msgs, "temperature": 0,
+            "max_tokens": max_tokens + (1500 if kind in ("gpt-oss", "qwen3") else 0)}
+    if kind == "gpt-oss" and provider == "groq":
+        body["reasoning_effort"] = "low"
+    elif kind == "gpt-oss":
+        body["reasoning"] = {"effort": "low", "exclude": True}
+    elif kind == "qwen3":
+        body["reasoning_effort"] = "none"
     if want_logprobs:
         body.update(logprobs=True, top_logprobs=jdg.TOP_LOGPROBS)
     try:
@@ -264,6 +307,7 @@ def main() -> None:
     parser.add_argument("--port", type=int, default=8000)
     args = parser.parse_args()
     load_env()
+    check_models()
     models = available()
     print(f"Loaded {len(QUESTIONS)} questions, {len(ANSWERS)} recorded answers, {len(PAIRS)} recorded pairs.")
     print("Models: " + (", ".join(v[0] + f" ({v[1]})" for v in models.values()) or "none — add keys to .env"))
