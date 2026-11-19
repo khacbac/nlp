@@ -152,8 +152,6 @@ button{cursor:pointer}
 .start{border:1.5px dashed var(--line);border-radius:16px;padding:28px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;background:var(--panel)}
 .start h4{margin:0 0 6px;font-size:16px}
 .start p{margin:0;color:var(--ink2)}
-.flow{display:flex;gap:8px;align-items:center;margin-top:14px;flex-wrap:wrap;color:var(--muted);font-size:12.5px}
-.flow span{padding:3px 9px;border-radius:999px;background:var(--line2);color:var(--ink2)}
 
 .working{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--panel)}
 .steps{display:grid;gap:12px}
@@ -176,12 +174,10 @@ button{cursor:pointer}
 .ban.flip .ic{background:var(--flip);color:#fff}
 .ban.partial,.ban.invalid{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
 .ban.partial .ic,.ban.invalid .ic{background:var(--warn);color:#fff}
-.naive{margin-top:8px;font-size:12.5px;color:var(--ink2)}
-.naive b{color:var(--flip)}
 
 /* runs */
 .runs{display:grid;gap:8px;margin-top:12px}
-.rcap{margin:14px 0 0;font-size:12.5px;color:var(--muted)}
+.credit{display:inline-block;margin-top:12px;font-size:12.5px;color:var(--muted)}
 .run{display:grid;grid-template-columns:52px auto 18px 1fr;gap:10px;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
 .run .lbl{font-size:12px;color:var(--muted);font-weight:600}
 .slots{display:flex;gap:4px}
@@ -236,7 +232,6 @@ details.why summary::-webkit-details-marker{display:none}
 .cards2{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;margin-top:12px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
 .card h3{margin:0 0 4px;font-size:15px}
-.card .sub{margin:0 0 14px;color:var(--ink2);font-size:13px}
 .stack{display:flex;height:34px;border-radius:8px;overflow:hidden;gap:2px;background:var(--panel)}
 .stack div{min-width:2px;position:relative}
 .stack div:first-child{border-radius:8px 0 0 8px}
@@ -250,12 +245,6 @@ details.why summary::-webkit-details-marker{display:none}
 .meter .mid{position:absolute;left:50%;top:-4px;bottom:-4px;border-left:2px dashed var(--ink2)}
 .mlab{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}
 .big2{font:600 34px/1 var(--mono);letter-spacing:-1px}
-.bridge{margin-top:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.bridge div{padding:18px;border-right:1px solid var(--line2)}
-.bridge div:last-child{border-right:0}
-.bridge span{font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--brand);font-weight:700}
-.bridge p{margin:6px 0 0;font-size:13.5px;color:var(--ink2)}
-.bridge p b{color:var(--ink)}
 table.tb{width:100%;border-collapse:collapse;font-size:13px}
 .tb th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;padding:8px 10px;border-bottom:1px solid var(--line)}
 .tb td{padding:9px 10px;border-bottom:1px solid var(--line2)}
@@ -314,8 +303,7 @@ table.tb{width:100%;border-collapse:collapse;font-size:13px}
   body.show-report .report{display:block}
   .back{display:inline-flex}
   .dwrap,.rwrap{padding:16px 16px 48px}
-  .drafts,.whys,.cards2,.bridge{grid-template-columns:1fr}
-  .bridge div{border-right:0;border-bottom:1px solid var(--line2)}
+  .drafts,.whys,.cards2{grid-template-columns:1fr}
   .start{grid-template-columns:1fr}
   .run{grid-template-columns:auto 1fr;row-gap:6px}
   .run .arrow{display:none}
@@ -336,7 +324,7 @@ table.tb{width:100%;border-collapse:collapse;font-size:13px}
     </div>
     <div class="ws"><i></i>Hỗ trợ khách hàng</div>
     <div class="grow"></div>
-    <label class="switch" title="Khi bật, câu trả lời được gửi ngay nếu hai lần kiểm tra của AI cho cùng kết quả. Các tin còn lại chờ bạn duyệt.">
+    <label class="switch" title="Tự gửi câu trả lời khi AI chắc chắn">
       <input type="checkbox" id="auto"><span class="lbl-t">Tự gửi khi AI chắc chắn</span>
     </label>
     <button class="btn pri" id="runAll"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.5v11l9-5.5z"/></svg><span id="runAllT">AI xử lý tin mới</span></button>
@@ -417,7 +405,7 @@ function prodCard(p) {
 function openShop() {
   sheet("Kho hàng hôm nay", `<div class="cat">${S.products.map(p => `<div class="card">${pimg(p)}<div class="ci"><div class="pn">${esc(p.name)}</div>
       <div class="pm"><span>${vnd(p.price)}</span>${stock(p)}</div>${p.defect ? `<div class="defect">${esc(p.defect)}</div>` : ""}</div></div>`).join("")}</div>
-    <div class="box">AI đọc đúng bảng tồn kho này trong chính sách, nên chỉ được báo "còn hàng" khi kho ghi còn. Ảnh lấy từ Wikimedia Commons, <a href="/nguon-anh" target="_blank">xem nguồn ảnh</a>.</div>`);
+    <a class="credit" href="/nguon-anh" target="_blank">Nguồn ảnh</a>`);
 }
 const AVC = ["#0B7285","#A35F00","#6D4BC4","#1E7B3C","#C0245A","#2F6FD0","#7A5C3E","#00897B"];
 const avatar = n => { let h = 0; for (const c of n) h = (h * 31 + c.charCodeAt(0)) >>> 0;
@@ -462,7 +450,7 @@ function renderSide() {
       <div class="wide"><b>${st.saved}</b><span>lần AI suýt gửi nhầm đã được chặn lại</span></div>
     </div>
     <button class="nav newb" id="newB" title="Tạo yêu cầu">${ICON.plus}<span class="lbl-t">Tạo yêu cầu</span></button>
-    <div class="foot">AI đánh giá: <b>${esc(label(S.settings.judge))}</b><br>Mỗi tin được kiểm tra chéo hai lần.</div>`;
+    <div class="foot">AI đánh giá: <b>${esc(label(S.settings.judge))}</b></div>`;
 }
 
 function pillFor(t) {
@@ -510,15 +498,13 @@ function runRow(d, i) {
 function banner(t) {
   const d = t.decision, w = d.winner;
   const B = {
-    agree:["agree", ICON.check, `AI đề xuất gửi Gợi ý ${w}`, "Đã kiểm tra chéo: đảo thứ tự hai gợi ý, AI vẫn chọn cùng một câu. Đủ tin cậy để gửi."],
-    tie:["tie", ICON.eq, "Hai gợi ý đều ổn", "Cả hai lần kiểm tra, AI đều thấy hai gợi ý ngang nhau. Mặc định gửi Gợi ý 1."],
-    flip:["flip", ICON.swap, "AI đổi ý khi đảo thứ tự", `Lần nào AI cũng chọn gợi ý được đọc ${d.runs[0].verdict === "A" ? "trước" : "sau"}, tức là nó đang bị thứ tự chi phối chứ không dựa vào nội dung. Bạn xem và chọn giúp.`],
-    partial:["partial", ICON.half, "AI phân vân", "Một lần AI chọn một gợi ý, lần kia lại thấy hai gợi ý ngang nhau. Chưa đủ chắc để tự gửi."],
-    invalid:["invalid", ICON.half, "AI chưa đánh giá được", "Một lần kiểm tra không cho kết quả rõ ràng. Bạn chọn giúp hoặc bấm “Đánh giá lại”."],
+    agree:["agree", ICON.check, `AI đề xuất gửi Gợi ý ${w}`, "Có thể gửi ngay."],
+    tie:["tie", ICON.eq, "Hai gợi ý đều ổn", "Gửi gợi ý nào cũng được."],
+    flip:["flip", ICON.swap, "AI đổi ý khi đảo thứ tự", "Bạn xem và chọn câu trả lời để gửi."],
+    partial:["partial", ICON.half, "AI phân vân", "Bạn xem và chọn câu trả lời để gửi."],
+    invalid:["invalid", ICON.half, "AI chưa đánh giá được", "Bạn chọn câu trả lời hoặc bấm “Đánh giá lại”."],
   }[d.status];
-  const naive = d.naive && !["agree","tie"].includes(d.status)
-    ? `<div class="naive">⚠ Nếu chỉ hỏi AI một lần, <b>Gợi ý ${d.naive}</b> đã được tự động gửi cho khách.</div>` : "";
-  return `<div class="ban ${B[0]}"><div class="ic">${B[1]}</div><div><h4>${B[2]}</h4><p>${B[3]}</p>${naive}</div></div>`;
+  return `<div class="ban ${B[0]}"><div class="ic">${B[1]}</div><div><h4>${B[2]}</h4><p>${B[3]}</p></div></div>`;
 }
 
 function renderDetail() {
@@ -527,27 +513,26 @@ function renderDetail() {
   if (view === "report") return;
   const t = sel && tk(sel);
   if (!t) {
-    el.innerHTML = `<div class="dwrap"><div class="empty" style="padding-top:18vh"><b>Chọn một tin nhắn để bắt đầu</b>AI soạn sẵn hai câu trả lời và đề xuất câu nên gửi.<br>Khi AI chưa chắc, tin nhắn sẽ chờ bạn duyệt.</div></div>`;
+    el.innerHTML = `<div class="dwrap"><div class="empty" style="padding-top:18vh"><b>Chọn một tin nhắn để bắt đầu</b></div></div>`;
     return;
   }
   const b = busy.get(t.id), d = t.decision;
   let body = "";
   if (b) {
-    const st = [["Soạn hai gợi ý trả lời", "draft"], ["Kiểm tra lần 1", "judge"], ["Kiểm tra lần 2, đảo thứ tự hai gợi ý", "judge"]];
+    const st = [["Soạn hai gợi ý trả lời", "draft"], ["Kiểm tra lần 1", "judge"], ["Kiểm tra lần 2", "judge"]];
     body = `<div class="working"><div class="steps">${st.map(([l, k], i) => {
       const cls = b === "draft" ? (k === "draft" ? "on" : "") : (k === "draft" ? "done" : "on");
       return `<div class="stp ${cls}"><span class="dot">${cls === "done" ? "✓" : cls === "on" ? '<span class="spin" style="width:10px;height:10px;border-width:1.5px"></span>' : i + 1}</span>${l}</div>`;
     }).join("")}</div><div style="display:grid;gap:8px;margin-top:18px"><div class="sk" style="width:92%"></div><div class="sk" style="width:78%"></div><div class="sk" style="width:85%"></div></div></div>`;
   } else if (!t.drafts) {
-    body = `<div class="start"><div><h4>Chưa có câu trả lời</h4><p>AI soạn hai câu trả lời theo chính sách cửa hàng, rồi kiểm tra chéo để chọn câu nên gửi.</p>
-      <div class="flow"><span>${esc(label(S.settings.writer1))}</span>+<span>${esc(label(S.settings.writer2))}</span>→<span>Kiểm tra chéo · ${esc(label(S.settings.judge))}</span></div></div>
+    body = `<div class="start"><div><h4>Chưa có câu trả lời</h4></div>
       <button class="btn pri" data-act="process">${ICON.pen}Soạn trả lời</button></div>`;
   } else {
     const sent = t.sent;
     const safe = ["agree","tie"].includes(d.status);
     body = (sent ? `<div class="sent"><div class="hd">✓ Đã gửi Gợi ý ${sent.draft}${sent.edited ? " (đã sửa)" : ""} <span>· ${sent.by === "auto" ? "tự động" : "bởi bạn"} lúc ${esc(sent.at)}${sent.followed_ai === false ? " · khác đề xuất của AI" : ""}</span></div><p>${esc(sent.text)}</p></div><div class="sec"></div>` : "") +
       banner(t) +
-      `<p class="rcap">AI đọc hai gợi ý hai lần, lần sau đảo thứ tự. Gợi ý bên trái được đọc trước.</p><div class="runs">${runRow(d, 0)}${runRow(d, 1)}</div>
+      `<div class="runs">${runRow(d, 0)}${runRow(d, 1)}</div>
       <details class="why"><summary>Xem nhận xét của AI</summary><div class="whys">
         ${d.runs.map((r, i) => `<div><h5>Lần ${i + 1} · đọc Gợi ý ${i + 1} trước</h5><pre>${esc(r.judgment || "(trống)")}</pre></div>`).join("")}
       </div></details>
@@ -585,7 +570,7 @@ function renderReport() {
   const aShare = pct(st.slot_a, st.slot_picks);
   el.innerHTML = `<div class="rwrap">
     <button class="btn ghost back" data-view="new">${ICON.back}Hộp thư</button>
-    <div class="rh"><h1>Hiệu quả AI</h1><p>Mô hình đánh giá: <b>${esc(label(S.settings.judge))}</b>. Số liệu tính trên các tin nhắn AI đã xử lý.</p></div>
+    <div class="rh"><h1>Hiệu quả AI</h1><p>Mô hình đánh giá: <b>${esc(label(S.settings.judge))}</b></p></div>
     ${n ? `
     <div class="kpis">
       <div class="kpi"><span>AI đã xử lý</span><b>${n}</b><small>tin nhắn · ${n * 2} lần kiểm tra</small></div>
@@ -594,20 +579,15 @@ function renderReport() {
       <div class="kpi hl"><span>Gửi nhầm đã chặn</span><b>${st.saved}</b><small>tin sẽ bị tự gửi nếu chỉ hỏi AI một lần</small></div>
     </div>
     <div class="cards2">
-      <div class="card"><h3>Kết quả kiểm tra chéo</h3><p class="sub">Mỗi tin nhắn thuộc đúng một nhóm.</p>
+      <div class="card"><h3>Kết quả kiểm tra</h3>
         <div class="stack" role="img" aria-label="Phân bố kết quả kiểm tra">${segs.filter(s => st[s[0]]).map(s => `<div style="flex:${st[s[0]]};background:${s[2]}" title="${s[1]}: ${st[s[0]]}"></div>`).join("")}</div>
         <div class="lg">${segs.map(s => `<span><i style="background:${s[2]}"></i>${s[1]} <b>${st[s[0]]}</b></span>`).join("")}</div></div>
-      <div class="card"><h3>AI có thiên vị thứ tự không?</h3><p class="sub">Tỷ lệ AI chọn gợi ý được đọc trước, trong các lần có chọn. Không thiên vị là quanh 50%.</p>
+      <div class="card"><h3>Tỷ lệ chọn gợi ý đọc trước</h3>
         <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px"><span class="big2">${aShare}%</span><span style="color:var(--muted);font-size:13px">${st.slot_a}/${st.slot_picks} lần chọn gợi ý đọc trước</span></div>
         <div class="meter"><div class="f" style="width:${aShare}%"></div><div class="mid"></div></div>
         <div class="mlab"><span>luôn chọn câu sau</span><span>50% · không thiên vị</span><span>luôn chọn câu trước</span></div></div>
     </div>` : `<div class="card" style="margin-top:20px"><div class="empty" style="padding:28px"><b>AI chưa xử lý tin nhắn nào.</b>Bấm “AI xử lý tin mới” ở góc trên, số liệu sẽ tự cập nhật.</div></div>`}
-    <div class="bridge">
-      <div><span>Vì sao cần kiểm tra chéo</span><p>AI hay ưu tiên câu trả lời được đọc trước. Thử trên 500 câu hỏi tiếng Việt, <b>gần một nửa kết quả thay đổi</b> chỉ vì đảo thứ tự hai câu.</p></div>
-      <div><span>Hệ thống làm gì</span><p>Mỗi tin nhắn được đánh giá <b>hai lần, đảo thứ tự</b>. Chỉ khi hai lần cho cùng kết quả, câu trả lời mới được tự gửi; còn lại chờ nhân viên duyệt.</p></div>
-      <div><span>Khách hàng nhận được</span><p>Không câu trả lời nào được gửi <b>chỉ vì nó được đọc trước</b>. Đổi lại, mỗi tin tốn gấp đôi lượt gọi AI.</p></div>
-    </div>
-    ${n ? `<div class="card" style="margin-top:12px"><h3>Chi tiết từng tin nhắn</h3><p class="sub">Bấm một dòng để mở.</p>
+    ${n ? `<div class="card" style="margin-top:12px"><h3>Chi tiết từng tin nhắn</h3>
       <div style="overflow-x:auto"><table class="tb"><thead><tr><th>Mã</th><th>Khách</th><th>Lần 1</th><th>Lần 2</th><th>Kết quả</th><th>Người gửi</th></tr></thead><tbody>
       ${done.map(t => { const d = t.decision; return `<tr data-id="${t.id}"><td class="mono">${t.id}</td><td>${esc(t.customer)}</td>
         <td>${pickText(d.picks[0])}</td><td>${pickText(d.picks[1])}</td><td>${pillFor(t).replace(/pill sent/, "pill new")}</td>
@@ -665,9 +645,8 @@ function openSettings() {
   const opt = cur => S.models.map(m => `<option value="${m.id}" ${m.id === cur ? "selected" : ""}>${esc(m.label)} · ${m.provider}</option>`).join("");
   sheet("Cài đặt AI", `
     <div class="fld"><label>Mô hình soạn Gợi ý 1</label><select id="w1">${opt(S.settings.writer1)}</select></div>
-    <div class="fld"><label>Mô hình soạn Gợi ý 2</label><select id="w2">${opt(S.settings.writer2)}</select><small>Dùng hai mô hình khác nhau để có hai cách viết khác nhau.</small></div>
-    <div class="fld"><label>Mô hình đánh giá</label><select id="jg">${opt(S.settings.judge)}</select><small>Chọn câu trả lời nên gửi. Mỗi tin nhắn được đánh giá hai lần (kiểm tra chéo).</small></div>
-    <div class="box"><b>Quy tắc tự gửi.</b> Khi bật “Tự gửi khi AI chắc chắn”, chỉ những tin mà AI chọn cùng một gợi ý ở cả hai lần kiểm tra mới được gửi đi. Khi AI đổi ý, phân vân hoặc gặp lỗi, tin nhắn chờ trong mục “Cần bạn duyệt”.</div>
+    <div class="fld"><label>Mô hình soạn Gợi ý 2</label><select id="w2">${opt(S.settings.writer2)}</select></div>
+    <div class="fld"><label>Mô hình đánh giá</label><select id="jg">${opt(S.settings.judge)}</select></div>
     <button class="btn pri" id="saveSet">Lưu</button>
     <div style="border-top:1px solid var(--line);padding-top:16px"><button class="btn danger" id="reset">Làm mới hộp thư</button><div class="fld"><small>Xoá câu trả lời đã soạn, kết quả đánh giá và trạng thái gửi; giữ cài đặt mô hình.</small></div></div>`,
   s => {
@@ -723,7 +702,7 @@ document.addEventListener("click", async e => {
   if (q("#newB")) return openNew();
   if (q("#setB")) return openSettings();
   if (q("#shopB")) return openShop();
-  if (q("#policyB")) return sheet("Chính sách ABNQ Store", `<div class="policy">${esc(S.policy)}</div><div class="box">AI dựa vào chính sách này khi soạn và đánh giá câu trả lời.</div>`);
+  if (q("#policyB")) return sheet("Chính sách ABNQ Store", `<div class="policy">${esc(S.policy)}</div>`);
   if (q("#themeB")) {
     const r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
     r.dataset.theme = dark ? "light" : "dark"; try { localStorage.setItem("nd-theme", r.dataset.theme); } catch {}
