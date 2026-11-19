@@ -1,6 +1,6 @@
 # ABNQ Store support inbox: an AI judge checked against reply order
 
-A working support tool for a made-up shop, ABNQ Store. For each customer
+A working support tool for a made-up online xiangqi (Chinese chess) shop, ABNQ Store. For each customer
 message two models write a reply draft, and an LLM judge picks the better
 one. The judge is the one from the experiment (MT-Bench pair-v2 prompt,
 `[[A]]`/`[[B]]`/`[[C]]` verdict), and it is checked against itself:
