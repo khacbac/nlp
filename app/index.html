@@ -727,6 +727,10 @@ document.addEventListener("click", async e => {
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") closeSheet();
   if (e.key === "Enter" && e.target.matches(".it")) e.target.click();
+  // Presenter shortcut: a customer message "arrives" from the reserve pool (see DEMO.md).
+  if (e.key.toLowerCase() === "n" && !e.metaKey && !e.ctrlKey && !e.altKey && !e.target.closest("input,textarea,select,[contenteditable]")) {
+    api("/api/release", {}).then(t => { upsert(t); render(); toast(`Tin nhắn mới từ ${t.customer}.`); }).catch(err => toast(err.message, true));
+  }
 });
 document.addEventListener("input", e => { if (e.target.matches(".draft textarea")) autosize(e.target); });
 $("#auto").addEventListener("change", async e => { S = await api("/api/settings", {autopilot:e.target.checked}); render(); });

@@ -74,11 +74,18 @@ def now() -> str:
     return datetime.now().strftime("%H:%M")
 
 
+def all_tickets() -> list:
+    return json.loads((DATA / "tickets.json").read_text())
+
+
+def blank(t: dict) -> dict:
+    t.update(status="new", drafts=None, decision=None, sent=None)
+    return t
+
+
 def fresh_state() -> dict:
-    tickets = json.loads((DATA / "tickets.json").read_text())
-    for t in tickets:
-        t.update(status="new", drafts=None, decision=None, sent=None)
-    return {"settings": dict(DEFAULTS), "tickets": tickets}
+    # Reserve tickets stay out of the inbox until the presenter releases one (key N in the page).
+    return {"settings": dict(DEFAULTS), "tickets": [blank(t) for t in all_tickets() if not t.get("reserve")]}
 
 
 def load_state() -> dict:
@@ -255,12 +262,24 @@ class Handler(BaseHTTPRequestHandler):
                     state.update(fresh_state(), settings=keep)
                     save()
                     return self.send_json(snapshot())
+            if parts == ["api", "release"]:
+                with lock:
+                    have = {t["id"] for t in state["tickets"]}
+                    t = next((t for t in all_tickets() if t.get("reserve") and t["id"] not in have), None)
+                    if not t:
+                        return self.send_json({"error": "Không còn tin nhắn mới."}, 404)
+                    del t["reserve"]
+                    t["at"] = now()
+                    state["tickets"].insert(0, blank(t))
+                    save()
+                    return self.send_json(t)
             if parts == ["api", "tickets"]:
                 name, msg = (body.get("customer") or "").strip(), (body.get("message") or "").strip()
                 if not name or not msg:
                     return self.send_json({"error": "Cần tên khách và nội dung tin nhắn."}, 400)
                 with lock:
-                    n = 1000 + len(state["tickets"]) + 42
+                    # Past every known id, reserves included, so a released reserve never collides.
+                    n = 1 + max(int(x["id"][2:]) for x in state["tickets"] + all_tickets())
                     known = {p["id"] for p in PRODUCTS}
                     t = {"id": f"T-{n}", "customer": name, "channel": "Chat", "order": None, "at": now(),
                          "products": [i for i in body.get("products") or [] if i in known],
