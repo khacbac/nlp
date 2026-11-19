@@ -130,7 +130,10 @@ def process(tid: str, redraft: bool, autosend: bool) -> dict:
     with lock:
         t = find(tid)
         s = settings()
-    if redraft or not t["drafts"]:
+    if t.get("canned") and not t["drafts"] and not redraft:
+        # Demo tickets ship a fixed pair: equally fluent, one breaks a policy detail.
+        drafts = [{"model": "Mẫu trả lời", "text": x} for x in t["canned"]]
+    elif redraft or not t["drafts"]:
         with ThreadPoolExecutor(2) as pool:
             d1 = pool.submit(write_draft, s["writer1"], t)
             d2 = pool.submit(write_draft, s["writer2"], t)

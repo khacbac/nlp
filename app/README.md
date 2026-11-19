@@ -37,7 +37,8 @@ draft writers and the judge from the models your keys can reach.
 | `llm.py` | Provider client (Groq, Gemini, OpenRouter); also used by `demo/server.py` |
 | `server.py` | Inbox state and JSON API |
 | `index.html` | The inbox UI |
-| `data/policy.md`, `data/tickets.json` | Made-up shop policy and customer messages |
+| `data/policy.md`, `data/tickets.json` | Made-up shop policy and customer messages. Tickets with `canned` ship a fixed draft pair (one breaks a policy detail) instead of AI drafts; "Soạn gợi ý khác" switches them to AI drafts |
+| `DEMO.md` | Demo script with the answer key for the canned tickets |
 | `data/products.json` | Catalog with stock; the policy's stock table is generated from it |
 | `static/products/` | Product photos from Wikimedia Commons; authors and licenses at `/nguon-anh` |
 | `test_arbiter.py` | Guards the routing rule |
