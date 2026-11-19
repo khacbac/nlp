@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Nháp Đôi · Hộp thư CSKH</title>
+<title>Quất Store · Hỗ trợ khách hàng</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -159,16 +159,15 @@ button{cursor:pointer}
 
 /* runs */
 .runs{display:grid;gap:8px;margin-top:12px}
-.run{display:grid;grid-template-columns:62px auto 18px auto 1fr;gap:10px;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.rcap{margin:14px 0 0;font-size:12.5px;color:var(--muted)}
+.run{display:grid;grid-template-columns:52px auto 18px 1fr;gap:10px;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
 .run .lbl{font-size:12px;color:var(--muted);font-weight:600}
 .slots{display:flex;gap:4px}
 .slot{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 8px;border-radius:7px;font-size:12px;font-weight:600;border:1px solid transparent}
-.slot i{font:600 11px var(--mono);opacity:.7;font-style:normal}
 .slot.s1{background:var(--d1-soft);color:var(--d1)}
 .slot.s2{background:var(--d2-soft);color:var(--d2)}
 .slot.pick{border-color:currentColor;box-shadow:0 0 0 2px color-mix(in srgb,currentColor 18%,transparent)}
 .arrow{color:var(--muted);text-align:center}
-.vd{font:600 12.5px var(--mono);padding:3px 8px;border-radius:6px;background:var(--line2)}
 .res{justify-self:end;font-size:13px;color:var(--ink2);text-align:right}
 .res b.p1{color:var(--d1)} .res b.p2{color:var(--d2)}
 .res .ms{color:var(--muted);font:500 11.5px var(--mono);margin-left:6px}
@@ -311,16 +310,16 @@ table.tb{width:100%;border-collapse:collapse;font-size:13px}
   <header class="top">
     <div class="logo">
       <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="2" y="5" width="15" height="18" rx="4" fill="var(--d1)"/><rect x="11" y="5" width="15" height="18" rx="4" fill="var(--d2)" opacity=".9"/><path d="M9 12h10l-2.5-2.5M19 16H9l2.5 2.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Nháp Đôi
+      Quất Store
     </div>
-    <div class="ws"><i></i>Quất Store · CSKH</div>
+    <div class="ws"><i></i>Hỗ trợ khách hàng</div>
     <div class="grow"></div>
-    <label class="switch" title="Khi xử lý cả hộp thư: chỉ tự gửi những ticket mà trọng tài chọn giống nhau ở cả hai lượt đổi chỗ.">
-      <input type="checkbox" id="auto"><span class="lbl-t">Tự gửi khi trọng tài nhất quán</span>
+    <label class="switch" title="Khi bật, câu trả lời được gửi ngay nếu hai lần kiểm tra của AI cho cùng kết quả. Các tin còn lại chờ bạn duyệt.">
+      <input type="checkbox" id="auto"><span class="lbl-t">Tự gửi khi AI chắc chắn</span>
     </label>
-    <button class="btn pri" id="runAll"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.5v11l9-5.5z"/></svg><span id="runAllT">Xử lý hộp thư</span></button>
+    <button class="btn pri" id="runAll"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.5v11l9-5.5z"/></svg><span id="runAllT">AI xử lý tin mới</span></button>
     <button class="btn icon ghost hide-m" id="policyB" title="Chính sách cửa hàng" aria-label="Chính sách cửa hàng"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3.5h9a3 3 0 0 1 3 3v10H7a3 3 0 0 1-3-3z"/><path d="M7 7.5h6M7 10.5h6M7 13.5h3"/></svg></button>
-    <button class="btn icon ghost" id="setB" title="Cài đặt mô hình" aria-label="Cài đặt mô hình"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 6h8M15 6h2M3 14h2M9 14h8"/><circle cx="13" cy="6" r="2"/><circle cx="7" cy="14" r="2"/></svg></button>
+    <button class="btn icon ghost" id="setB" title="Cài đặt AI" aria-label="Cài đặt AI"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 6h8M15 6h2M3 14h2M9 14h8"/><circle cx="13" cy="6" r="2"/><circle cx="7" cy="14" r="2"/></svg></button>
     <button class="btn icon ghost" id="themeB" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện sáng/tối"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="6.5"/><path d="M10 3.5a6.5 6.5 0 0 0 0 13z" fill="currentColor"/></svg></button>
   </header>
 
@@ -356,16 +355,16 @@ const ICON = {
   send:'<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2.5 7.5 13.5 2.5l-4 11-2-4.5z"/></svg>',
 };
 const STATUS = {
-  new:["new","Mới"], review:["review","Cần bạn chọn"], ready:["ready","Sẵn sàng gửi"], sent:["sent","Đã gửi"],
+  new:["new","Mới"], review:["review","Cần bạn duyệt"], ready:["ready","Sẵn sàng gửi"], sent:["sent","Đã gửi"],
 };
 const VIEWS = [
-  ["new","Mới",ICON.inbox], ["review","Cần bạn chọn",ICON.review], ["ready","Sẵn sàng gửi",ICON.ready],
+  ["new","Mới",ICON.inbox], ["review","Cần bạn duyệt",ICON.review], ["ready","Sẵn sàng gửi",ICON.ready],
   ["sent","Đã gửi",ICON.sent], ["all","Tất cả",ICON.all],
 ];
 const EMPTY = {
-  new:["Hết thư mới.","Khách hôm nay hiền thật."],
-  review:["Không còn ca nào trọng tài lật kèo.","Hiếm đấy. Tận hưởng đi."],
-  ready:["Chưa có nháp nào sẵn sàng.","Bấm “Xử lý hộp thư” để AI viết và chấm."],
+  new:["Không có tin nhắn mới.","Khách hôm nay hiền thật."],
+  review:["Không có tin nào cần bạn duyệt.","AI tự lo được hết rồi."],
+  ready:["Chưa có câu trả lời nào chờ gửi.","Bấm “AI xử lý tin mới” để AI soạn trả lời."],
   sent:["Chưa gửi gì.","Khách vẫn đang chờ, nhẹ nhàng thôi."],
   all:["Hộp thư trống.","Đi pha trà đi."],
 };
@@ -404,7 +403,7 @@ function renderTop() {
   $("#auto").checked = !!S.settings.autopilot;
   const n = S.tickets.filter(t => t.status === "new" && !busy.has(t.id)).length;
   $("#runAll").disabled = !!bulk || !n;
-  $("#runAllT").textContent = bulk ? `Đang xử lý ${bulk.done}/${bulk.total}…` : n ? `Xử lý hộp thư (${n})` : "Hộp thư đã xử lý";
+  $("#runAllT").textContent = bulk ? `Đang xử lý ${bulk.done}/${bulk.total}…` : n ? `AI xử lý tin mới (${n})` : "Đã xử lý hết tin mới";
   $("#runAll").firstElementChild.outerHTML = bulk ? '<span class="spin"></span>' : '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.5v11l9-5.5z"/></svg>';
 }
 
@@ -414,22 +413,22 @@ function renderSide() {
   $("#side").innerHTML =
     `<h4>Hộp thư</h4>` +
     VIEWS.map(([k, l, ic]) => `<button class="nav ${view === k ? "on" : ""}" data-view="${k}" title="${l}">${ic}<span class="lbl-t">${l}</span><span class="n ${k === "review" && c(k) ? "hot" : ""}">${c(k)}</span></button>`).join("") +
-    `<h4>Phân tích</h4><button class="nav ${view === "report" ? "on" : ""}" data-view="report" title="Báo cáo trọng tài">${ICON.report}<span class="lbl-t">Báo cáo trọng tài</span></button>` +
+    `<h4>Phân tích</h4><button class="nav ${view === "report" ? "on" : ""}" data-view="report" title="Hiệu quả AI">${ICON.report}<span class="lbl-t">Hiệu quả AI</span></button>` +
     `<div class="today">
       <div><b>${st.auto_sent}</b><span>tự động gửi</span></div>
-      <div><b>${st.partial + st.flip + st.invalid}</b><span>chuyển cho người</span></div>
-      <div class="wide"><b>${st.saved}</b><span>câu trả lời suýt được gửi chỉ vì đứng trước</span></div>
+      <div><b>${st.partial + st.flip + st.invalid}</b><span>chờ bạn duyệt</span></div>
+      <div class="wide"><b>${st.saved}</b><span>lần AI suýt gửi nhầm đã được chặn lại</span></div>
     </div>
-    <button class="nav newb" id="newB" title="Tin nhắn mới">${ICON.plus}<span class="lbl-t">Tin nhắn mới</span></button>
-    <div class="foot">Trọng tài: <b>${esc(label(S.settings.judge))}</b><br>chấm mỗi cặp nháp hai lượt, đổi chỗ.</div>`;
+    <button class="nav newb" id="newB" title="Tạo yêu cầu">${ICON.plus}<span class="lbl-t">Tạo yêu cầu</span></button>
+    <div class="foot">AI đánh giá: <b>${esc(label(S.settings.judge))}</b><br>Mỗi tin được kiểm tra chéo hai lần.</div>`;
 }
 
 function pillFor(t) {
-  if (busy.has(t.id)) return `<span class="pill busy"><span class="spin"></span>${busy.get(t.id) === "draft" ? "Đang viết nháp" : "Đang chấm"}</span>`;
+  if (busy.has(t.id)) return `<span class="pill busy"><span class="spin"></span>${busy.get(t.id) === "draft" ? "AI đang soạn" : "AI đang kiểm tra"}</span>`;
   if (t.status === "sent") return `<span class="pill sent">✓ ${t.sent.by === "auto" ? "Tự động gửi" : "Bạn đã gửi"} · ${esc(t.sent.at)}</span>`;
   if (t.status === "review") {
     const s = t.decision.status;
-    return `<span class="pill review">${s === "flip" ? "Trọng tài lật kèo" : s === "partial" ? "Trọng tài lưỡng lự" : "Chấm lỗi định dạng"}</span>`;
+    return `<span class="pill review">${s === "flip" ? "AI đổi ý" : s === "partial" ? "AI phân vân" : "AI gặp lỗi"}</span>`;
   }
   return `<span class="pill ${STATUS[t.status][0]}">${STATUS[t.status][1]}</span>`;
 }
@@ -453,31 +452,30 @@ function renderList() {
       </div>`).join("") : `<div class="empty"><b>${EMPTY[view][0]}</b>${EMPTY[view][1]}</div>`}</div>`;
 }
 
-function slot(n, letter, pick) { return `<span class="slot s${n} ${pick ? "pick" : ""}"><i>${letter}</i>Nháp ${n}</span>`; }
-function pickText(p) { return p === "tie" ? "hoà" : p ? `<b class="p${p}">Nháp ${p}</b>` : "không rõ"; }
+function slot(n, pick) { return `<span class="slot s${n} ${pick ? "pick" : ""}">Gợi ý ${n}</span>`; }
+function pickText(p) { return p === "tie" ? "thấy ngang nhau" : p ? `chọn <b class="p${p}">Gợi ý ${p}</b>` : "không rõ"; }
 
 function runRow(d, i) {
   const r = d.runs[i], p = d.picks[i], first = i === 0 ? 1 : 2, second = 3 - first;
   return `<div class="run">
-    <span class="lbl">Lượt ${i + 1}</span>
-    <span class="slots">${slot(first, "A", p === first)}${slot(second, "B", p === second)}</span>
+    <span class="lbl">Lần ${i + 1}</span>
+    <span class="slots">${slot(first, p === first)}${slot(second, p === second)}</span>
     <span class="arrow">→</span>
-    <span class="vd">${r.verdict ? `[[${r.verdict}]]` : "??"}</span>
-    <span class="res">chọn ${pickText(p)}<span class="ms">${(r.ms / 1000).toFixed(1)}s</span></span>
+    <span class="res">${pickText(p)}<span class="ms">${(r.ms / 1000).toFixed(1)}s</span></span>
   </div>`;
 }
 
 function banner(t) {
   const d = t.decision, w = d.winner;
   const B = {
-    agree:["agree", ICON.check, `Trọng tài chọn Nháp ${w} ở cả hai lượt`, "Đổi chỗ hai nháp mà quyết định vẫn giữ nguyên, nên đủ tin để gửi."],
-    tie:["tie", ICON.eq, "Hai nháp ngang nhau ở cả hai lượt", "Trọng tài nhất quán: bản nào cũng ổn. Mặc định gửi Nháp 1."],
-    flip:["flip", ICON.swap, "Trọng tài lật kèo", `Cả hai lượt nó đều chọn ô ${d.runs[0].verdict}, dù nháp nằm ở ô đó đã đổi. Nó đang chọn vị trí chứ không chọn nội dung, nên phần này bạn quyết.`],
-    partial:["partial", ICON.half, "Trọng tài lưỡng lự", "Một lượt chọn một nháp, lượt kia lại bảo hoà. Chưa đủ chắc để tự gửi."],
-    invalid:["invalid", ICON.half, "Trọng tài trả lời sai định dạng", "Không đọc được [[A]]/[[B]]/[[C]] ở một lượt. Bạn chọn hoặc bấm chấm lại."],
+    agree:["agree", ICON.check, `AI đề xuất gửi Gợi ý ${w}`, "Đã kiểm tra chéo: đảo thứ tự hai gợi ý, AI vẫn chọn cùng một câu. Đủ tin cậy để gửi."],
+    tie:["tie", ICON.eq, "Hai gợi ý đều ổn", "Cả hai lần kiểm tra, AI đều thấy hai gợi ý ngang nhau. Mặc định gửi Gợi ý 1."],
+    flip:["flip", ICON.swap, "AI đổi ý khi đảo thứ tự", `Lần nào AI cũng chọn gợi ý được đọc ${d.runs[0].verdict === "A" ? "trước" : "sau"}, tức là nó đang bị thứ tự chi phối chứ không dựa vào nội dung. Bạn xem và chọn giúp.`],
+    partial:["partial", ICON.half, "AI phân vân", "Một lần AI chọn một gợi ý, lần kia lại thấy hai gợi ý ngang nhau. Chưa đủ chắc để tự gửi."],
+    invalid:["invalid", ICON.half, "AI chưa đánh giá được", "Một lần kiểm tra không cho kết quả rõ ràng. Bạn chọn giúp hoặc bấm “Đánh giá lại”."],
   }[d.status];
   const naive = d.naive && !["agree","tie"].includes(d.status)
-    ? `<div class="naive">⚠ Nếu chỉ chấm một lượt như phần lớn hệ thống, <b>Nháp ${d.naive}</b> đã được gửi thẳng cho khách.</div>` : "";
+    ? `<div class="naive">⚠ Nếu chỉ hỏi AI một lần, <b>Gợi ý ${d.naive}</b> đã được tự động gửi cho khách.</div>` : "";
   return `<div class="ban ${B[0]}"><div class="ic">${B[1]}</div><div><h4>${B[2]}</h4><p>${B[3]}</p>${naive}</div></div>`;
 }
 
@@ -487,39 +485,39 @@ function renderDetail() {
   if (view === "report") return;
   const t = sel && tk(sel);
   if (!t) {
-    el.innerHTML = `<div class="dwrap"><div class="empty" style="padding-top:18vh"><b>Chọn một tin nhắn để bắt đầu</b>AI viết hai bản nháp, trọng tài chấm hai lượt có đổi chỗ.<br>Chỉ quyết định nào đứng vững khi đổi chỗ mới được tự gửi.</div></div>`;
+    el.innerHTML = `<div class="dwrap"><div class="empty" style="padding-top:18vh"><b>Chọn một tin nhắn để bắt đầu</b>AI soạn sẵn hai câu trả lời và đề xuất câu nên gửi.<br>Khi AI chưa chắc, tin nhắn sẽ chờ bạn duyệt.</div></div>`;
     return;
   }
   const b = busy.get(t.id), d = t.decision;
   let body = "";
   if (b) {
-    const st = [["Viết hai bản nháp", "draft"], ["Lượt 1: Nháp 1 đứng trước", "judge"], ["Lượt 2: đổi chỗ, Nháp 2 đứng trước", "judge"]];
+    const st = [["Soạn hai gợi ý trả lời", "draft"], ["Kiểm tra lần 1", "judge"], ["Kiểm tra lần 2, đảo thứ tự hai gợi ý", "judge"]];
     body = `<div class="working"><div class="steps">${st.map(([l, k], i) => {
       const cls = b === "draft" ? (k === "draft" ? "on" : "") : (k === "draft" ? "done" : "on");
       return `<div class="stp ${cls}"><span class="dot">${cls === "done" ? "✓" : cls === "on" ? '<span class="spin" style="width:10px;height:10px;border-width:1.5px"></span>' : i + 1}</span>${l}</div>`;
     }).join("")}</div><div style="display:grid;gap:8px;margin-top:18px"><div class="sk" style="width:92%"></div><div class="sk" style="width:78%"></div><div class="sk" style="width:85%"></div></div></div>`;
   } else if (!t.drafts) {
-    body = `<div class="start"><div><h4>Chưa có bản nháp</h4><p>Hai mô hình viết hai câu trả lời theo chính sách cửa hàng. Trọng tài chấm hai lượt, lượt sau đổi chỗ hai nháp.</p>
-      <div class="flow"><span>${esc(label(S.settings.writer1))}</span>+<span>${esc(label(S.settings.writer2))}</span>→<span>Trọng tài ${esc(label(S.settings.judge))} × 2 lượt</span></div></div>
-      <button class="btn pri" data-act="process">${ICON.pen}Viết 2 nháp và chấm</button></div>`;
+    body = `<div class="start"><div><h4>Chưa có câu trả lời</h4><p>AI soạn hai câu trả lời theo chính sách cửa hàng, rồi kiểm tra chéo để chọn câu nên gửi.</p>
+      <div class="flow"><span>${esc(label(S.settings.writer1))}</span>+<span>${esc(label(S.settings.writer2))}</span>→<span>Kiểm tra chéo · ${esc(label(S.settings.judge))}</span></div></div>
+      <button class="btn pri" data-act="process">${ICON.pen}Soạn trả lời</button></div>`;
   } else {
     const sent = t.sent;
     const safe = ["agree","tie"].includes(d.status);
-    body = (sent ? `<div class="sent"><div class="hd">✓ Đã gửi Nháp ${sent.draft}${sent.edited ? " (đã sửa)" : ""} <span>· ${sent.by === "auto" ? "tự động bởi Nháp Đôi" : "bởi bạn"} lúc ${esc(sent.at)}${sent.followed_ai === false ? " · khác lựa chọn của trọng tài" : ""}</span></div><p>${esc(sent.text)}</p></div><div class="sec"></div>` : "") +
+    body = (sent ? `<div class="sent"><div class="hd">✓ Đã gửi Gợi ý ${sent.draft}${sent.edited ? " (đã sửa)" : ""} <span>· ${sent.by === "auto" ? "tự động" : "bởi bạn"} lúc ${esc(sent.at)}${sent.followed_ai === false ? " · khác đề xuất của AI" : ""}</span></div><p>${esc(sent.text)}</p></div><div class="sec"></div>` : "") +
       banner(t) +
-      `<div class="runs">${runRow(d, 0)}${runRow(d, 1)}</div>
-      <details class="why"><summary>Xem lý lẽ của trọng tài ở hai lượt</summary><div class="whys">
-        ${d.runs.map((r, i) => `<div><h5>Lượt ${i + 1} · Nháp ${i + 1} là Assistant A</h5><pre>${esc(r.judgment || "(trống)")}</pre></div>`).join("")}
+      `<p class="rcap">AI đọc hai gợi ý hai lần, lần sau đảo thứ tự. Gợi ý bên trái được đọc trước.</p><div class="runs">${runRow(d, 0)}${runRow(d, 1)}</div>
+      <details class="why"><summary>Xem nhận xét của AI</summary><div class="whys">
+        ${d.runs.map((r, i) => `<div><h5>Lần ${i + 1} · đọc Gợi ý ${i + 1} trước</h5><pre>${esc(r.judgment || "(trống)")}</pre></div>`).join("")}
       </div></details>
-      <div class="sec"><div class="sech"><h3>Hai bản nháp</h3><div class="grow"></div></div>
+      <div class="sec"><div class="sech"><h3>Câu trả lời gợi ý</h3><div class="grow"></div></div>
       <div class="drafts">${t.drafts.map((x, i) => {
         const n = i + 1, win = safe && d.winner === n;
         return `<div class="draft ${win ? "win" : ""}">
-          <div class="dhd"><span class="tag t${n}">Nháp ${n}</span><span class="mdl">${esc(label(x.model))}</span>${win ? `<span class="badge">✓ Trọng tài chọn</span>` : ""}</div>
-          <textarea data-draft="${n}" ${sent ? "readonly" : ""} aria-label="Nội dung nháp ${n}">${esc(x.text)}</textarea>
-          <div class="dft"><span class="wc">${words(x.text)} từ</span>${sent ? "" : `<button class="btn ${win || (!safe && false) ? "pri" : ""}" data-send="${n}">${ICON.send}Gửi nháp ${n}</button>`}</div>
+          <div class="dhd"><span class="tag t${n}">Gợi ý ${n}</span><span class="mdl">${esc(label(x.model))}</span>${win ? `<span class="badge">✓ AI đề xuất</span>` : ""}</div>
+          <textarea data-draft="${n}" ${sent ? "readonly" : ""} aria-label="Nội dung gợi ý ${n}">${esc(x.text)}</textarea>
+          <div class="dft"><span class="wc">${words(x.text)} từ</span>${sent ? "" : `<button class="btn ${win ? "pri" : ""}" data-send="${n}">${ICON.send}Gửi gợi ý này</button>`}</div>
         </div>`; }).join("")}</div>
-      ${sent ? "" : `<div class="acts"><button class="btn ghost" data-act="rejudge">${ICON.redo}Chấm lại hai nháp này</button><button class="btn ghost" data-act="redraft">${ICON.pen}Viết lại hai nháp</button></div>`}</div>`;
+      ${sent ? "" : `<div class="acts"><button class="btn ghost" data-act="rejudge">${ICON.redo}Đánh giá lại</button><button class="btn ghost" data-act="redraft">${ICON.pen}Soạn gợi ý khác</button></div>`}</div>`;
   }
   el.innerHTML = `<div class="dwrap">
     <button class="btn ghost back" data-act="back">${ICON.back}Hộp thư</button>
@@ -538,36 +536,36 @@ function renderReport() {
   const st = S.stats, n = st.judged;
   const pct = (a, b) => b ? Math.round(100 * a / b) : 0;
   const human = st.partial + st.flip + st.invalid;
-  const segs = [["agree","Nhất quán, chọn một nháp","var(--ok)"],["tie","Nhất quán, hoà","color-mix(in srgb,var(--ok) 45%,var(--panel))"],
-    ["partial","Lưỡng lự","var(--warn)"],["flip","Lật kèo","var(--flip)"],["invalid","Sai định dạng","var(--muted)"]];
+  const segs = [["agree","AI chắc chắn","var(--ok)"],["tie","Hai gợi ý ngang nhau","color-mix(in srgb,var(--ok) 45%,var(--panel))"],
+    ["partial","AI phân vân","var(--warn)"],["flip","AI đổi ý","var(--flip)"],["invalid","AI gặp lỗi","var(--muted)"]];
   const done = S.tickets.filter(t => t.decision);
   const aShare = pct(st.slot_a, st.slot_picks);
   el.innerHTML = `<div class="rwrap">
     <button class="btn ghost back" data-view="new">${ICON.back}Hộp thư</button>
-    <div class="rh"><h1>Báo cáo trọng tài</h1><p>Trọng tài hiện tại: <b>${esc(label(S.settings.judge))}</b>. Số liệu tính trên các ticket đã chấm trong hộp thư này.</p></div>
+    <div class="rh"><h1>Hiệu quả AI</h1><p>Mô hình đánh giá: <b>${esc(label(S.settings.judge))}</b>. Số liệu tính trên các tin nhắn AI đã xử lý.</p></div>
     ${n ? `
     <div class="kpis">
-      <div class="kpi"><span>Đã chấm</span><b>${n}</b><small>${n * 2} lượt gọi trọng tài</small></div>
-      <div class="kpi"><span>Đủ tin để tự gửi</span><b>${pct(st.agree + st.tie, n)}%</b><small>${st.agree + st.tie} ticket giữ nguyên quyết định khi đổi chỗ</small></div>
-      <div class="kpi"><span>Chuyển cho người</span><b>${pct(human, n)}%</b><small>${st.flip} lật kèo · ${st.partial} lưỡng lự · ${st.invalid} lỗi</small></div>
-      <div class="kpi hl"><span>Pha tránh được</span><b>${st.saved}</b><small>ticket mà hệ thống chấm một lượt đã tự gửi đi</small></div>
+      <div class="kpi"><span>AI đã xử lý</span><b>${n}</b><small>tin nhắn · ${n * 2} lần kiểm tra</small></div>
+      <div class="kpi"><span>Tự gửi được</span><b>${pct(st.agree + st.tie, n)}%</b><small>${st.agree + st.tie} tin AI chắc chắn</small></div>
+      <div class="kpi"><span>Cần người duyệt</span><b>${pct(human, n)}%</b><small>${st.flip} đổi ý · ${st.partial} phân vân · ${st.invalid} lỗi</small></div>
+      <div class="kpi hl"><span>Gửi nhầm đã chặn</span><b>${st.saved}</b><small>tin sẽ bị tự gửi nếu chỉ hỏi AI một lần</small></div>
     </div>
     <div class="cards2">
-      <div class="card"><h3>Quyết định sau hai lượt</h3><p class="sub">Mỗi ticket rơi vào đúng một nhóm.</p>
-        <div class="stack" role="img" aria-label="Phân bố quyết định">${segs.filter(s => st[s[0]]).map(s => `<div style="flex:${st[s[0]]};background:${s[2]}" title="${s[1]}: ${st[s[0]]}"></div>`).join("")}</div>
+      <div class="card"><h3>Kết quả kiểm tra chéo</h3><p class="sub">Mỗi tin nhắn thuộc đúng một nhóm.</p>
+        <div class="stack" role="img" aria-label="Phân bố kết quả kiểm tra">${segs.filter(s => st[s[0]]).map(s => `<div style="flex:${st[s[0]]};background:${s[2]}" title="${s[1]}: ${st[s[0]]}"></div>`).join("")}</div>
         <div class="lg">${segs.map(s => `<span><i style="background:${s[2]}"></i>${s[1]} <b>${st[s[0]]}</b></span>`).join("")}</div></div>
-      <div class="card"><h3>Trọng tài thích vị trí A bao nhiêu?</h3><p class="sub">Tỷ lệ lượt chọn Assistant A, trong các lượt có chọn một bên. Công bằng là quanh 50%.</p>
-        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px"><span class="big2">${aShare}%</span><span style="color:var(--muted);font-size:13px">${st.slot_a}/${st.slot_picks} lượt chọn A</span></div>
+      <div class="card"><h3>AI có thiên vị thứ tự không?</h3><p class="sub">Tỷ lệ AI chọn gợi ý được đọc trước, trong các lần có chọn. Không thiên vị là quanh 50%.</p>
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px"><span class="big2">${aShare}%</span><span style="color:var(--muted);font-size:13px">${st.slot_a}/${st.slot_picks} lần chọn gợi ý đọc trước</span></div>
         <div class="meter"><div class="f" style="width:${aShare}%"></div><div class="mid"></div></div>
-        <div class="mlab"><span>luôn chọn B</span><span>50% · công bằng</span><span>luôn chọn A</span></div></div>
-    </div>` : `<div class="card" style="margin-top:20px"><div class="empty" style="padding:28px"><b>Chưa có ticket nào được chấm.</b>Bấm “Xử lý hộp thư” ở góc trên, báo cáo sẽ tự điền.</div></div>`}
+        <div class="mlab"><span>luôn chọn câu sau</span><span>50% · không thiên vị</span><span>luôn chọn câu trước</span></div></div>
+    </div>` : `<div class="card" style="margin-top:20px"><div class="empty" style="padding:28px"><b>AI chưa xử lý tin nhắn nào.</b>Bấm “AI xử lý tin mới” ở góc trên, số liệu sẽ tự cập nhật.</div></div>`}
     <div class="bridge">
-      <div><span>Nghiên cứu đo được</span><p>Trên 500 câu hỏi tiếng Việt, judge Qwen2.5-7B <b>đổi ý ở 48,7% cặp</b> khi chỉ đổi thứ tự hai câu trả lời, và cứ 8 lần đổi ý thì 7 lần nghiêng về câu đứng trước.</p></div>
-      <div><span>Sản phẩm làm gì</span><p>Mỗi cặp nháp được chấm <b>hai lượt, đổi chỗ</b>. Chỉ quyết định giữ nguyên ở cả hai lượt mới được tự gửi; còn lại chuyển cho nhân viên.</p></div>
-      <div><span>Khách hàng nhận được</span><p>Không câu trả lời nào được gửi <b>chỉ vì nó đứng trước</b>. Đổi lại, mỗi ticket tốn gấp đôi lượt gọi trọng tài.</p></div>
+      <div><span>Vì sao cần kiểm tra chéo</span><p>AI hay ưu tiên câu trả lời được đọc trước. Thử trên 500 câu hỏi tiếng Việt, <b>gần một nửa kết quả thay đổi</b> chỉ vì đảo thứ tự hai câu.</p></div>
+      <div><span>Hệ thống làm gì</span><p>Mỗi tin nhắn được đánh giá <b>hai lần, đảo thứ tự</b>. Chỉ khi hai lần cho cùng kết quả, câu trả lời mới được tự gửi; còn lại chờ nhân viên duyệt.</p></div>
+      <div><span>Khách hàng nhận được</span><p>Không câu trả lời nào được gửi <b>chỉ vì nó được đọc trước</b>. Đổi lại, mỗi tin tốn gấp đôi lượt gọi AI.</p></div>
     </div>
-    ${n ? `<div class="card" style="margin-top:12px"><h3>Chi tiết từng ticket</h3><p class="sub">Bấm một dòng để mở ticket.</p>
-      <div style="overflow-x:auto"><table class="tb"><thead><tr><th>Ticket</th><th>Khách</th><th>Lượt 1</th><th>Lượt 2</th><th>Kết quả</th><th>Gửi</th></tr></thead><tbody>
+    ${n ? `<div class="card" style="margin-top:12px"><h3>Chi tiết từng tin nhắn</h3><p class="sub">Bấm một dòng để mở.</p>
+      <div style="overflow-x:auto"><table class="tb"><thead><tr><th>Mã</th><th>Khách</th><th>Lần 1</th><th>Lần 2</th><th>Kết quả</th><th>Người gửi</th></tr></thead><tbody>
       ${done.map(t => { const d = t.decision; return `<tr data-id="${t.id}"><td class="mono">${t.id}</td><td>${esc(t.customer)}</td>
         <td>${pickText(d.picks[0])}</td><td>${pickText(d.picks[1])}</td><td>${pillFor(t).replace(/pill sent/, "pill new")}</td>
         <td>${t.sent ? (t.sent.by === "auto" ? "Tự động" : "Nhân viên") : "—"}</td></tr>`; }).join("")}
@@ -610,7 +608,7 @@ async function runAll() {
   bulk = null;
   await refresh();
   const st = S.stats;
-  toast(`Xong. ${st.auto_sent} ticket tự gửi, ${st.partial + st.flip + st.invalid} ticket chờ bạn chọn${fail ? `, ${fail} lỗi` : ""}.`);
+  toast(`Xong. ${st.auto_sent} tin đã tự gửi, ${st.partial + st.flip + st.invalid} tin chờ bạn duyệt${fail ? `, ${fail} lỗi` : ""}.`);
   if (st.partial + st.flip + st.invalid) { view = "review"; render(); }
 }
 
@@ -622,21 +620,21 @@ const closeSheet = () => $("#layer").innerHTML = "";
 
 function openSettings() {
   const opt = cur => S.models.map(m => `<option value="${m.id}" ${m.id === cur ? "selected" : ""}>${esc(m.label)} · ${m.provider}</option>`).join("");
-  sheet("Cài đặt mô hình", `
-    <div class="fld"><label>Người viết Nháp 1</label><select id="w1">${opt(S.settings.writer1)}</select></div>
-    <div class="fld"><label>Người viết Nháp 2</label><select id="w2">${opt(S.settings.writer2)}</select><small>Hai người viết khác nhau cho hai giọng văn khác nhau, giống ba mô hình trả lời trong nghiên cứu.</small></div>
-    <div class="fld"><label>Trọng tài</label><select id="jg">${opt(S.settings.judge)}</select><small>Dùng nguyên prompt MT-Bench pair-v2 của thí nghiệm. Mỗi ticket gọi trọng tài hai lần.</small></div>
-    <div class="box"><b>Quy tắc tự gửi.</b> Khi bật “Tự gửi khi trọng tài nhất quán”, nút “Xử lý hộp thư” chỉ gửi những ticket mà trọng tài chọn cùng một nháp (hoặc cùng bảo hoà) ở cả hai lượt. Lật kèo, lưỡng lự hay sai định dạng đều chuyển sang “Cần bạn chọn”.</div>
+  sheet("Cài đặt AI", `
+    <div class="fld"><label>Mô hình soạn Gợi ý 1</label><select id="w1">${opt(S.settings.writer1)}</select></div>
+    <div class="fld"><label>Mô hình soạn Gợi ý 2</label><select id="w2">${opt(S.settings.writer2)}</select><small>Dùng hai mô hình khác nhau để có hai cách viết khác nhau.</small></div>
+    <div class="fld"><label>Mô hình đánh giá</label><select id="jg">${opt(S.settings.judge)}</select><small>Chọn câu trả lời nên gửi. Mỗi tin nhắn được đánh giá hai lần (kiểm tra chéo).</small></div>
+    <div class="box"><b>Quy tắc tự gửi.</b> Khi bật “Tự gửi khi AI chắc chắn”, chỉ những tin mà AI chọn cùng một gợi ý ở cả hai lần kiểm tra mới được gửi đi. Khi AI đổi ý, phân vân hoặc gặp lỗi, tin nhắn chờ trong mục “Cần bạn duyệt”.</div>
     <button class="btn pri" id="saveSet">Lưu</button>
-    <div style="border-top:1px solid var(--line);padding-top:16px"><button class="btn danger" id="reset">Đặt lại hộp thư</button><div class="fld"><small>Xoá nháp, kết quả chấm và trạng thái gửi; giữ cài đặt mô hình.</small></div></div>`,
+    <div style="border-top:1px solid var(--line);padding-top:16px"><button class="btn danger" id="reset">Làm mới hộp thư</button><div class="fld"><small>Xoá câu trả lời đã soạn, kết quả đánh giá và trạng thái gửi; giữ cài đặt mô hình.</small></div></div>`,
   s => {
     s.querySelector("#saveSet").onclick = async () => {
       S = await api("/api/settings", {writer1:$("#w1").value, writer2:$("#w2").value, judge:$("#jg").value});
       closeSheet(); render(); toast("Đã lưu cài đặt.");
     };
     s.querySelector("#reset").onclick = async () => {
-      if (!confirm("Đặt lại toàn bộ hộp thư?")) return;
-      S = await api("/api/reset", {}); sel = null; view = "new"; closeSheet(); render(); toast("Hộp thư đã về như lúc đầu.");
+      if (!confirm("Xoá toàn bộ câu trả lời và trạng thái gửi trong hộp thư?")) return;
+      S = await api("/api/reset", {}); sel = null; view = "new"; closeSheet(); render(); toast("Hộp thư đã được làm mới.");
     };
   });
 }
@@ -647,12 +645,12 @@ const SAMPLES = [
   ["Bác Sáu","Tôi ở Hà Nội đặt hôm qua, bao giờ hàng tới? Có giao chủ nhật không?"],
 ];
 function openNew() {
-  sheet("Tin nhắn mới", `
+  sheet("Tạo yêu cầu", `
     <div class="fld"><label for="nc">Tên khách</label><input id="nc" placeholder="Ví dụ: Hoàng Nam"></div>
     <div class="fld"><label for="ns">Tiêu đề (không bắt buộc)</label><input id="ns" placeholder="Tự lấy từ nội dung nếu để trống"></div>
     <div class="fld"><label for="nm">Nội dung</label><textarea id="nm" placeholder="Dán tin nhắn của khách vào đây"></textarea></div>
-    <div class="fld"><label>Thử nhanh</label><div class="samples">${SAMPLES.map((s, i) => `<button data-s="${i}">${esc(s[0])}</button>`).join("")}</div></div>
-    <button class="btn pri" id="addT">${ICON.plus}Thêm vào hộp thư và chấm</button>`,
+    <div class="fld"><label>Mẫu có sẵn</label><div class="samples">${SAMPLES.map((s, i) => `<button data-s="${i}">${esc(s[0])}</button>`).join("")}</div></div>
+    <button class="btn pri" id="addT">${ICON.plus}Tạo và để AI soạn trả lời</button>`,
   s => {
     s.querySelectorAll("[data-s]").forEach(b => b.onclick = () => { const [n, m] = SAMPLES[+b.dataset.s]; $("#nc").value = n; $("#nm").value = m; });
     s.querySelector("#addT").onclick = async () => {
@@ -675,7 +673,7 @@ document.addEventListener("click", async e => {
   if (it) { if (view === "report") view = "all"; open(it.dataset.id); return render(); }
   if (q("#newB")) return openNew();
   if (q("#setB")) return openSettings();
-  if (q("#policyB")) return sheet("Chính sách Quất Store", `<div class="policy">${esc(S.policy)}</div><div class="box">Cả người viết nháp lẫn trọng tài đều đọc chính sách này. Cửa hàng và khách hàng là giả lập.</div>`);
+  if (q("#policyB")) return sheet("Chính sách Quất Store", `<div class="policy">${esc(S.policy)}</div><div class="box">AI dựa vào chính sách này khi soạn và đánh giá câu trả lời.</div>`);
   if (q("#themeB")) {
     const r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
     r.dataset.theme = dark ? "light" : "dark"; try { localStorage.setItem("nd-theme", r.dataset.theme); } catch {}
@@ -692,7 +690,7 @@ document.addEventListener("click", async e => {
   const sb = q("[data-send]");
   if (sb) {
     const n = +sb.dataset.send, text = $(`textarea[data-draft="${n}"]`).value;
-    try { upsert(await api(`/api/tickets/${sel}/send`, {draft:n, text})); S.stats = (await api("/api/state")).stats; toast(`Đã gửi Nháp ${n} cho ${tk(sel).customer}.`); }
+    try { upsert(await api(`/api/tickets/${sel}/send`, {draft:n, text})); S.stats = (await api("/api/state")).stats; toast(`Đã gửi trả lời cho ${tk(sel).customer}.`); }
     catch (err) { toast(err.message, true); }
     return render();
   }

@@ -1,13 +1,13 @@
-"""Nháp Đôi: a support inbox where an AI writes two reply drafts and an AI judge picks one.
+"""Quất Store support inbox: an AI writes two reply drafts and an AI judge picks one.
 
 The judge is checked against itself: it sees the two drafts in both orders
 (see arbiter.py). Only a pick that survives the swap is sent automatically;
-everything else lands in the "Cần bạn chọn" queue for a person. This is the
+everything else lands in the "Cần bạn duyệt" queue for a person. This is the
 position-bias experiment turned into a routing rule.
 
 The shop, its policy (data/policy.md) and the customers (data/tickets.json)
 are made up. Progress is kept in data/state.json (gitignored) so a restart
-does not lose it; "Đặt lại hộp thư" in the page clears it.
+does not lose it; "Làm mới hộp thư" in the page clears it.
 
 Usage:
     python app/server.py            # then open http://localhost:8010
@@ -234,7 +234,7 @@ class Handler(BaseHTTPRequestHandler):
                         return self.send_json(t)
             return self.send_json({"error": "not found"}, 404)
         except KeyError:
-            return self.send_json({"error": "Không tìm thấy ticket."}, 404)
+            return self.send_json({"error": "Không tìm thấy tin nhắn."}, 404)
         except Exception as e:  # surface provider errors to the page instead of a dropped connection
             return self.send_json({"error": llm.error_message(e)}, 502 if isinstance(e, llm.ApiError) else 500)
 

@@ -1,4 +1,4 @@
-# Nháp Đôi: a support inbox with a position-checked AI judge
+# Quất Store support inbox: an AI judge checked against reply order
 
 A working support tool for a made-up shop, Quất Store. For each customer
 message two models write a reply draft, and an LLM judge picks the better
@@ -40,5 +40,5 @@ draft writers and the judge from the models your keys can reach.
 | `data/policy.md`, `data/tickets.json` | Made-up shop policy and customer messages |
 | `test_arbiter.py` | Guards the routing rule |
 
-Inbox progress is saved to `data/state.json` (gitignored); "Đặt lại hộp thư"
+Inbox progress is saved to `data/state.json` (gitignored); "Làm mới hộp thư"
 in the settings sheet clears it.
