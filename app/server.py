@@ -15,6 +15,7 @@ Usage:
 """
 
 import argparse
+import html
 import json
 import sys
 import threading
@@ -31,7 +32,25 @@ import llm  # noqa: E402
 
 DATA = APP / "data"
 STATE = DATA / "state.json"
-POLICY = (DATA / "policy.md").read_text().strip()
+IMAGES = APP / "static" / "products"
+PRODUCTS = json.loads((DATA / "products.json").read_text())
+
+
+def price(vnd: int) -> str:
+    return f"{vnd:,}".replace(",", ".") + "đ"
+
+
+def stock_line(p: dict) -> str:
+    """One row of the stock table the AI reads; the page shows the same data as cards."""
+    name = p["name"] + (f" ({p['defect']})" if p.get("defect") else "")
+    if p["stock"] > 0:
+        state = f"còn {p['stock']}"
+    else:
+        state = "HẾT HÀNG, " + (f"dự kiến về {p['eta']}" if p.get("eta") else "chưa có ngày về")
+    return f"- {name}, {price(p['price'])}: {state}."
+
+
+POLICY = (DATA / "policy.md").read_text().strip().replace("{stock}", "\n".join(map(stock_line, PRODUCTS)))
 
 WRITER_SYSTEM = (
     "Bạn là nhân viên chăm sóc khách hàng của ABNQ Store. Hãy soạn câu trả lời gửi khách hàng, "
@@ -156,8 +175,30 @@ def stats() -> dict:
 
 def snapshot() -> dict:
     models = llm.available()
-    return {"settings": settings(), "policy": POLICY, "tickets": state["tickets"], "stats": stats(),
+    return {"settings": settings(), "policy": POLICY, "products": PRODUCTS, "tickets": state["tickets"], "stats": stats(),
             "models": [{"id": k, "label": v[0], "provider": v[1]} for k, v in models.items()]}
+
+
+def credits_page() -> str:
+    """Where each product photo comes from, with its author and license."""
+    rows = "".join(
+        f'<li><img src="/img/{p["image"]}" alt=""><div><b>{html.escape(p["name"])}</b>'
+        f'<a href="{html.escape(c["url"])}">{html.escape(c["title"])}</a>'
+        f'<span>Tác giả: {html.escape(c["author"] or "không ghi")} · Giấy phép '
+        f'<a href="{html.escape(c["license_url"])}">{html.escape(c["license"])}</a> · đã cắt vuông</span></div></li>'
+        for p in PRODUCTS if (c := p.get("credit")))
+    return f"""<!doctype html><html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Nguồn ảnh · ABNQ Store</title>
+<style>:root{{color-scheme:light dark;--bg:#f6f7f9;--ink:#1b2430;--muted:#667085;--line:#e3e6eb;--card:#fff}}
+@media (prefers-color-scheme:dark){{:root{{--bg:#12161c;--ink:#e8ecf1;--muted:#98a2b3;--line:#2a313b;--card:#1a1f27}}}}
+body{{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}}
+main{{max-width:760px;margin:0 auto;padding:32px 16px}}h1{{font-size:22px;margin:0 0 6px}}p{{color:var(--muted);margin:0 0 20px}}
+ul{{list-style:none;padding:0;margin:0;display:grid;gap:10px}}li{{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}}
+img{{width:64px;height:64px;border-radius:8px;object-fit:cover;flex:none}}li div{{display:grid;gap:2px;min-width:0}}
+span{{color:var(--muted);font-size:13px}}a{{color:inherit;overflow-wrap:anywhere}}</style></head><body><main>
+<h1>Nguồn ảnh sản phẩm</h1><p>ABNQ Store là cửa hàng giả lập cho bài demo môn NLP. Ảnh sản phẩm lấy từ Wikimedia Commons,
+dùng theo giấy phép ghi bên dưới. Sản phẩm, giá và tồn kho là dữ liệu bịa.</p><ul>{rows}</ul>
+<p style="margin-top:20px"><a href="/">← Về trang hỗ trợ khách hàng</a></p></main></body></html>"""
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -179,6 +220,12 @@ class Handler(BaseHTTPRequestHandler):
         path = self.path.split("?")[0]
         if path in ("/", "/index.html"):
             return self.send_body((APP / "index.html").read_bytes(), "text/html; charset=utf-8")
+        if path.startswith("/img/"):
+            img = IMAGES / path.removeprefix("/img/")
+            if img.parent == IMAGES and img.suffix == ".jpg" and img.is_file():
+                return self.send_body(img.read_bytes(), "image/jpeg")
+        if path == "/nguon-anh":
+            return self.send_body(credits_page().encode(), "text/html; charset=utf-8")
         if path == "/api/state":
             with lock:
                 return self.send_json(snapshot())
@@ -211,7 +258,9 @@ class Handler(BaseHTTPRequestHandler):
                     return self.send_json({"error": "Cần tên khách và nội dung tin nhắn."}, 400)
                 with lock:
                     n = 1000 + len(state["tickets"]) + 42
+                    known = {p["id"] for p in PRODUCTS}
                     t = {"id": f"T-{n}", "customer": name, "channel": "Chat", "order": None, "at": now(),
+                         "products": [i for i in body.get("products") or [] if i in known],
                          "subject": (body.get("subject") or "").strip() or short(msg), "message": msg,
                          "status": "new", "drafts": None, "decision": None, "sent": None}
                     state["tickets"].insert(0, t)

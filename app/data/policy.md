@@ -1,13 +1,7 @@
 Chính sách chăm sóc khách hàng của ABNQ Store, cửa hàng cờ tướng online (bàn cờ gỗ, quân cờ, bộ cờ du lịch, sách cờ), kho tại Hà Nội, cập nhật 11/2026.
 
 TỒN KHO (cập nhật 8:00 sáng nay; chỉ dùng bảng này khi trả lời về hàng còn hay hết)
-- Bàn cờ gỗ hương 60x66 cm kèm quân gỗ hương 4,5 cm, 2.450.000đ: HẾT HÀNG, dự kiến về 28/11.
-- Bàn cờ gỗ cẩm lai gấp đôi kèm quân 4 cm, 1.650.000đ: còn 3.
-- Bộ cờ gỗ sồi phổ thông (bàn gấp, quân 3,8 cm), 420.000đ: còn 25.
-- Bộ cờ nam châm du lịch 25 cm, 180.000đ: còn 40.
-- Bộ quân cờ đá ngọc (không kèm bàn), 890.000đ: HẾT HÀNG, chưa có ngày về.
-- Bàn cờ gỗ hương Loại 2 (móp một góc khoảng 2 cm, đã ghi trong mô tả), 1.690.000đ: còn 1.
-- Sách "Tàn cuộc cờ tướng căn bản", 120.000đ: còn 12.
+{stock}
 
 1. Trả lời về tồn kho: chỉ nói "còn hàng" khi bảng trên ghi còn. Sản phẩm hết hàng: nói rõ là hết, báo ngày về dự kiến nếu có, mời khách đặt trước (cọc 20%, hoàn đủ cọc nếu hàng về trễ hơn ngày hẹn quá 7 ngày). Sản phẩm không có trong bảng: không đoán; nói sẽ kiểm tra kho và phản hồi trong 2 giờ làm việc.
 2. Đã nhận đơn nhưng kho thực tế hết hàng: cửa hàng xin lỗi, khách chọn chờ hàng về hoặc huỷ đơn và được hoàn 100% trong 24 giờ; trong cả hai trường hợp khách được tặng mã XINLOI50 giảm 50.000đ cho đơn sau.

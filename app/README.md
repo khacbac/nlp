@@ -38,6 +38,8 @@ draft writers and the judge from the models your keys can reach.
 | `server.py` | Inbox state and JSON API |
 | `index.html` | The inbox UI |
 | `data/policy.md`, `data/tickets.json` | Made-up shop policy and customer messages |
+| `data/products.json` | Catalog with stock; the policy's stock table is generated from it |
+| `static/products/` | Product photos from Wikimedia Commons; authors and licenses at `/nguon-anh` |
 | `test_arbiter.py` | Guards the routing rule |
 
 Inbox progress is saved to `data/state.json` (gitignored); "Làm mới hộp thư"
