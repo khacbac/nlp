@@ -100,3 +100,9 @@ Ngày lập: 2026-11-19. Trạng thái hiện tại:
 2. Điều kiện tiếng Anh **để sau**: làm phần tiếng Việt trước, code vẫn để sẵn tham số ngôn ngữ.
 3. Slide kết quả dùng **Artifact Slides**.
 4. Còn mở: định dạng/độ dài báo cáo, thời lượng thuyết trình, hạn nộp. Tạm theo cấu trúc ở Bước 4 và khoảng 10 phút.
+
+## 5. Phát hiện khi chạy judge (2026-11-19)
+
+- Judge chạy đủ 3000 lần chấm, 0 lỗi format. **86% lần chấm ghi verdict trước rồi mới giải thích**, nên giả định "prompt MT-Bench đã đáp ứng MEC" trong `papers/matrix.md` không đúng với Qwen2.5-7B. Cần ghi vào báo cáo.
+- Judge thiên vị gpt-oss rõ (thắng 67% theo BPC) và thích câu dài hơn (69%). Judge thấy text gốc có `**in đậm**` của gpt-oss, còn người chấm thấy bản đã bỏ. **Thí nghiệm phụ nên chạy:** judge lại trên text đã bỏ in đậm (`strip_emphasis`) để tách hiệu ứng định dạng.
+- RQ1 và RQ3 không cần điểm người nên đã là số cuối. RQ2 và RQ4 đang chạy trên điểm AI (TRIAL), chạy lại `python analyze.py` khi người chấm xong.

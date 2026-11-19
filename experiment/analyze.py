@@ -276,10 +276,15 @@ def compute(rows: list[dict], by_annotator: dict, has_cos: bool) -> dict:
         "biased_second": float(np.mean([a == "y" and b == "x" for a, b in zip(v1, v2)])),
         "involves_tie": float(np.mean([a != b and "tie" in (a, b) for a, b in zip(v1, v2)])),
         "tie_rate": float(np.mean([v == "tie" for v in v1 + v2])),
+        # MT-Bench asks for the explanation first; a verdict at the start means it was not.
+        "verdict_first": float(np.mean([r[k].lstrip().startswith("[[") for r in rows
+                                        for k in ("judgment_1", "judgment_2")])),
     }
 
     # RQ1
     out["flip_rate"] = bs.mean(flip)
+    no_tie = np.array([a != "tie" and b != "tie" for a, b in zip(v1, v2)])
+    out["flip_rate_no_tie"] = bs.mean(flip, no_tie)
     fpp = a_both.astype(float) - b_both.astype(float)
     out["fpp"] = bs.mean(fpp)
     out["first_slot_wins_both"] = bs.mean(a_both)
@@ -400,11 +405,13 @@ def summary(res: dict, lang: str, source: str) -> str:
           "## RQ1 How often does the judge flip?", "",
           "| Measure | Value |", "|---|---|",
           f"| Flip rate | {fmt(res['flip_rate'])} |",
+          f"| Flip rate, pairs with no tie verdict | {fmt(res['flip_rate_no_tie'])} |",
           f"| Slot A wins both runs | {fmt(res['first_slot_wins_both'])} |",
           f"| Slot B wins both runs | {fmt(res['second_slot_wins_both'])} |",
           f"| First-Position Preference | {fmt(res['fpp'], pct=False)} |",
           f"| Verdict labels consistent (ties allowed) | {100 * res['labels']['consistent']:.1f}% |",
-          f"| Tie verdicts | {100 * res['labels']['tie_rate']:.1f}% |", "",
+          f"| Tie verdicts | {100 * res['labels']['tie_rate']:.1f}% |",
+          f"| Verdict written before the explanation | {100 * res['labels']['verdict_first']:.1f}% |", "",
           "| Model pair | Flip rate | FPP |", "|---|---|---|"]
     for k, v in res["by_pair"].items():
         L.append(f"| {k} | {fmt(v['flip_rate'])} | {fmt(v['fpp'], pct=False)} |")
