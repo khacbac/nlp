@@ -11,7 +11,7 @@ Kết quả cuối cùng là `matrix.md` (bảng tổng hợp) và bảng "Bài 
 | `card-template.md` | Mẫu thẻ đọc 1 trang, copy cho mỗi paper |
 | `prompts.md` | Prompt mẫu để hỏi AI khi đọc |
 | `matrix.md` | Ma trận tổng hợp + bảng Bài học → Quyết định |
-| `cards/` | Thẻ đọc đã làm, đặt tên `<tacgia><nam>.md`, vd `wang2023.md` |
+| `cards/` | Thẻ đọc đã làm, đặt tên `<tacgia><nam>.md`, vd `wang2023.md`. Bản giải thích dễ hiểu (đọc trước thẻ): `<tacgia><nam>-explained.md` |
 | `pdf/` | PDF tải về (đã gitignore, repo là public) |
 
 ## Danh sách đọc
