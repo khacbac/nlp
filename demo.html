@@ -2,378 +2,568 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Demo đổi chỗ</title>
-<style>
-:root{
-  --bg:#F2F5F6; --surface:#FFFFFF; --sunk:#E6ECEE; --ink:#13242C; --muted:#56686F; --line:#D2DBDF;
-  --x:#0B7285; --x-soft:#DCEFF2; --y:#9A5B06; --y-soft:#F6EAD3;
-  --flip:#C2255C; --flip-soft:#FBE2EB; --good:#2B8A3E; --good-soft:#E3F4E6;
-  --body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --mono:ui-monospace,Menlo,Consolas,monospace;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0E181D; --surface:#16242B; --sunk:#1E3038; --ink:#E7EEF1; --muted:#96A9B1; --line:#2C414A;
-    --x:#5AC8D8; --x-soft:#123A42; --y:#E5B862; --y-soft:#3B2F14;
-    --flip:#F4759F; --flip-soft:#45192B; --good:#69DB7C; --good-soft:#173A20; color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#0E181D; --surface:#16242B; --sunk:#1E3038; --ink:#E7EEF1; --muted:#96A9B1; --line:#2C414A;
-  --x:#5AC8D8; --x-soft:#123A42; --y:#E5B862; --y-soft:#3B2F14;
-  --flip:#F4759F; --flip-soft:#45192B; --good:#69DB7C; --good-soft:#173A20; color-scheme:dark;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--body)}
-.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 60px}
-h1{font-size:1.9rem;margin:0 0 6px;line-height:1.2}
-h2{font-size:1.05rem;margin:0 0 10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
-.note{background:var(--sunk);border-left:4px solid var(--y);padding:10px 14px;border-radius:8px;font-size:.92rem;color:var(--muted);margin:10px 0 18px}
-.note b{color:var(--ink)}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.tabs button{font:inherit;font-size:.92rem;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
-.tabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.grid2>*,.runs>*{min-width:0}
-.prompt,.ans,.ctx{overflow-wrap:anywhere}
-@media (max-width:820px){.grid2{grid-template-columns:1fr}}
-.q{font-size:1.25rem;font-weight:600;margin:4px 0 10px}
-.ctx{font-size:.92rem;color:var(--muted);max-height:9.5em;overflow:auto}
-mark{background:var(--good-soft);color:var(--ink);padding:1px 2px;border-radius:3px}
-.meta{font:12px var(--mono);color:var(--muted)}
-.ans{border-radius:10px;padding:10px 14px;margin:6px 0}
-.ans .tag{font-weight:700;margin-right:6px}
-.ax{background:var(--x-soft);border:1.5px solid var(--x)} .ax .tag{color:var(--x)}
-.ay{background:var(--y-soft);border:1.5px solid var(--y)} .ay .tag{color:var(--y)}
-.prompt{font:14.5px/1.55 var(--mono);background:var(--sunk);border-radius:10px;padding:12px 14px}
-.slot{display:block;margin:8px 0;padding:8px 10px;border-radius:8px;transition:transform .5s ease,opacity .3s}
-.slot.sx{background:var(--x-soft);border:1.5px solid var(--x)}
-.slot.sy{background:var(--y-soft);border:1.5px solid var(--y)}
-.slot .lbl{font-weight:700}
-.swapping .slot:first-of-type{transform:translateY(100%)}
-.swapping .slot:last-of-type{transform:translateY(-100%)}
-.ctrl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0 4px}
-.ctrl button{font:inherit;font-weight:600;padding:10px 18px;border-radius:10px;border:0;background:var(--ink);color:var(--bg);cursor:pointer}
-.ctrl button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
-.ctrl button:disabled{opacity:.35;cursor:default}
-.ctrl .hint{font-size:.85rem;color:var(--muted)}
-.runs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-.run{border:1px dashed var(--line);border-radius:10px;padding:10px 12px;min-height:118px}
-.run h3{margin:0 0 6px;font-size:.9rem;color:var(--muted);font-weight:600}
-.run.empty>*:not(h3){visibility:hidden}
-.bar{display:grid;grid-template-columns:52px 1fr 48px;gap:8px;align-items:center;font-size:.88rem;margin:3px 0}
-.bar .t{height:14px;background:var(--sunk);border-radius:7px;overflow:hidden}
-.bar .f{height:100%;border-radius:7px;background:var(--muted);transition:width .6s ease}
-.verdict{margin-top:6px;font-weight:600}
-.cx{color:var(--x)} .cy{color:var(--y)}
-.res{font-size:1.15rem;font-weight:700;padding:12px 16px;border-radius:10px;margin-top:12px}
-.res.flip{background:var(--flip-soft);color:var(--flip)}
-.res.same{background:var(--good-soft);color:var(--good)}
-.res small{display:block;font-weight:400;color:var(--ink);font-size:.9rem;margin-top:2px}
-.hidden{display:none}
-table{border-collapse:collapse;width:100%;font-size:.95rem}
-th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
-th{color:var(--muted);font-weight:600;font-size:.85rem}
-.locked{position:relative}
-.locked .cover{position:absolute;inset:0;background:var(--surface);border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--muted);font-size:.95rem;border:1px dashed var(--line)}
-.cmp li{margin:4px 0}
-.chart{display:grid;gap:6px;margin-top:8px}
-.chart .row{display:grid;grid-template-columns:170px 1fr 52px;gap:8px;align-items:center;font-size:.88rem}
-.chart .t{height:18px;background:var(--sunk);border-radius:4px;overflow:hidden}
-.chart .f{height:100%;background:repeating-linear-gradient(45deg,var(--flip) 0 6px,var(--flip-soft) 6px 9px)}
-.fake{display:inline-block;font:600 11px var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--flip);border:1px solid var(--flip);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:middle}
-.stat{display:flex;gap:28px;flex-wrap:wrap;margin-top:6px}
-.stat div{font-size:.9rem;color:var(--muted)} .stat b{display:block;font-size:1.6rem;color:var(--ink)}
-.kbd{font:12px var(--mono);border:1px solid var(--line);border-radius:4px;padding:0 5px}
-</style>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 </head>
 <body>
-<div class="wrap">
-  <h1>Đổi chỗ hai câu trả lời, judge có đổi ý không?</h1>
-  <div class="note"><b>Dữ liệu thật.</b> Câu hỏi, đoạn văn và đáp án gốc lấy từ UIT-ViQuAD 2.0. Câu trả lời X/Y do hai trong ba mô hình (Qwen2.5-7B, gpt-oss-20b, Gemini Flash-Lite) viết. Xác suất là của judge Qwen2.5-7B-Instruct tại token verdict, đọc từ đúng lượt chấm đó.</div>
+<title>Đứng Trước Là Thắng</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Giám khảo AI có chọn câu trả lời theo vị trí không? Thí nghiệm position bias của LLM-as-a-judge trên 500 câu hỏi tiếng Việt.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: sticky nav, split hero with a live swap toy, then a scroll story:
+   pipeline -> case files -> bento of results -> lessons -> footer. */
+:root{
+  --bg:#F3F6F7; --surface:#FFFFFF; --sunk:#E7EDEF; --ink:#11222A; --muted:#51656D; --line:#D3DDE1;
+  --x:#0B7285; --x-soft:#D9EEF2; --y:#9A5B06; --y-soft:#F6E8CF;
+  --flip:#C2255C; --flip-soft:#F9DCE6; --ok:#2B7A3D; --ok-soft:#DDF1E1;
+  --display:'Bricolage Grotesque','Be Vietnam Pro',system-ui,sans-serif;
+  --body:'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  --r:18px; --wrap:1180px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0C171C; --surface:#13232A; --sunk:#0F1D23; --ink:#E6EFF1; --muted:#97AAB2; --line:#253840;
+  --x:#45B8CB; --x-soft:#123540; --y:#E2A43F; --y-soft:#3A2A10;
+  --flip:#F0679A; --flip-soft:#4A1729; --ok:#6CCB82; --ok-soft:#163222; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C171C; --surface:#13232A; --sunk:#0F1D23; --ink:#E6EFF1; --muted:#97AAB2; --line:#253840;
+  --x:#45B8CB; --x-soft:#123540; --y:#E2A43F; --y-soft:#3A2A10;
+  --flip:#F0679A; --flip-soft:#4A1729; --ok:#6CCB82; --ok-soft:#163222; color-scheme:dark}
 
-  <div class="tabs" id="tabs"></div>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--body);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+a{color:inherit}
+.wrap{max-width:var(--wrap);margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;letter-spacing:-.02em}
+h2{font-size:clamp(32px,4.6vw,54px);line-height:1.05;font-weight:800}
+h3{font-size:22px;line-height:1.2;font-weight:700}
+p{margin:0}
+.eyebrow{font:600 13px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--x)}
+.lead{font-size:clamp(17px,1.6vw,20px);color:var(--muted);max-width:62ch}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.tx{color:var(--x)} .ty{color:var(--y)} .tf{color:var(--flip)}
+section{padding-block:clamp(64px,9vw,120px)}
+.sec-head{display:grid;gap:14px;margin-bottom:44px;max-width:780px}
+:focus-visible{outline:3px solid var(--x);outline-offset:3px;border-radius:6px}
 
-  <div class="grid2">
-    <div class="card">
-      <h2>1 · Dữ liệu (UIT-ViQuAD 2.0)</h2>
-      <div class="meta" id="meta"></div>
-      <div class="q" id="q"></div>
-      <div class="ctx" id="ctx"></div>
-      <div style="margin-top:8px;font-size:.92rem"><b>Đáp án gốc:</b> <span id="gold"></span></div>
-    </div>
-    <div class="card">
-      <h2>2 · Hai mô hình trả lời</h2>
-      <div class="ans ax"><span class="tag">X</span><span id="ansX"></span></div>
-      <div class="ans ay"><span class="tag">Y</span><span id="ansY"></span></div>
-      <div style="font-size:.85rem;color:var(--muted);margin-top:8px">Judge không thấy đáp án gốc và không biết mô hình nào viết câu nào. Đáp án gốc chỉ dùng làm tham chiếu cho người chấm và để tính baseline F1.</div>
-    </div>
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:24px;height:60px}
+.logo{font:800 20px/1 var(--display);letter-spacing:-.03em;text-decoration:none;display:flex;align-items:center;gap:10px}
+.logo i{display:inline-grid;grid-auto-flow:column;gap:3px}
+.logo i b{width:10px;height:18px;border-radius:3px;display:block}
+.logo i b:first-child{background:var(--x)} .logo i b:last-child{background:var(--y)}
+.nav ul{display:flex;gap:4px;list-style:none;margin:0 0 0 auto;padding:0}
+.nav ul a{display:block;padding:8px 12px;border-radius:999px;text-decoration:none;font-size:15px;font-weight:500;color:var(--muted)}
+.nav ul a:hover{color:var(--ink);background:var(--sunk)}
+@media (max-width:760px){.nav ul{display:none}}
+
+/* hero */
+.hero{padding-block:clamp(40px,6vw,80px) clamp(48px,7vw,96px)}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(32px,5vw,72px);align-items:center}
+.hero h1{font-size:clamp(44px,6.6vw,86px);line-height:.98;font-weight:800;margin:18px 0 22px}
+.hero h1 em{font-style:normal;color:var(--flip);position:relative;white-space:nowrap}
+.hero h1 em::after{content:"";position:absolute;left:0;right:0;bottom:.04em;height:.12em;background:var(--flip-soft);z-index:-1;border-radius:4px}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.btn{font:600 16px/1 var(--body);padding:15px 22px;border-radius:999px;border:1.5px solid var(--ink);background:var(--ink);color:var(--bg);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:10px;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+@media (max-width:900px){.hero .wrap{grid-template-columns:1fr}}
+
+/* toy */
+.toy{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:22px;box-shadow:0 30px 60px -30px rgba(17,34,42,.35);display:grid;gap:16px;min-width:0}
+.toy-top{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px;color:var(--muted)}
+.toy-q{font:600 17px/1.4 var(--body)}
+.slots{display:grid;gap:10px}
+.ans{border-radius:16px;padding:14px 16px;border:1.5px solid;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:start;transition:box-shadow .3s;will-change:transform}
+.ans .pos{grid-row:span 2;font:800 26px/1 var(--display);width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--surface)}
+.ans .who{font:600 12px/1.2 var(--body);letter-spacing:.08em;text-transform:uppercase}
+.ans .txt{font-size:15px;line-height:1.45}
+.ans.mx{background:var(--x-soft);border-color:var(--x)} .ans.mx .who,.ans.mx .pos{color:var(--x)}
+.ans.my{background:var(--y-soft);border-color:var(--y)} .ans.my .who,.ans.my .pos{color:var(--y)}
+.ans.win{box-shadow:0 0 0 4px var(--bg),0 0 0 7px var(--ink)}
+.judge{display:flex;gap:14px;align-items:center;background:var(--sunk);border-radius:16px;padding:14px 16px}
+.bot{flex:none;width:52px;height:52px}
+.bubble{font-size:15px;line-height:1.4;min-width:0}
+.bubble b{font-family:var(--display);font-size:19px}
+.toy-foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.log{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font:600 13px/1 var(--body);padding:8px 12px;border-radius:999px;background:var(--sunk);color:var(--muted)}
+.chip.cx{background:var(--x-soft);color:var(--x)} .chip.cy{background:var(--y-soft);color:var(--y)}
+.flipbar{display:none;align-items:center;gap:12px;background:var(--flip-soft);color:var(--ink);border-radius:14px;padding:12px 16px;font-size:15px}
+.flipbar.on{display:flex;animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
+.flipbar strong{font:800 20px/1 var(--display);color:var(--flip);letter-spacing:.02em}
+@keyframes pop{from{transform:scale(.9);opacity:.4}to{transform:none;opacity:1}}
+
+/* ticker */
+.ticker{border-block:1px solid var(--line);background:var(--surface);overflow:hidden;padding-block:16px}
+.ticker .track{display:flex;gap:48px;width:max-content;animation:roll 38s linear infinite}
+.ticker span{font:600 16px/1 var(--body);color:var(--muted);white-space:nowrap}
+.ticker b{font:700 18px/1 var(--mono);color:var(--ink);margin-right:6px}
+@keyframes roll{to{transform:translateX(-50%)}}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;counter-reset:s}
+.pipe li{list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:grid;gap:10px;align-content:start;position:relative;counter-increment:s}
+.pipe li::before{content:counter(s);font:700 13px/1 var(--mono);color:var(--muted)}
+.pipe .big{font:800 40px/1 var(--display);letter-spacing:-.03em}
+.pipe p{font-size:15px;color:var(--muted)}
+.pipe ol{margin:0;padding:0}
+.pipe-wrap{padding:0}
+@media (max-width:900px){.pipe{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.pipe{grid-template-columns:1fr}}
+.joke{margin-top:18px;font-size:15px;color:var(--muted)}
+
+/* cases */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.tab{font:600 15px/1 var(--body);padding:12px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
+.tab[aria-selected="true"]{border-color:var(--ink);color:var(--ink);background:var(--sunk)}
+.case{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:clamp(18px,3vw,36px);display:grid;gap:26px;position:relative;overflow:hidden}
+.case-head{display:flex;gap:20px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}
+.case-head .meta{display:grid;gap:8px;max-width:720px;min-width:0}
+.case-head .meta .t{font-size:14px;color:var(--muted)}
+.case-head h3{font-size:clamp(22px,2.6vw,30px)}
+.stamp{font:800 18px/1.05 var(--display);letter-spacing:.06em;text-transform:uppercase;border:3px solid currentColor;border-radius:10px;padding:10px 14px;transform:rotate(-6deg);text-align:center;flex:none;max-width:220px}
+.stamp.s-ok{color:var(--ok)} .stamp.s-flip{color:var(--flip)} .stamp.s-warn{color:var(--y)}
+.stamp.hit{animation:stamp .5s cubic-bezier(.2,1.8,.4,1)}
+@keyframes stamp{from{transform:rotate(-6deg) scale(1.8);opacity:0}to{transform:rotate(-6deg) scale(1);opacity:1}}
+.ctx{font-size:15px;color:var(--muted);background:var(--sunk);border-radius:14px;padding:14px 16px}
+.ctx mark{background:var(--ok-soft);color:var(--ink);border-radius:4px;padding:0 2px}
+details.ctx summary{cursor:pointer;font-weight:600;color:var(--ink)}
+details.ctx p{margin-top:10px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pair .ans{grid-template-columns:1fr}
+.pair .ans .who{display:flex;justify-content:space-between;gap:8px}
+.score{font:700 13px/1 var(--mono);letter-spacing:0;text-transform:none}
+.runs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.run{border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:12px;min-width:0}
+.run-h{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.order{display:flex;gap:6px}
+.order span{font:700 12px/1 var(--body);padding:6px 9px;border-radius:8px}
+.order .ox{background:var(--x-soft);color:var(--x)} .order .oy{background:var(--y-soft);color:var(--y)}
+.pbar{display:grid;grid-template-columns:118px 1fr 52px;gap:10px;align-items:center;font-size:14px}
+.pbar .tr{height:14px;border-radius:7px;background:var(--sunk);overflow:hidden}
+.pbar .fl{display:block;height:100%;border-radius:7px;width:0;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.pbar .v{text-align:right}
+.run-v{font-size:15px}
+.run-v b{font-family:var(--display);font-size:18px}
+.take{font-size:17px;line-height:1.55;border-left:0;background:var(--sunk);border-radius:16px;padding:18px 20px}
+.take b{font-family:var(--display)}
+@media (max-width:760px){.pair,.runs{grid-template-columns:1fr}.pbar{grid-template-columns:96px 1fr 46px}}
+
+/* bento */
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:clamp(20px,2.4vw,30px);display:grid;gap:16px;align-content:start;min-width:0}
+.tile .rq{font:700 12px/1 var(--mono);color:var(--muted);letter-spacing:.06em}
+.tile .hero-n{font:800 clamp(56px,7vw,92px)/.9 var(--display);letter-spacing:-.04em}
+.tile .cap{font-size:15px;color:var(--muted)}
+.tile.dark{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tile.dark .cap,.tile.dark .rq{color:color-mix(in srgb,var(--bg) 70%,var(--ink))}
+.c2{grid-column:span 2}.c3{grid-column:span 3}.c4{grid-column:span 4}.c6{grid-column:span 6}
+@media (max-width:960px){.bento{grid-template-columns:1fr 1fr}.c2,.c3,.c4,.c6{grid-column:span 2}.c2.half{grid-column:span 1}}
+@media (max-width:560px){.c2.half{grid-column:span 2}}
+
+.waffle{display:grid;grid-template-columns:repeat(20,1fr);gap:4px;max-width:520px}
+.waffle i{aspect-ratio:1;border-radius:3px;background:var(--sunk);display:block;transform:scale(.4);opacity:0;transition:transform .4s,opacity .4s}
+.waffle.go i{transform:none;opacity:1}
+.waffle i.f1{background:var(--flip)} .waffle i.f2{background:var(--flip-soft);outline:1.5px solid var(--flip);outline-offset:-1.5px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted)}
+.legend span{display:inline-flex;gap:8px;align-items:center}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+
+.hbars{display:grid;gap:12px}
+.hb{display:grid;grid-template-columns:minmax(120px,190px) 1fr 56px;gap:12px;align-items:center;font-size:14px;position:relative}
+.hb .tr{height:26px;background:var(--sunk);border-radius:6px;overflow:hidden}
+.hb .fl{display:block;height:100%;border-radius:0 4px 4px 0;background:var(--x);width:0;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.hb .fl.pink{background:var(--flip)} .hb .fl.gray{background:var(--muted)} .hb .fl.amber{background:var(--y)}
+.hb .fl.faint{opacity:.45}
+.hb .v{text-align:right;font:700 15px/1 var(--mono)}
+.hb .n{display:block;font-size:12px;color:var(--muted)}
+.hb.ref .tr{position:relative}
+.go .hb .fl{width:var(--w)}
+
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.board{display:grid;gap:8px}
+.board h4{margin:0 0 4px;font:600 13px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.row{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;background:var(--sunk);border-radius:12px;padding:10px 12px;font-size:15px}
+.row .rk{font:800 18px/1 var(--display)}
+.row .sv{font:700 14px/1 var(--mono)}
+.row.gold{background:var(--ok-soft)}
+@media (max-width:560px){.vs{grid-template-columns:1fr}}
+
+/* lessons */
+.lessons{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.lesson{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:28px;display:grid;grid-template-columns:auto 1fr;gap:6px 18px}
+.lesson svg{grid-row:span 2;width:44px;height:44px}
+.lesson p{color:var(--muted);font-size:16px}
+@media (max-width:760px){.lessons{grid-template-columns:1fr}}
+
+/* glossary */
+.gloss{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.gloss div{border-top:2px solid var(--ink);padding-top:14px;display:grid;gap:6px}
+.gloss b{font-family:var(--display);font-size:19px}
+.gloss p{font-size:15px;color:var(--muted)}
+@media (max-width:760px){.gloss{grid-template-columns:1fr}}
+
+footer{border-top:1px solid var(--line);padding-block:48px 64px;font-size:15px;color:var(--muted)}
+footer .wrap{display:grid;grid-template-columns:2fr 1fr 1fr;gap:28px}
+footer h4{margin:0 0 10px;font:600 13px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+@media (max-width:760px){footer .wrap{grid-template-columns:1fr}}
+
+.reveal{transition:opacity .7s,transform .7s}
+.js .reveal.pending{opacity:.001;transform:translateY(24px)}
+#tip{position:fixed;pointer-events:none;z-index:50;background:var(--ink);color:var(--bg);font-size:13px;line-height:1.4;padding:8px 10px;border-radius:8px;max-width:240px;opacity:0;transition:opacity .12s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}.js .reveal.pending{opacity:1;transform:none}.waffle i{transform:none;opacity:1}}
+</style>
+
+<nav class="nav" aria-label="Mục lục trang">
+ <div class="wrap">
+  <a class="logo" href="#top"><i aria-hidden="true"><b></b><b></b></i>đứng·trước</a>
+  <ul>
+   <li><a href="#thi-nghiem">Thí nghiệm</a></li>
+   <li><a href="#ho-so">Hồ sơ</a></li>
+   <li><a href="#ket-qua">Kết quả</a></li>
+   <li><a href="#bai-hoc">Bài học</a></li>
+  </ul>
+ </div>
+</nav>
+
+<header class="hero" id="top">
+ <div class="wrap">
+  <div>
+   <p class="eyebrow">Đồ án NLP · LLM-as-a-judge · tiếng Việt</p>
+   <h1>Giám khảo AI rất công tâm. Miễn là bạn <em>đứng trước.</em></h1>
+   <p class="lead">Nhóm cho một mô hình 7B chấm 1.500 cặp câu trả lời, mỗi cặp hai lượt, lượt sau chỉ đổi chỗ hai câu. Gần một nửa số cặp, judge đổi ý. Thử bấm nút bên cạnh để xem chuyện đó xảy ra thế nào.</p>
+   <div class="cta">
+    <a class="btn" href="#ket-qua">Xem kết quả</a>
+    <a class="btn ghost" href="#ho-so">Mở hồ sơ thật</a>
+   </div>
   </div>
 
-  <div class="card">
-    <h2>3 · LLM judge chấm hai lượt</h2>
-    <div class="grid2">
-      <div>
-        <div class="prompt" id="prompt">
-          <div>Câu hỏi: <span id="pq"></span></div>
-          <span class="slot" id="slotA"><span class="lbl">[Câu trả lời A]</span> <span></span></span>
-          <span class="slot" id="slotB"><span class="lbl">[Câu trả lời B]</span> <span></span></span>
-          <div>So sánh, giải thích ngắn, rồi kết luận "[[A]]", "[[B]]" hoặc "[[C]]" (hoà).</div>
-        </div>
-        <div style="font-size:.8rem;color:var(--muted);margin-top:4px">Prompt rút gọn. Bản đầy đủ là prompt chấm theo cặp của MT-Bench (pair-v2), kèm đoạn văn.</div>
-      </div>
-      <div>
-        <div class="runs">
-          <div class="run empty" id="run1"><h3>Lượt 1 · A = X, B = Y</h3><div class="bars"></div><div class="verdict"></div></div>
-          <div class="run empty" id="run2"><h3>Lượt 2 · A = Y, B = X</h3><div class="bars"></div><div class="verdict"></div></div>
-        </div>
-        <div class="res hidden" id="res"></div>
-      </div>
-    </div>
-    <div class="ctrl">
-      <button id="back" class="ghost">← Lùi</button>
-      <button id="next">Chấm lượt 1 →</button>
-      <span class="hint">Phím <span class="kbd">→</span> <span class="kbd">←</span> để đi tiếp/lùi, <span class="kbd">1</span>–<span class="kbd">3</span> để đổi ví dụ</span>
-    </div>
+  <div class="toy" aria-live="polite">
+   <div class="toy-top"><span>Ẩm thực Việt Nam · cặp thật #0058</span><span class="num" id="toyRun">Lượt 1 / 2</span></div>
+   <p class="toy-q">“Chả trái quất được chế biến ra sao?”</p>
+   <div class="slots" id="slots">
+    <div class="ans mx" id="cardX"><span class="pos">A</span><span class="who">Qwen2.5-7B · người chấm 5/5</span><span class="txt">Làm thành viên nhỏ giống quả quất, phết lòng đỏ trứng ra ngoài, hấp chín rồi mới đem nướng.</span></div>
+    <div class="ans my" id="cardY"><span class="pos">B</span><span class="who">Gemini Flash-Lite · người chấm 5/5</span><span class="txt">Viên thịt thành viên nhỏ như quả quất, phết lòng đỏ trứng bên ngoài, hấp chín, cuối cùng đem nướng.</span></div>
+   </div>
+   <div class="judge">
+    <svg class="bot" viewBox="0 0 52 52" aria-hidden="true">
+     <rect x="6" y="12" width="40" height="32" rx="10" fill="var(--ink)"/>
+     <rect x="22" y="4" width="8" height="10" rx="3" fill="var(--ink)"/>
+     <circle id="eyeL" cx="19" cy="27" r="4.5" fill="var(--bg)"/>
+     <circle id="eyeR" cx="33" cy="27" r="4.5" fill="var(--bg)"/>
+     <path d="M18 36 q8 5 16 0" stroke="var(--bg)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </svg>
+    <p class="bubble" id="bubble"><b>“Câu A hay hơn.”</b><br>Độ chắc chắn: <span class="num">100%</span>. Tức là chọn câu của <span class="tx">Qwen</span>.</p>
+   </div>
+   <div class="flipbar" id="flipbar"><strong>FLIP</strong><span>Không câu nào đổi một chữ. Judge vẫn nói “A”, nên lần này nó chọn <span class="ty">Gemini</span>.</span></div>
+   <div class="toy-foot">
+    <div class="log" id="log"><span class="chip cx">Lượt 1 → Qwen</span></div>
+    <button class="btn" id="swap" type="button">Đổi chỗ hai câu ⇅</button>
+   </div>
   </div>
+ </div>
+</header>
 
-  <div class="card locked" id="humanCard">
-    <h2>4 · So với người chấm</h2>
-    <div class="grid2">
-      <div>
-        <table>
-          <thead><tr><th></th><th>Người 1</th><th>Người 2</th><th>Trung bình</th></tr></thead>
-          <tbody id="htab"></tbody>
-        </table>
-        <div style="font-size:.85rem;color:var(--muted);margin-top:6px">Chấm 1–5 cho từng câu, độc lập, không biết câu nào của mô hình nào và không thấy judge chọn gì.</div>
-      </div>
-      <ul class="cmp" id="cmp"></ul>
-    </div>
-    <div class="cover" id="cover">Người chấm đã chấm riêng từ trước.<br>Kết quả chỉ mở ra sau khi judge chấm xong cả hai lượt.</div>
-  </div>
+<div class="ticker" aria-hidden="true"><div class="track" id="track">
+ <span><b>500</b>câu hỏi tiếng Việt</span><span><b>3</b>mô hình trả lời</span><span><b>3.000</b>lượt chấm</span><span><b>48,7%</b>số cặp bị đổi ý</span><span><b>7:1</b>thiên vị câu đứng đầu</span><span><b>4</b>người chấm thật</span><span><b>1</b>giám khảo hơi cả nể người đứng trước</span>
+</div></div>
 
-  <div class="card">
-    <h2>5 · Kết quả trên toàn bộ 500 câu (1500 cặp, 3000 lượt chấm)</h2>
-    <div class="grid2" style="margin-top:6px">
-      <div><b>RQ1 · Flip rate chung</b>
-        <div class="stat"><div><b>48.7%</b>mọi cặp</div><div><b>34.8%</b>bỏ cặp có verdict hoà</div><div><b>42.5% / 6.2%</b>câu đầu / câu sau thắng cả 2 lượt</div></div></div>
-      <div><b>RQ4 · Khớp với người chấm</b>
-        <div class="stat"><div><b>37.1%</b>chấm 1 lượt</div><div><b>34.8%</b>2 chiều + BPC</div><div><b>68.9%</b>baseline F1</div></div></div>
-    </div>
-    <div class="grid2" style="margin-top:18px">
-      <div>
-        <b>RQ2 · Flip rate theo độ chênh điểm người chấm</b>
-        <div class="chart" id="c1"></div>
-      </div>
-      <div>
-        <b>RQ3 · Flip rate theo độ tự tin của judge</b> <span style="font-size:.8rem;color:var(--muted)">(margin |P(X) − P(Y)|, tứ phân vị)</span>
-        <div class="chart" id="c2"></div>
-      </div>
-    </div>
-    <div style="font-size:.85rem;color:var(--muted);margin-top:12px">Khoảng tin cậy 95% và bảng đầy đủ: <code>experiment/results/summary_vi.md</code>.</div>
+<main>
+<section id="thi-nghiem">
+ <div class="wrap">
+  <div class="sec-head reveal">
+   <p class="eyebrow">Thí nghiệm trong 30 giây</p>
+   <h2>Cùng hai câu, chấm hai lần, chỉ đổi thứ tự</h2>
+   <p class="lead">Một judge công bằng phải chọn cùng một câu ở cả hai lượt. Nếu hai lượt chọn hai câu khác nhau, ta gọi đó là một <b class="tf">flip</b>: judge chọn theo vị trí chứ không theo nội dung.</p>
   </div>
-</div>
+  <ol class="pipe reveal">
+   <li><span class="big num">500</span><h3>Câu hỏi đọc hiểu</h3><p>Lấy từ UIT-ViQuAD 2.0: một đoạn Wikipedia tiếng Việt và một câu hỏi về nó.</p></li>
+   <li><span class="big num">3</span><h3>Mô hình trả lời</h3><p>Qwen2.5-7B, gpt-oss-20b và Gemini Flash-Lite. Ghép đôi được 1.500 cặp.</p></li>
+   <li><span class="big num">×2</span><h3>Judge chấm hai lượt</h3><p>Qwen2.5-7B dùng prompt của MT-Bench. Lượt 2 đổi chỗ A và B. Ghi lại xác suất của từng nhãn.</p></li>
+   <li><span class="big num">1–5</span><h3>So với người chấm</h3><p>Bốn người chấm từng câu trên thang 1–5, không biết câu nào của mô hình nào.</p></li>
+  </ol>
+  <p class="joke reveal">Judge được xem đoạn văn và câu hỏi, nhưng không được xem đáp án. Giống giám khảo thi hát không có bản nhạc gốc.</p>
+ </div>
+</section>
+
+<section id="ho-so" style="background:var(--surface);border-block:1px solid var(--line)">
+ <div class="wrap">
+  <div class="sec-head reveal">
+   <p class="eyebrow">Hồ sơ vụ án</p>
+   <h2>Ba cặp thật, ba kiểu phán quyết</h2>
+   <p class="lead">Mỗi hồ sơ là một câu hỏi, hai câu trả lời, điểm của người chấm và hai lượt chấm của judge. Thanh màu là xác suất judge gán cho từng nhãn.</p>
+  </div>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <article class="case" id="case" role="tabpanel"></article>
+ </div>
+</section>
+
+<section id="ket-qua">
+ <div class="wrap">
+  <div class="sec-head reveal">
+   <p class="eyebrow">Kết quả trên toàn bộ 1.500 cặp</p>
+   <h2>Bốn câu hỏi nghiên cứu, bốn câu trả lời</h2>
+   <p class="lead">Khoảng tin cậy 95% tính bằng bootstrap trên câu hỏi. Rê chuột lên biểu đồ để xem số cặp.</p>
+  </div>
+  <div class="bento">
+   <div class="tile c4 reveal">
+    <span class="rq">RQ1 · JUDGE CÓ ĐỔI Ý KHI ĐỔI CHỖ KHÔNG?</span>
+    <div style="display:flex;flex-wrap:wrap;gap:18px 28px;align-items:end"><span class="hero-n num tf">48,7%</span><p class="cap" style="max-width:34ch">số cặp bị flip (KTC 45,9–51,5%). Bỏ các lượt chấm hoà thì còn 34,8%.</p></div>
+    <div class="waffle" id="waffle" role="img" aria-label="100 ô: 43 ô flip về câu đứng đầu, 6 ô flip về câu đứng sau, 51 ô nhất quán"></div>
+    <div class="legend"><span><i style="background:var(--flip)"></i>Flip, câu đứng đầu thắng cả hai lượt: 42,5%</span><span><i style="background:var(--flip-soft);outline:1.5px solid var(--flip);outline-offset:-1.5px"></i>Flip, câu đứng sau thắng: 6,2%</span><span><i style="background:var(--sunk)"></i>Nhất quán: 51,3%</span></div>
+   </div>
+   <div class="tile c2 dark reveal">
+    <span class="rq">THIÊN VỊ VỊ TRÍ</span>
+    <span class="hero-n num">7 : 1</span>
+    <p class="cap">Khi flip, câu đứng đầu thắng gấp 7 lần câu đứng sau. Chỉ số FPP = +0,36 (0 là công bằng).</p>
+    <p class="cap">Judge còn ghi kết luận ngay dòng đầu ở 86% bản chấm. Phán trước, giải thích sau.</p>
+   </div>
+
+   <div class="tile c3 reveal">
+    <span class="rq">RQ2 · CẶP CÀNG SÁT NÚT, CÀNG DỄ FLIP?</span>
+    <p class="cap">Tỉ lệ flip theo chênh lệch điểm người chấm giữa hai câu.</p>
+    <div class="hbars" id="rq2"></div>
+    <p class="cap">Đúng hướng dự đoán ở ba nhóm đầu. Nhóm ≥ 2,5 chỉ có 18 cặp nên khoảng tin cậy rất rộng (17–77%).</p>
+   </div>
+   <div class="tile c3 reveal">
+    <span class="rq">RQ3 · JUDGE TỰ TIN THÌ CÓ ĐÁNG TIN?</span>
+    <p class="cap">Tỉ lệ flip theo độ tự tin của judge, chia bốn nhóm bằng nhau.</p>
+    <div class="hbars" id="rq3"></div>
+    <p class="cap">Chỉ nhóm tự tin nhất (trên 99,6%) flip ít hơn, và vẫn flip 37% số lần. AUC = 0,56, gần với tung đồng xu (0,5).</p>
+   </div>
+
+   <div class="tile c4 reveal">
+    <span class="rq">RQ4 · CHẤM HAI CHIỀU CÓ KHỚP NGƯỜI CHẤM HƠN?</span>
+    <p class="cap">Tỉ lệ chọn đúng câu mà người chấm cho điểm cao hơn, trên 813 cặp người chấm không hoà.</p>
+    <div class="hbars" id="rq4"></div>
+   </div>
+   <div class="tile c2 reveal" style="background:var(--flip-soft);border-color:var(--flip)">
+    <span class="rq">CÚ TWIST</span>
+    <p style="font:800 clamp(24px,2.6vw,32px)/1.15 var(--display)">Một phép đếm từ trùng nhau, không cần GPU, khớp người chấm <span class="num">69%</span>. Judge 7B: <span class="num">35%</span>.</p>
+    <p class="cap" style="color:var(--ink)">Chấm hai chiều chữa được thiên vị vị trí, nhưng không chữa được sở thích lệch của judge.</p>
+   </div>
+
+   <div class="tile c6 reveal">
+    <span class="rq">VÌ SAO LỆCH · BẢNG XẾP HẠNG</span>
+    <div class="vs">
+     <div class="board"><h4>Người chấm (điểm trung bình)</h4>
+      <div class="row gold"><span class="rk">1</span><span>Gemini Flash-Lite</span><span class="sv">4,82</span></div>
+      <div class="row"><span class="rk">2</span><span>Qwen2.5-7B</span><span class="sv">4,52</span></div>
+      <div class="row"><span class="rk">3</span><span>gpt-oss-20b</span><span class="sv">4,27</span></div>
+     </div>
+     <div class="board"><h4>Judge (tỉ lệ thắng sau khi chấm hai chiều)</h4>
+      <div class="row gold"><span class="rk">1</span><span>gpt-oss-20b</span><span class="sv">67,3%</span></div>
+      <div class="row"><span class="rk">2</span><span>Gemini Flash-Lite</span><span class="sv">47,0%</span></div>
+      <div class="row"><span class="rk">3</span><span>Qwen2.5-7B</span><span class="sv">35,7%</span></div>
+     </div>
+    </div>
+    <div class="gloss" style="margin-top:8px">
+     <div><b>Thích câu dài</b><p>Judge chọn câu dài hơn ở 69% số cặp. Qwen viết ngắn nhất (52 từ) nên thua.</p></div>
+     <div><b>Nghi vấn in đậm</b><p>gpt-oss và Gemini dài gần bằng nhau (74 và 72 từ). Chỉ gpt-oss dùng **in đậm**: judge nhìn thấy, người chấm thì không.</p></div>
+     <div><b>Không tự thiên vị</b><p>Judge là Qwen nhưng xếp Qwen cuối. Công tâm đến mức hơi tự ti.</p></div>
+    </div>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section id="bai-hoc" style="background:var(--surface);border-block:1px solid var(--line)">
+ <div class="wrap">
+  <div class="sec-head reveal">
+   <p class="eyebrow">Điều rút ra</p>
+   <h2>Trước khi để AI chấm bài, nhớ bốn điều</h2>
+  </div>
+  <div class="lessons">
+   <div class="lesson reveal"><svg viewBox="0 0 44 44" aria-hidden="true"><rect x="4" y="8" width="16" height="28" rx="5" fill="var(--x)"/><rect x="24" y="8" width="16" height="28" rx="5" fill="var(--y)"/></svg><h3>Luôn chấm cả hai chiều</h3><p>Chỉ chấm một lượt thì gần một nửa phán quyết phụ thuộc vào việc câu nào được đặt trước.</p></div>
+   <div class="lesson reveal"><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="17" fill="none" stroke="var(--flip)" stroke-width="4"/><path d="M22 12v12l7 5" stroke="var(--flip)" stroke-width="4" fill="none" stroke-linecap="round"/></svg><h3>Tự tin không có nghĩa là đúng</h3><p>Xác suất 99% của judge chỉ giảm flip một chút. Đừng dùng nó để lọc phán quyết đáng tin.</p></div>
+   <div class="lesson reveal"><svg viewBox="0 0 44 44" aria-hidden="true"><path d="M8 23l9 9 19-20" stroke="var(--ok)" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><h3>Nhất quán chưa phải là đúng</h3><p>Judge có thể chọn cùng một câu ở hai lượt mà vẫn ngược với người chấm. Nhất quán là điều kiện cần, chưa đủ.</p></div>
+   <div class="lesson reveal"><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="15" cy="16" r="7" fill="var(--ink)"/><circle cx="31" cy="16" r="7" fill="var(--muted)"/><path d="M4 38c1-8 6-12 11-12s10 4 11 12M20 38c1-8 6-12 11-12s10 4 11 12" fill="none" stroke="var(--ink)" stroke-width="3.5"/></svg><h3>Luôn có một mốc người chấm</h3><p>Chỉ khi so với người chấm mới thấy judge thích câu dài và câu in đậm. Một tập nhỏ có nhãn người là đủ để phát hiện.</p></div>
+  </div>
+ </div>
+</section>
+
+<section>
+ <div class="wrap">
+  <div class="sec-head reveal">
+   <p class="eyebrow">Từ điển nhanh</p>
+   <h2>Mấy thuật ngữ trên trang này</h2>
+  </div>
+  <div class="gloss reveal">
+   <div><b>Position bias</b><p>Judge chọn câu theo vị trí (đứng đầu hay đứng sau) thay vì theo nội dung.</p></div>
+   <div><b>Flip rate</b><p>Tỉ lệ cặp mà hai lượt chấm, chỉ khác thứ tự, cho hai câu thắng khác nhau.</p></div>
+   <div><b>BPC</b><p>Balanced Position Calibration: cộng xác suất của hai lượt rồi mới chọn câu thắng.</p></div>
+   <div><b>FPP</b><p>First-Position Preference: câu đứng đầu thắng nhiều hơn câu đứng sau bao nhiêu. 0 là công bằng.</p></div>
+   <div><b>Độ tự tin (margin)</b><p>Xác suất judge gán cho nhãn nó chọn, đọc từ logprob của token “A” hoặc “B”.</p></div>
+   <div><b>Krippendorff α</b><p>Mức đồng thuận giữa bốn người chấm. Nhóm đạt 0,74, đủ tin cậy để làm mốc.</p></div>
+  </div>
+ </div>
+</section>
+</main>
+
+<footer>
+ <div class="wrap">
+  <div><a class="logo" href="#top"><i aria-hidden="true"><b></b><b></b></i>đứng·trước</a><p style="margin-top:12px;max-width:52ch">Đồ án môn Xử lý ngôn ngữ tự nhiên. Judge Qwen2.5-7B-Instruct-AWQ chạy bằng vLLM, giải mã tham lam. Câu hỏi từ UIT-ViQuAD 2.0.</p></div>
+  <div><h4>Tài liệu</h4><ul><li><a href="https://github.com/khacbac/nlp">Mã nguồn trên GitHub</a></li><li>Báo cáo: report.md</li><li>Số liệu: experiment/results</li></ul></div>
+  <div><h4>Dựa trên</h4><ul><li>Zheng và cs., 2023 (MT-Bench)</li><li>Wang và cs., 2024 (Fair Evaluators)</li><li>Shi và cs., 2024 (Position bias)</li></ul></div>
+ </div>
+</footer>
+<div id="tip" role="tooltip"></div>
 
 <script>
-/* Real pairs from the experiment (experiment/data, picked by question id).
-   pl1/pl2 = probabilities of the labels A/B/C at the verdict token in run 1 (A = X) and run 2 (A = Y). */
-var CASES=[
- {
-  "name": "Ví dụ 1 · chênh rõ",
-  "id": "0034-0006-0004",
-  "title": "Alexandros Đại đế",
-  "q": "Tại sao ông vua bị mất đi một con mắt khi đi chinh chiến?",
-  "ctx": "Nói chung, sau khi có chiêm bao, vua Philippos II sai Chaero người xứ Megalopolis) đến ngôi điện thờ thần Apollo tại Delphi, để hỏi ý thần linh xem giấc mộng của vua báo hiệu điều gì sẽ xảy ra? Philippos II đã nhận được câu trả lời rằng, ông phải thờ phụng thần Zeus chu đáo, hơn hết tất cả mọi vị thần khác. Và, nhà vua đã bị mất một con mắt khi đi chinh chiến, mà với con mắt này ông đã nhìn trộm qua buồng ngủ của vợ, thấy thần linh đội lốt loài rắn mà ngủ chung với vợ ông. Hơn nữa, theo như Eratosthenes, sau này khi Alexandros Đại Đế lên đường chinh phạt Á châu, Olympias đã tử tế từ biệt con mình, sau khi bà đã nói riêng với ông rằng ông thực chất là con của ai? Bà đã cúng tế vị thần ấy như thế nào? Để rồi ông thật xứng đáng là con của vị thần ấy. Cũng có người viết rằng Olympias bác bỏ huyền thoại này, bà nói:",
-  "gold": "nhìn trộm qua buồng ngủ của vợ, thấy thần linh đội lốt loài rắn mà ngủ chung với vợ ông",
-  "goldInCtx": true,
-  "X": "Theo đoạn văn,Philippos II mất một con mắt khi đi chinh chiến vì đã nhìn trộm qua buồng ngủ của vợ và thấy thần linh đội lốt loài rắn mà ngủ chung với vợ ông, do đó ông bị mất đi con mắt đó.",
-  "Y": "Vua Philippos II đã mất một con mắt khi tham gia chiến dịch quân sự, vì một tai nạn hoặc thương tích xảy ra trong trận đánh. Thông tin này được ghi nhận trong đoạn văn mà không nêu rõ nguyên nhân cụ thể, chỉ đơn giản là một hậu quả của cuộc chinh chiến.",
-  "mX": "qwen",
-  "mY": "gpt-oss",
-  "h": {
-   "X": [
-    5,
-    5
-   ],
-   "Y": [
-    1,
-    1
-   ]
-  },
-  "pl1": {
-   "A": 0.9986,
-   "B": 0.0,
-   "C": 0.0014
-  },
-  "pl2": {
-   "A": 0.0009,
-   "B": 0.999,
-   "C": 0.0
-  },
-  "v1": "A",
-  "v2": "B",
-  "take": "Hai câu chênh rõ. Judge chọn đúng câu tốt hơn ở cả hai lượt, với độ tự tin gần 100%. Khi chất lượng chênh lệch lớn, đổi chỗ không làm judge đổi ý."
- },
- {
-  "name": "Ví dụ 2 · sát nút, flip",
-  "id": "0058-0017-0003",
-  "title": "Ẩm thực Việt Nam",
-  "q": "Chả trái quất được chế biên ra sao?",
-  "ctx": "Chả dùng các loại thịt (có thể là thịt lợn, cá, tôm, cá mực tươi) băm hoặc giã nhuyễn, trộn gia vị và nướng chín bằng than hoặc hấp chín. Chả có các loại đặc biệt: chả quế, chả cốm (cho cốm lẫn với giò sống, hấp chín), chả mực, chả cá (cá quết nhuyễn, gia rau thì là và ép dẹt nướng hoặc hấp), chả bò, chả trái quất (viên chả thành viên nhỏ như quả quất, phết lòng đỏ trứng ra ngoài hấp chín sau đó đem nướng). Một số biến thể của món bò cuốn lá lốt cũng được gọi là các món chả như chả xương sông, chả lá lốt dùng thịt lợn.",
-  "gold": "viên chả thành viên nhỏ như quả quất, phết lòng đỏ trứng ra ngoài hấp chín sau đó đem nướng",
-  "goldInCtx": true,
-  "X": "Chả trái quất được làm thành viên nhỏ giống như quả quất, sau đó phết lòng đỏ trứng ra ngoài, hấp chín rồi mới đem nướng.",
-  "Y": "Chả trái quất được chế biến bằng cách viên thịt thành những viên nhỏ như quả quất, sau đó phết lòng đỏ trứng ra bên ngoài rồi đem hấp chín. Cuối cùng, món chả này sẽ được đem đi nướng để hoàn thành.",
-  "mX": "qwen",
-  "mY": "gemini",
-  "h": {
-   "X": [
-    5,
-    5
-   ],
-   "Y": [
-    5,
-    5
-   ]
-  },
-  "pl1": {
-   "A": 1.0,
-   "B": 0.0,
-   "C": 0.0
-  },
-  "pl2": {
-   "A": 0.9969,
-   "B": 0.0004,
-   "C": 0.0028
-  },
-  "v1": "A",
-  "v2": "A",
-  "take": "Người chấm cho cả hai câu 5/5. Judge trả lời \"A\" ở cả hai lượt với xác suất gần 100%, tức là chọn câu đứng đầu chứ không theo nội dung. Độ tự tin cao không có nghĩa là judge đúng."
- },
- {
-  "name": "Ví dụ 3 · nhất quán nhưng lệch người chấm",
-  "id": "0005-0019-0005",
-  "title": "Edward I của Anh",
-  "q": "Quyền lợi của Llywelyn thay đổi thế nào sau Hiệp ước Aberconwy tháng 11 năm 1277?",
-  "ctx": "Tháng 11 năm 1276, cuộc chiến được khởi động. Các cuộc hành quân ban đầu được khởi động bởi đại úy của Mortimer, Lancaster (em trai của Edward, Edmund) và William de Beauchamp, Bá tước Warwick.[k] Sự ủng hộ đối với Llywelyn từ những người đồng hương. Tháng 7 năm 1277 Edward tiến hành chiến dịch với lực lượng 15,500, trong đó 9,000 là người bản địa Wales. Chiến dịch không bao giờ dẫn đến một trận đánh lớn, và Llywelyn sớm nhận ra rằng mình không còn lựa chọn nào khác ngoài việc đầu hàng. Với Hiệp ước Aberconwy tháng 11 năm 1277, ông ta chỉ còn giữ lại lãnh địa Gwynedd, dù vẫn được phép xưng là Hoàng tử xứ Wales.",
-  "gold": "ông ta chỉ còn giữ lại lãnh địa Gwynedd, dù vẫn được phép xưng là Hoàng tử xứ Wales",
-  "goldInCtx": true,
-  "X": "Sau Hiệp ước Aberconwy tháng 11 năm 1277, Llywelyn bị thu hẹp quyền lãnh của mình chỉ còn vùng lãnh địa Gwynedd, nhưng vẫn được phép giữ danh hiệu Hoàng tử xứ Wales. Điều này đồng nghĩa với việc quyền lực thực tiễn của ông bị giảm đáng kể, trong khi danh hiệu truyền thống vẫn được bảo toàn.",
-  "Y": "Sau Hiệp ước Aberconwy vào tháng 11 năm 1277, Llywelyn buộc phải đầu hàng và chỉ còn được giữ lại lãnh địa Gwynedd của mình. Mặc dù bị thu hẹp đáng kể về lãnh thổ, ông vẫn được phép tiếp tục xưng là Hoàng tử xứ Wales.",
-  "mX": "gpt-oss",
-  "mY": "gemini",
-  "h": {
-   "X": [
-    4,
-    4
-   ],
-   "Y": [
-    5,
-    5
-   ]
-  },
-  "pl1": {
-   "A": 0.9668,
-   "B": 0.0002,
-   "C": 0.0331
-  },
-  "pl2": {
-   "A": 0.0071,
-   "B": 0.9901,
-   "C": 0.0028
-  },
-  "v1": "A",
-  "v2": "B",
-  "take": "Judge nhất quán ở cả hai lượt nhưng chọn ngược với người chấm. Nhất quán chỉ cho biết judge không bị vị trí kéo đi, không cho biết judge đúng. Đây là lý do BPC không cứu được một judge có sở thích lệch (RQ4)."
- }
-];
-var cur=0,step=0;
+document.documentElement.classList.add('js');
 var $=function(id){return document.getElementById(id)};
-var pct=function(v){return Math.round(v*100)+'%'};
-var mean=function(a){return (a[0]+a[1])/2};
+var fmt=function(v,d){return (v*100).toFixed(d==null?1:d).replace('.',',')+'%'};
+var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
-function tabs(){
-  $('tabs').innerHTML=CASES.map(function(c,i){return '<button class="'+(i===cur?'on':'')+'" data-i="'+i+'">'+c.name+'</button>'}).join('');
-  [].forEach.call($('tabs').children,function(b){b.onclick=function(){load(+b.dataset.i)}});
-}
-function load(i){
-  cur=i;step=0;var c=CASES[i];tabs();
-  $('meta').textContent=c.id+' · bài "'+c.title+'"';
-  $('q').textContent=c.q; $('pq').textContent=c.q;
-  $('ctx').innerHTML=esc(c.ctx).replace(esc(c.gold),'<mark>'+esc(c.gold)+'</mark>');
-  $('gold').textContent=c.gold; $('ansX').textContent=c.X; $('ansY').textContent=c.Y;
-  render();
-}
-function bars(pl,aIs,show){
-  var bIs=aIs==='X'?'Y':'X';
-  var col={A:aIs==='X'?'var(--x)':'var(--y)',B:bIs==='X'?'var(--x)':'var(--y)',C:'var(--muted)'};
-  return ['A','B','C'].map(function(k){var v=show?pl[k]:0;
-    return '<div class="bar"><span>P("'+k+'")</span><div class="t"><div class="f" style="width:'+pct(v)+';background:'+col[k]+'"></div></div><span>'+(show?pct(v):'')+'</span></div>'}).join('');
-}
-function verdict(letter,aIs){
-  var bIs=aIs==='X'?'Y':'X', pick=letter==='A'?aIs:(letter==='B'?bIs:'hoà');
-  return {pick:pick,html:'Judge trả lời "'+letter+'", tức là '+(pick==='hoà'?'<b>hoà</b>':'chọn <span class="c'+pick.toLowerCase()+'">'+pick+'</span>')};
-}
-function setSlots(swapped){
-  var c=CASES[cur],a=swapped?'Y':'X',b=swapped?'X':'Y';
-  $('slotA').className='slot s'+a.toLowerCase(); $('slotA').lastChild.textContent=c[a];
-  $('slotB').className='slot s'+b.toLowerCase(); $('slotB').lastChild.textContent=c[b];
-}
-function render(){
-  var c=CASES[cur];
-  setSlots(step>=2);
-  var r1=verdict(c.v1,'X'), r2=verdict(c.v2,'Y');
-  var R1=$('run1'),R2=$('run2');
-  R1.classList.toggle('empty',step<1); R2.classList.toggle('empty',step<3);
-  R1.querySelector('.bars').innerHTML=bars(c.pl1,'X',step>=1); R1.querySelector('.verdict').innerHTML=r1.html;
-  R2.querySelector('.bars').innerHTML=bars(c.pl2,'Y',step>=3); R2.querySelector('.verdict').innerHTML=r2.html;
-  var res=$('res'); res.classList.toggle('hidden',step<3);
-  var flip=r1.pick!==r2.pick;
-  res.className='res '+(flip?'flip':'same')+(step<3?' hidden':'');
-  res.innerHTML=flip?'FLIP: hai lượt chọn hai câu khác nhau<small>Nội dung không đổi, chỉ đổi vị trí. Cả hai lượt judge đều trả lời "'+c.v1+'", tức là chọn theo vị trí chứ không theo nội dung.</small>'
-                    :'Nhất quán: cả hai lượt đều chọn '+r1.pick+'<small>Đổi vị trí không làm judge đổi ý.</small>';
-  /* human panel */
-  $('humanCard').classList.toggle('locked',step<4); $('cover').classList.toggle('hidden',step>=4);
-  var mx=mean(c.h.X),my=mean(c.h.Y),hw=mx>my?'X':(my>mx?'Y':'hoà'),gap=Math.abs(mx-my);
-  $('htab').innerHTML='<tr><td class="cx"><b>X</b></td><td>'+c.h.X[0]+'</td><td>'+c.h.X[1]+'</td><td><b>'+mx+'</b></td></tr>'+
-                      '<tr><td class="cy"><b>Y</b></td><td>'+c.h.Y[0]+'</td><td>'+c.h.Y[1]+'</td><td><b>'+my+'</b></td></tr>';
-  var px1=c.pl1.A/(c.pl1.A+c.pl1.B),px2=c.pl2.B/(c.pl2.A+c.pl2.B),bpc=(px1+px2)/2;
-  var bpcPick=Math.abs(bpc-.5)<.02?'gần như hoà':(bpc>.5?'chọn X':'chọn Y');
-  var ok=function(p){if(hw==='hoà')return '<span style="color:var(--muted)">không so được (người chấm cho ngang nhau)</span>';return p===hw?'<span style="color:var(--good)">✓ khớp</span>':'<span style="color:var(--flip)">✗ lệch</span>'};
-  $('cmp').innerHTML=
-    (hw==='hoà'?'<li>Người chấm: hai câu <b>ngang nhau</b> (chênh 0 điểm) → <b>cặp sát nút</b></li>':'<li>Người chấm: <b class="c'+hw.toLowerCase()+'">'+hw+'</b> tốt hơn, chênh <b>'+gap+'</b> điểm → '+(gap<=1?'<b>cặp sát nút</b>':'cặp chênh rõ')+'</li>')+
-    '<li>Lượt 1 judge chọn '+r1.pick+': '+ok(r1.pick)+'</li>'+
-    '<li>Lượt 2 judge chọn '+r2.pick+': '+ok(r2.pick)+'</li>'+
-    '<li>BPC (trung bình hai lượt, chuẩn hoá trên A/B): P(chọn X) = ('+pct(px1)+' + '+pct(px2)+') / 2 = <b>'+pct(bpc)+'</b> → '+bpcPick+'</li>'+
-    '<li>Mô hình: <span class="cx">X = '+c.mX+'</span>, <span class="cy">Y = '+c.mY+'</span></li>'+
-    '<li style="color:var(--muted)">'+c.take+'</li>';
-  var labels=['Chấm lượt 1 →','Đổi chỗ A ⇄ B →','Chấm lượt 2 →','Mở điểm người chấm →','Xong ✓'];
-  $('next').textContent=labels[step]; $('next').disabled=step>=4; $('back').disabled=step<=0;
-}
-function go(d){
-  var n=Math.max(0,Math.min(4,step+d)); if(n===step)return;
-  if(d>0&&n===2){ /* animate the swap */
-    $('prompt').classList.add('swapping');
-    setTimeout(function(){$('prompt').classList.remove('swapping');step=n;render()},520); return;
+/* ---------- hero toy ---------- */
+(function(){
+  var swapped=false,runs=1,X=$('cardX'),Y=$('cardY'),slots=$('slots');
+  function flipAnim(fn){
+    var a=X.getBoundingClientRect(),b=Y.getBoundingClientRect();fn();
+    if(reduce)return;
+    var a2=X.getBoundingClientRect(),b2=Y.getBoundingClientRect();
+    [[X,a,a2],[Y,b,b2]].forEach(function(t){
+      t[0].animate([{transform:'translate('+(t[1].left-t[2].left)+'px,'+(t[1].top-t[2].top)+'px)'},{transform:'none'}],{duration:520,easing:'cubic-bezier(.3,1.3,.5,1)'});
+    });
   }
-  step=n;render();
+  function render(){
+    var first=swapped?Y:X,second=swapped?X:Y;
+    first.querySelector('.pos').textContent='A';second.querySelector('.pos').textContent='B';
+    X.classList.toggle('win',!swapped);Y.classList.toggle('win',swapped);
+    $('toyRun').textContent='Lượt '+(swapped?2:1)+' / 2';
+    $('bubble').innerHTML=swapped
+      ?'<b>“Câu A hay hơn.”</b><br>Độ chắc chắn: <span class="num">99,7%</span>. Tức là chọn câu của <span class="ty">Gemini</span>.'
+      :'<b>“Câu A hay hơn.”</b><br>Độ chắc chắn: <span class="num">100%</span>. Tức là chọn câu của <span class="tx">Qwen</span>.';
+    $('flipbar').classList.toggle('on',swapped);
+  }
+  X.classList.add('win');
+  $('swap').addEventListener('click',function(){
+    flipAnim(function(){swapped=!swapped;if(swapped)slots.insertBefore(Y,X);else slots.insertBefore(X,Y);render();});
+    runs++;
+    var log=$('log');var c=document.createElement('span');
+    c.className='chip '+(swapped?'cy':'cx');c.textContent='Lượt '+runs+' → '+(swapped?'Gemini':'Qwen');
+    log.appendChild(c);while(log.children.length>3)log.removeChild(log.firstChild);
+    ['eyeL','eyeR'].forEach(function(id){var e=$(id);if(e.animate&&!reduce)e.animate([{transform:'scaleY(1)'},{transform:'scaleY(.1)'},{transform:'scaleY(1)'}],{duration:260,transformOrigin:'center'});});
+  });
+})();
+
+/* duplicate ticker for a seamless loop */
+$('track').innerHTML+=$('track').innerHTML;
+
+/* ---------- cases ---------- */
+var CASES=[
+ {tab:'Hồ sơ 1 · Chênh rõ',topic:'Alexandros Đại đế',q:'Tại sao ông vua bị mất đi một con mắt khi đi chinh chiến?',
+  ctx:'…Và, nhà vua đã bị mất một con mắt khi đi chinh chiến, mà với con mắt này ông đã <mark>nhìn trộm qua buồng ngủ của vợ, thấy thần linh đội lốt loài rắn mà ngủ chung với vợ ông</mark>. Hơn nữa, theo như Eratosthenes…',
+  X:'Theo đoạn văn, Philippos II mất một con mắt khi đi chinh chiến vì đã nhìn trộm qua buồng ngủ của vợ và thấy thần linh đội lốt loài rắn mà ngủ chung với vợ ông, do đó ông bị mất đi con mắt đó.',
+  Y:'Vua Philippos II đã mất một con mắt khi tham gia chiến dịch quân sự, vì một tai nạn hoặc thương tích xảy ra trong trận đánh. Thông tin này được ghi nhận trong đoạn văn mà không nêu rõ nguyên nhân cụ thể.',
+  mX:'Qwen2.5-7B',mY:'gpt-oss-20b',hX:5,hY:1,p1:{A:.9986,B:0,C:.0014},p2:{A:.0009,B:.999,C:0},
+  stamp:['s-ok','Nhất quán<br>và đúng'],
+  take:'<b>Khi chênh lệch rõ, judge làm tốt.</b> Câu của gpt-oss bịa ra “tai nạn trong trận đánh”. Judge chọn câu của Qwen ở cả hai lượt, gần như chắc chắn 100%.'},
+ {tab:'Hồ sơ 2 · Sát nút, flip',topic:'Ẩm thực Việt Nam',q:'Chả trái quất được chế biến ra sao?',
+  ctx:'…chả bò, chả trái quất (<mark>viên chả thành viên nhỏ như quả quất, phết lòng đỏ trứng ra ngoài hấp chín sau đó đem nướng</mark>). Một số biến thể của món bò cuốn lá lốt…',
+  X:'Chả trái quất được làm thành viên nhỏ giống như quả quất, sau đó phết lòng đỏ trứng ra ngoài, hấp chín rồi mới đem nướng.',
+  Y:'Chả trái quất được chế biến bằng cách viên thịt thành những viên nhỏ như quả quất, sau đó phết lòng đỏ trứng ra bên ngoài rồi đem hấp chín. Cuối cùng, món chả này sẽ được đem đi nướng để hoàn thành.',
+  mX:'Qwen2.5-7B',mY:'Gemini Flash-Lite',hX:5,hY:5,p1:{A:1,B:0,C:0},p2:{A:.9969,B:.0004,C:.0028},
+  stamp:['s-flip','Flip!'],
+  take:'<b>Hai câu đều đúng, judge chọn chỗ đứng.</b> Người chấm cho cả hai 5/5. Judge trả lời “A” ở cả hai lượt, mỗi lần chắc chắn gần 100%, nên chọn Qwen rồi lại chọn Gemini. Tự tin cao không cứu được.'},
+ {tab:'Hồ sơ 3 · Nhất quán nhưng lệch',topic:'Edward I của Anh',q:'Quyền lợi của Llywelyn thay đổi thế nào sau Hiệp ước Aberconwy tháng 11 năm 1277?',
+  ctx:'…Với Hiệp ước Aberconwy tháng 11 năm 1277, <mark>ông ta chỉ còn giữ lại lãnh địa Gwynedd, dù vẫn được phép xưng là Hoàng tử xứ Wales</mark>.',
+  X:'Sau Hiệp ước Aberconwy, Llywelyn bị thu hẹp quyền lãnh của mình chỉ còn vùng lãnh địa Gwynedd, nhưng vẫn được phép giữ danh hiệu Hoàng tử xứ Wales. Điều này đồng nghĩa với việc quyền lực thực tiễn của ông bị giảm đáng kể, trong khi danh hiệu truyền thống vẫn được bảo toàn.',
+  Y:'Sau Hiệp ước Aberconwy vào tháng 11 năm 1277, Llywelyn buộc phải đầu hàng và chỉ còn được giữ lại lãnh địa Gwynedd của mình. Mặc dù bị thu hẹp đáng kể về lãnh thổ, ông vẫn được phép tiếp tục xưng là Hoàng tử xứ Wales.',
+  mX:'gpt-oss-20b',mY:'Gemini Flash-Lite',hX:4,hY:5,p1:{A:.9668,B:.0002,C:.0331},p2:{A:.0071,B:.9901,C:.0028},
+  stamp:['s-warn','Nhất quán<br>nhưng sai'],
+  take:'<b>Nhất quán chưa chắc đã đúng.</b> Judge chọn gpt-oss ở cả hai lượt, không bị vị trí kéo đi. Nhưng người chấm thích câu của Gemini hơn. Chấm hai chiều không sửa được loại lỗi này.'}
+];
+var cur=0;
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function runHtml(c,n){
+  var p=n===1?c.p1:c.p2, a=n===1?'X':'Y', b=n===1?'Y':'X';
+  var ma=c['m'+a],mb=c['m'+b];
+  var lab=p.A>=p.B&&p.A>=p.C?'A':(p.B>=p.C?'B':'C');
+  var winner=lab==='C'?'hoà':(lab==='A'?ma:mb), wcls=lab==='C'?'':((lab==='A'?a:b)==='X'?'tx':'ty');
+  function bar(k,cls,name){return '<div class="pbar"><span>'+k+' · '+name+'</span><span class="tr"><span class="fl" style="background:var(--'+cls+')" data-w="'+(p[k]*100)+'%"></span></span><span class="v num">'+fmt(p[k],p[k]>.99||p[k]<.01?1:0)+'</span></div>'}
+  return '<div class="run"><div class="run-h"><span>Lượt '+n+'</span><span class="order"><span class="o'+a.toLowerCase()+'">A = '+ma.split(' ')[0]+'</span><span class="o'+b.toLowerCase()+'">B = '+mb.split(' ')[0]+'</span></span></div>'
+   +bar('A',a.toLowerCase(),ma.split(' ')[0])+bar('B',b.toLowerCase(),mb.split(' ')[0])+bar('C','muted','hoà')
+   +'<p class="run-v">Judge: <b>“'+lab+'”</b> → chọn <b class="'+wcls+'">'+winner+'</b></p></div>';
 }
-$('next').onclick=function(){go(1)}; $('back').onclick=function(){go(-1)};
-document.addEventListener('keydown',function(e){
-  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();go(1)}
-  else if(e.key==='ArrowLeft')go(-1);
-  else if(/^[1-3]$/.test(e.key))load(+e.key-1);
-});
-/* section 5: experiment/results/metrics_vi.json */
-function chart(id,rows){$(id).innerHTML=rows.map(function(r){return '<div class="row"><span>'+r[0]+'</span><div class="t"><div class="f" style="width:'+r[1]+'%"></div></div><span>'+r[1]+'%</span></div>'}).join('')}
-chart('c1',[['chênh 0 (n=645)',56.6],['chênh 0.5–1 (n=659)',43.7],['chênh 1.5–2 (n=136)',36.0],['chênh ≥ 2.5 (n=18)',44.4]]);
-chart('c2',[['Q1: 0.03–0.80',51.2],['Q2: 0.80–0.96',54.9],['Q3: 0.96–1.00',51.5],['Q4: ≈ 1.00',37.1]]);
-/* optional deep link: #<case>-<step>, e.g. #2-4 */
-var hm=/^#([1-3])(?:-([0-4]))?$/.exec(location.hash);
-load(hm?+hm[1]-1:0); if(hm&&hm[2]){step=+hm[2];render()}
+function showCase(i){
+  cur=i;var c=CASES[i];
+  $('tabs').innerHTML=CASES.map(function(k,j){return '<button class="tab" role="tab" type="button" id="tab'+j+'" aria-selected="'+(j===i)+'" data-i="'+j+'">'+k.tab+'</button>'}).join('');
+  $('case').innerHTML='<div class="case-head"><div class="meta"><span class="t">'+c.topic+' · UIT-ViQuAD 2.0</span><h3>“'+esc(c.q)+'”</h3></div><div class="stamp '+c.stamp[0]+'">'+c.stamp[1]+'</div></div>'
+   +'<details class="ctx"><summary>Đoạn văn judge được đọc (phần tô xanh là đáp án gốc)</summary><p>'+c.ctx+'</p></details>'
+   +'<div class="pair"><div class="ans mx"><span class="who"><span>Câu X · '+c.mX+'</span><span class="score">người chấm '+c.hX+'/5</span></span><span class="txt">'+esc(c.X)+'</span></div>'
+   +'<div class="ans my"><span class="who"><span>Câu Y · '+c.mY+'</span><span class="score">người chấm '+c.hY+'/5</span></span><span class="txt">'+esc(c.Y)+'</span></div></div>'
+   +'<div class="runs">'+runHtml(c,1)+runHtml(c,2)+'</div>'
+   +'<p class="take">'+c.take+'</p>';
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    document.querySelectorAll('#case .fl').forEach(function(f){f.style.width=f.dataset.w});
+    var s=document.querySelector('#case .stamp');s.classList.add('hit');
+  })});
+}
+$('tabs').addEventListener('click',function(e){var b=e.target.closest('.tab');if(b)showCase(+b.dataset.i)});
+$('tabs').addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='ArrowLeft'){var n=(cur+(e.key==='ArrowRight'?1:2))%3;showCase(n);$('tab'+n).focus()}});
+showCase(0);
+
+/* ---------- charts ---------- */
+(function(){
+  var w=$('waffle'),h='';
+  for(var i=0;i<100;i++){var cls=i<43?'f1':(i<49?'f2':'');h+='<i class="'+cls+'" style="transition-delay:'+(i*8)+'ms"></i>'}
+  w.innerHTML=h;
+})();
+function bars(id,rows,max){
+  $(id).innerHTML=rows.map(function(r){
+    return '<div class="hb" data-tip="'+r.tip+'"><span>'+r.l+(r.n?'<span class="n">'+r.n+'</span>':'')+'</span><span class="tr"><span class="fl '+(r.c||'')+'" style="--w:'+(r.v/max*100)+'%"></span></span><span class="v">'+fmt(r.v)+'</span></div>'
+  }).join('');
+}
+bars('rq2',[
+ {l:'Bằng điểm (0)',n:'645 cặp',v:.566,c:'pink',tip:'Chênh 0 điểm · 645 cặp · flip 56,6% (KTC 52,3–60,6%)'},
+ {l:'Chênh 0,5–1',n:'659 cặp',v:.437,c:'pink',tip:'659 cặp · flip 43,7% (KTC 39,8–47,7%)'},
+ {l:'Chênh 1,5–2',n:'136 cặp',v:.360,c:'pink',tip:'136 cặp · flip 36,0% (KTC 28,7–43,8%)'},
+ {l:'Chênh ≥ 2,5',n:'18 cặp',v:.444,c:'pink faint',tip:'Chỉ 18 cặp · flip 44,4% (KTC 16,7–76,9%), không đủ để kết luận'}
+],.7);
+bars('rq3',[
+ {l:'Thấp (3–80%)',n:'375 cặp',v:.512,c:'amber',tip:'Độ tự tin 0,03–0,80 · flip 51,2% (KTC 46,4–56,1%)'},
+ {l:'Vừa (80–96%)',n:'375 cặp',v:.549,c:'amber',tip:'Độ tự tin 0,80–0,96 · flip 54,9% (KTC 49,6–60,2%)'},
+ {l:'Cao (96–99,6%)',n:'375 cặp',v:.515,c:'amber',tip:'Độ tự tin 0,96–0,996 · flip 51,5% (KTC 46,1–57,0%)'},
+ {l:'Rất cao (> 99,6%)',n:'375 cặp',v:.371,c:'amber',tip:'Độ tự tin trên 0,996 · flip 37,1% (KTC 31,5–43,1%)'}
+],.7);
+bars('rq4',[
+ {l:'Judge, một lượt',v:.371,c:'gray',tip:'Trung bình hai thứ tự · 37,1% (KTC 34,3–40,1%) · 813 cặp'},
+ {l:'Judge, chấm hai chiều (BPC)',v:.348,c:'gray',tip:'BPC · 34,8% (KTC 31,3–38,6%) · 813 cặp'},
+ {l:'Judge, chỉ cặp nhất quán',n:'phủ 58% số cặp',v:.276,c:'gray',tip:'27,6% trên 468 cặp nhất quán (KTC 23,1–32,4%)'},
+ {l:'Độ giống câu (cosine)',v:.571,tip:'Embedding cosine với đáp án gốc · 57,1% (KTC 53,3–60,9%)'},
+ {l:'Đếm từ trùng (F1)',v:.689,tip:'Word-overlap F1 với đáp án gốc · 68,9% (KTC 65,3–72,4%) · 807 cặp'}
+],.8);
+
+/* tooltip */
+(function(){
+  var tip=$('tip');
+  document.addEventListener('pointermove',function(e){
+    var t=e.target.closest('[data-tip]');
+    if(!t){tip.style.opacity=0;return}
+    tip.textContent=t.dataset.tip;tip.style.opacity=1;
+    var x=Math.min(e.clientX+14,window.innerWidth-260);tip.style.left=x+'px';tip.style.top=(e.clientY+16)+'px';
+  });
+})();
+
+/* reveal + chart grow: content stays visible if the observer never fires */
+(function(){
+  var els=document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)||reduce){document.querySelectorAll('.hbars,.waffle').forEach(function(e){e.classList.add('go')});return}
+  var io=new IntersectionObserver(function(es){es.forEach(function(en){
+    if(en.isIntersecting){en.target.classList.remove('pending');en.target.querySelectorAll('.hbars,.waffle').forEach(function(e){e.classList.add('go')});io.unobserve(en.target)}
+  })},{threshold:.15});
+  els.forEach(function(e){var r=e.getBoundingClientRect();if(r.top>window.innerHeight){e.classList.add('pending')}else{e.querySelectorAll('.hbars,.waffle').forEach(function(x){x.classList.add('go')})}io.observe(e)});
+  setTimeout(function(){els.forEach(function(e){e.classList.remove('pending')});document.querySelectorAll('.hbars,.waffle').forEach(function(e){e.classList.add('go')})},4000);
+})();
 </script>
+
 </body>
 </html>
