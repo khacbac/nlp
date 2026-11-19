@@ -1,4 +1,4 @@
-"""Quất Store support inbox: an AI writes two reply drafts and an AI judge picks one.
+"""ABNQ Store support inbox: an AI writes two reply drafts and an AI judge picks one.
 
 The judge is checked against itself: it sees the two drafts in both orders
 (see arbiter.py). Only a pick that survives the swap is sent automatically;
@@ -34,15 +34,15 @@ STATE = DATA / "state.json"
 POLICY = (DATA / "policy.md").read_text().strip()
 
 WRITER_SYSTEM = (
-    "Bạn là nhân viên chăm sóc khách hàng của Quất Store. Hãy soạn câu trả lời gửi khách hàng, "
+    "Bạn là nhân viên chăm sóc khách hàng của ABNQ Store. Hãy soạn câu trả lời gửi khách hàng, "
     "chỉ dựa trên chính sách được cung cấp. Nếu chính sách không đề cập, nói rõ sẽ chuyển bộ phận "
-    "phụ trách và không tự hứa hẹn. Viết tiếng Việt, lịch sự, xưng \"Quất Store\" hoặc \"em\", "
+    "phụ trách và không tự hứa hẹn. Viết tiếng Việt, lịch sự, xưng \"ABNQ Store\" hoặc \"em\", "
     "tối đa 120 từ, văn bản thuần, không dùng markdown, không ký tên."
 )
 WRITER_USER = "Chính sách:\n{policy}\n\nTin nhắn của khách hàng {customer}:\n{message}"
 # What the judge reads as the "user question" of the MT-Bench prompt.
 JUDGE_QUESTION = (
-    "Bạn là nhân viên chăm sóc khách hàng của Quất Store. Dựa trên chính sách dưới đây, "
+    "Bạn là nhân viên chăm sóc khách hàng của ABNQ Store. Dựa trên chính sách dưới đây, "
     "hãy trả lời tin nhắn của khách hàng.\n\nChính sách:\n{policy}\n\nTin nhắn của khách hàng {customer}:\n{message}"
 )
 DEFAULTS = {"writer1": "groq-gpt-oss-20b", "writer2": "gemini-3.5-flash-lite",

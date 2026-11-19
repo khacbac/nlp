@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Quất Store · Hỗ trợ khách hàng</title>
+<title>ABNQ Store · Hỗ trợ khách hàng</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -310,7 +310,7 @@ table.tb{width:100%;border-collapse:collapse;font-size:13px}
   <header class="top">
     <div class="logo">
       <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="2" y="5" width="15" height="18" rx="4" fill="var(--d1)"/><rect x="11" y="5" width="15" height="18" rx="4" fill="var(--d2)" opacity=".9"/><path d="M9 12h10l-2.5-2.5M19 16H9l2.5 2.5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Quất Store
+      ABNQ Store
     </div>
     <div class="ws"><i></i>Hỗ trợ khách hàng</div>
     <div class="grow"></div>
@@ -673,7 +673,7 @@ document.addEventListener("click", async e => {
   if (it) { if (view === "report") view = "all"; open(it.dataset.id); return render(); }
   if (q("#newB")) return openNew();
   if (q("#setB")) return openSettings();
-  if (q("#policyB")) return sheet("Chính sách Quất Store", `<div class="policy">${esc(S.policy)}</div><div class="box">AI dựa vào chính sách này khi soạn và đánh giá câu trả lời.</div>`);
+  if (q("#policyB")) return sheet("Chính sách ABNQ Store", `<div class="policy">${esc(S.policy)}</div><div class="box">AI dựa vào chính sách này khi soạn và đánh giá câu trả lời.</div>`);
   if (q("#themeB")) {
     const r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
     r.dataset.theme = dark ? "light" : "dark"; try { localStorage.setItem("nd-theme", r.dataset.theme); } catch {}
