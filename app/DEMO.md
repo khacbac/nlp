@@ -25,6 +25,19 @@ Bảy tin dưới đây dùng cặp câu trả lời soạn sẵn (nhãn "Mẫu 
 
 Các tin còn lại (T-1043, T-1048, T-1050 đến T-1053) do AI tự soạn, dùng để cho thấy case thường vẫn chạy trơn.
 
+## Hai lớp kiểm tra bắt được tin nào
+
+Lớp 1 là phép đảo thứ tự (bắt lỗi do thứ tự đọc). Lớp 2 là đối chiếu chính sách: so số tiền, phần trăm, tồn kho và ngày hàng về trong câu trả lời với chính sách và bảng tồn kho, bằng luật, không dùng AI. Đây là bài học của nghiên cứu: AI nhất quán chưa chắc đúng; có đáp án tham chiếu thì so với đáp án.
+
+| Câu sai của tin | Lớp 2 phát hiện | Ghi chú |
+|---|---|---|
+| T-1042 | "Hứa kịp ngày 25/11, nhưng hàng về 28/11" | Lỗi gpt-oss-20b và Gemini chọn sai nhất quán; phép đảo không bắt được, lớp 2 giữ lại |
+| T-1044 | Số tiền 165.000đ và mức 10% không có trong chính sách | |
+| T-1055 | Số tiền 2.100.000đ không có trong bảng giá | |
+| T-1045, T-1046, T-1047, T-1049, T-1054, T-1057, T-1058 | Không | Cần đọc hiểu tình huống (va đập, quá 7 ngày, lỗi của shop, lệnh cài); để lại cho giám khảo và phép đảo |
+
+Không câu đúng nào bị báo nhầm (kể cả 18 câu do ba mô hình tự soạn cho các tin thường, thử ngày 20/11/2026).
+
 ## Kết quả đo thật (19/11/2026, mỗi ô chạy một lần)
 
 | Tin | gpt-oss-120b (mặc định) | gpt-oss-20b | Gemini 3.5 Flash-Lite |
@@ -69,12 +82,14 @@ Kết quả đo thật (19/11/2026):
 
 1. **Giám khảo mạnh làm tốt.** Giữ gpt-oss-120b, mở T-1044 (chuyện thật của thầy), bấm "Soạn trả lời". AI chọn Gợi ý 1 ở cả hai lượt. Chỉ ra câu bị loại nghe rất hợp lý ("ảnh đã thể hiện…") nhưng sai mục 3.
 2. **Phép đảo thứ tự cứu một lần gửi sai.** Đổi giám khảo sang gpt-oss-20b, mở T-1046, bấm "Đánh giá lại". Nếu ra "AI đổi ý khi đảo thứ tự": hỏi một lần thì Gợi ý 2 (gửi bù miễn phí, sai) đã đi tới khách; hệ thống giữ lại cho người duyệt. Đây là kết quả nghiên cứu: gần một nửa phán quyết đổi khi đảo thứ tự, nhiều nhất khi hai câu ngang nhau.
-3. **Trang Hiệu quả AI.** Số "Gửi nhầm đã chặn" tăng lên.
-4. **Tuỳ chọn, nếu còn thời gian.** Nói "vừa có khách nhắn", bấm `N` ba lần để tới T-1057, mở tin và bấm "Soạn trả lời" với gpt-oss-120b: tin bị giữ lại. Đổi sang gpt-oss-20b, bấm "Đánh giá lại": AI nghe theo lệnh của khách ở cả hai lượt.
+3. **AI nhất quán vẫn có thể sai.** Giữ gpt-oss-20b, mở T-1042, bấm "Soạn trả lời". AI chọn Gợi ý 1 ở cả hai lượt, phép đảo coi là chắc chắn, nhưng hàng "Đối chiếu" báo Gợi ý 1 hứa kịp sinh nhật trong khi hàng về sau ngày đó, nên tin bị giữ lại. Đây là kết quả mạnh nhất của nghiên cứu: chỉ giữ phán quyết nhất quán thì độ khớp với người còn 27.6%, còn so với đáp án mẫu đạt 68.9%.
+4. **Trang Hiệu quả AI.** Hai số "Gửi nhầm đã chặn" (lớp 1) và "Sai dữ kiện đã chặn" (lớp 2) tăng lên.
+5. **Tuỳ chọn, nếu còn thời gian.** Nói "vừa có khách nhắn", bấm `N` ba lần để tới T-1057, mở tin và bấm "Soạn trả lời" với gpt-oss-120b: tin bị giữ lại. Đổi sang gpt-oss-20b, bấm "Đánh giá lại": AI nghe theo lệnh của khách ở cả hai lượt.
 
 ## Câu hỏi có thể gặp
 
-- **"Phép đảo thứ tự có bắt được mọi lỗi không?"** Không. T-1042 là ví dụ: giám khảo yếu chọn sai nhưng chọn sai *nhất quán* ở cả hai lượt, nên vẫn được coi là chắc chắn. Phép đảo thứ tự chỉ bắt lỗi do thứ tự đọc, không bắt được AI hiểu sai chính sách. Muốn chặn loại lỗi này cần giám khảo mạnh hơn hoặc kiểm tra bằng luật.
+- **"Phép đảo thứ tự có bắt được mọi lỗi không?"** Không. T-1042 là ví dụ: giám khảo yếu chọn sai nhưng chọn sai *nhất quán* ở cả hai lượt. Phép đảo thứ tự chỉ bắt lỗi do thứ tự đọc, không bắt được AI hiểu sai chính sách. Vì vậy có lớp đối chiếu chính sách bằng luật; lớp này bắt được T-1042, nhưng chỉ với lỗi về dữ kiện (số tiền, ngày, tồn kho), không với lỗi cần đọc hiểu như T-1047.
+- **"Sao không dùng AI để đối chiếu chính sách?"** Như vậy là thêm một giám khảo AI nữa, mang đúng những thiên vị đang đo. Luật không thiên vị vị trí và không bị khách cài lệnh, nhưng chỉ kiểm được những gì viết thành con số.
 - **"Sao không để AI tự viết hết?"** Hai mô hình tự viết thường cùng đúng hoặc cùng sai, khó tạo cặp có độ chênh đã biết. Cặp soạn sẵn giống cách thí nghiệm dùng cặp câu trả lời có điểm của người chấm. Bấm "Soạn gợi ý khác" để chuyển sang AI tự viết.
 - **"Phép đảo thứ tự có cái giá nào không?"** Có: báo động nhầm. Khi hai câu đều ổn (T-1056), giám khảo hay đổi ý và tin bị đẩy sang người duyệt dù gửi câu nào cũng được. Đổi lại, không có câu sai nào được gửi chỉ vì đứng trước.
 - **"Khách cài lệnh vào tin nhắn thì sao?"** Xem T-1057. Phép đảo thứ tự giúp được khi lệnh chỉ kéo giám khảo một phần; nếu giám khảo nghe theo hoàn toàn thì cần lớp phòng vệ khác, ví dụ tách tin của khách ra khỏi phần chỉ dẫn cho giám khảo.

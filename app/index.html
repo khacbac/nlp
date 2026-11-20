@@ -172,6 +172,18 @@ button{cursor:pointer}
 .ban.agree .ic,.ban.tie .ic{background:var(--ok);color:#fff}
 .ban.flip{background:var(--flip-soft);border-color:color-mix(in srgb,var(--flip) 35%,transparent)}
 .ban.flip .ic{background:var(--flip);color:#fff}
+.ban.facts{background:var(--flip-soft);border-color:color-mix(in srgb,var(--flip) 35%,transparent)}
+.ban.facts .ic{background:var(--flip);color:#fff}
+.run.fc{grid-template-columns:auto 1fr}
+.run.fc .res{justify-self:end}
+.run.fc .lbl{white-space:nowrap}
+.run.fc .res b.bad{color:var(--flip)}
+.run.fc .res b.good{color:var(--ok)}
+.fchk{margin:0;padding:10px 14px;border-top:1px solid var(--line2);list-style:none;display:grid;gap:4px;font-size:13px}
+.fchk li{color:var(--flip)}
+.fchk li::before{content:"✗ ";font-weight:700}
+.fchk.ok li{color:var(--ok)}
+.fchk.ok li::before{content:"✓ "}
 .ban.partial,.ban.invalid{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
 .ban.partial .ic,.ban.invalid .ic{background:var(--warn);color:#fff}
 
@@ -222,7 +234,7 @@ details.why summary::-webkit-details-marker{display:none}
 .rwrap{max-width:1080px;margin:0 auto;padding:26px 28px 64px}
 .rh h1{margin:0;font-size:24px;letter-spacing:-.4px}
 .rh p{margin:4px 0 0;color:var(--ink2)}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:20px}
 .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
 .kpi b{display:block;font:600 30px/1 var(--mono);letter-spacing:-1px;margin-top:8px}
 .kpi span{color:var(--muted);font-size:12.5px;font-weight:500}
@@ -446,8 +458,9 @@ function renderSide() {
     `<h4>Phân tích</h4><button class="nav ${view === "report" ? "on" : ""}" data-view="report" title="Hiệu quả AI">${ICON.report}<span class="lbl-t">Hiệu quả AI</span></button>` +
     `<div class="today">
       <div><b>${st.auto_sent}</b><span>tự động gửi</span></div>
-      <div><b>${st.partial + st.flip + st.invalid}</b><span>chờ bạn duyệt</span></div>
-      <div class="wide"><b>${st.saved}</b><span>lần AI suýt gửi nhầm đã được chặn lại</span></div>
+      <div><b>${st.partial + st.flip + st.invalid + st.held}</b><span>chờ bạn duyệt</span></div>
+      <div class="wide"><b>${st.saved}</b><span>lần AI suýt gửi nhầm vì thứ tự đọc đã được chặn lại</span></div>
+      <div class="wide"><b>${st.held}</b><span>lần AI chọn câu sai dữ kiện đã được chặn lại</span></div>
     </div>
     <button class="nav newb" id="newB" title="Tạo yêu cầu">${ICON.plus}<span class="lbl-t">Tạo yêu cầu</span></button>
     <div class="foot">AI đánh giá: <b>${esc(label(S.settings.judge))}</b></div>`;
@@ -458,6 +471,7 @@ function pillFor(t) {
   if (t.status === "sent") return `<span class="pill sent">✓ ${t.sent.by === "auto" ? "Tự động gửi" : "Bạn đã gửi"} · ${esc(t.sent.at)}</span>`;
   if (t.status === "review") {
     const s = t.decision.status;
+    if (t.decision.held) return `<span class="pill review">Sai dữ kiện</span>`;
     return `<span class="pill review">${s === "flip" ? "AI đổi ý" : s === "partial" ? "AI phân vân" : "AI gặp lỗi"}</span>`;
   }
   return `<span class="pill ${STATUS[t.status][0]}">${STATUS[t.status][1]}</span>`;
@@ -497,6 +511,7 @@ function runRow(d, i) {
 
 function banner(t) {
   const d = t.decision, w = d.winner;
+  if (d.held) return `<div class="ban facts"><div class="ic">${ICON.half}</div><div><h4>AI chọn Gợi ý ${w}, nhưng câu này sai dữ kiện</h4><p>AI chọn giống nhau ở cả hai lần, nhưng đối chiếu với chính sách và kho hàng thấy lỗi. Bạn xem và chọn câu trả lời để gửi.</p></div></div>`;
   const B = {
     agree:["agree", ICON.check, `AI đề xuất gửi Gợi ý ${w}`, "Có thể gửi ngay."],
     tie:["tie", ICON.eq, "Hai gợi ý đều ổn", "Gửi gợi ý nào cũng được."],
@@ -529,10 +544,12 @@ function renderDetail() {
       <button class="btn pri" data-act="process">${ICON.pen}Soạn trả lời</button></div>`;
   } else {
     const sent = t.sent;
-    const safe = ["agree","tie"].includes(d.status);
+    const safe = ["agree","tie"].includes(d.status) && !d.held;
+    const fx = d.facts;  // absent on tickets judged before the fact check existed
+    const fsum = i => fx[i].length ? `<b class="bad">Gợi ý ${i + 1}: ${fx[i].length} lỗi</b>` : `<b class="good">Gợi ý ${i + 1}: khớp</b>`;
     body = (sent ? `<div class="sent"><div class="hd">✓ Đã gửi Gợi ý ${sent.draft}${sent.edited ? " (đã sửa)" : ""} <span>· ${sent.by === "auto" ? "tự động" : "bởi bạn"} lúc ${esc(sent.at)}${sent.followed_ai === false ? " · khác đề xuất của AI" : ""}</span></div><p>${esc(sent.text)}</p></div><div class="sec"></div>` : "") +
       banner(t) +
-      `<div class="runs">${runRow(d, 0)}${runRow(d, 1)}</div>
+      `<div class="runs">${runRow(d, 0)}${runRow(d, 1)}${fx ? `<div class="run fc"><span class="lbl">Đối chiếu</span><span class="res">${fsum(0)} · ${fsum(1)}</span></div>` : ""}</div>
       <details class="why"><summary>Xem nhận xét của AI</summary><div class="whys">
         ${d.runs.map((r, i) => `<div><h5>Lần ${i + 1} · đọc Gợi ý ${i + 1} trước</h5><pre>${esc(r.judgment || "(trống)")}</pre></div>`).join("")}
       </div></details>
@@ -542,6 +559,7 @@ function renderDetail() {
         return `<div class="draft ${win ? "win" : ""}">
           <div class="dhd"><span class="tag t${n}">Gợi ý ${n}</span><span class="mdl">${esc(label(x.model))}</span>${win ? `<span class="badge">✓ AI đề xuất</span>` : ""}</div>
           <textarea data-draft="${n}" ${sent ? "readonly" : ""} aria-label="Nội dung gợi ý ${n}">${esc(x.text)}</textarea>
+          ${fx ? (fx[i].length ? `<ul class="fchk">${fx[i].map(f => `<li>${esc(f)}</li>`).join("")}</ul>` : `<ul class="fchk ok"><li>Khớp chính sách và kho hàng</li></ul>`) : ""}
           <div class="dft"><span class="wc">${words(x.text)} từ</span>${sent ? "" : `<button class="btn ${win ? "pri" : ""}" data-send="${n}">${ICON.send}Gửi gợi ý này</button>`}</div>
         </div>`; }).join("")}</div>
       ${sent ? "" : `<div class="acts"><button class="btn ghost" data-act="rejudge">${ICON.redo}Đánh giá lại</button><button class="btn ghost" data-act="redraft">${ICON.pen}Soạn gợi ý khác</button></div>`}</div>`;
@@ -563,9 +581,9 @@ function renderReport() {
   if (view !== "report") return;
   const st = S.stats, n = st.judged;
   const pct = (a, b) => b ? Math.round(100 * a / b) : 0;
-  const human = st.partial + st.flip + st.invalid;
+  const human = st.partial + st.flip + st.invalid + st.held;
   const segs = [["agree","AI chắc chắn","var(--ok)"],["tie","Hai gợi ý ngang nhau","color-mix(in srgb,var(--ok) 45%,var(--panel))"],
-    ["partial","AI phân vân","var(--warn)"],["flip","AI đổi ý","var(--flip)"],["invalid","AI gặp lỗi","var(--muted)"]];
+    ["partial","AI phân vân","var(--warn)"],["flip","AI đổi ý","var(--flip)"],["held","Sai dữ kiện","color-mix(in srgb,var(--flip) 55%,var(--panel))"],["invalid","AI gặp lỗi","var(--muted)"]];
   const done = S.tickets.filter(t => t.decision);
   const aShare = pct(st.slot_a, st.slot_picks);
   el.innerHTML = `<div class="rwrap">
@@ -575,8 +593,9 @@ function renderReport() {
     <div class="kpis">
       <div class="kpi"><span>AI đã xử lý</span><b>${n}</b><small>tin nhắn · ${n * 2} lần kiểm tra</small></div>
       <div class="kpi"><span>Tự gửi được</span><b>${pct(st.agree + st.tie, n)}%</b><small>${st.agree + st.tie} tin AI chắc chắn</small></div>
-      <div class="kpi"><span>Cần người duyệt</span><b>${pct(human, n)}%</b><small>${st.flip} đổi ý · ${st.partial} phân vân · ${st.invalid} lỗi</small></div>
+      <div class="kpi"><span>Cần người duyệt</span><b>${pct(human, n)}%</b><small>${st.flip} đổi ý · ${st.partial} phân vân · ${st.held} sai dữ kiện · ${st.invalid} lỗi</small></div>
       <div class="kpi hl"><span>Gửi nhầm đã chặn</span><b>${st.saved}</b><small>tin sẽ bị tự gửi nếu chỉ hỏi AI một lần</small></div>
+      <div class="kpi hl"><span>Sai dữ kiện đã chặn</span><b>${st.held}</b><small>AI chọn nhất quán nhưng câu đó sai chính sách hoặc kho</small></div>
     </div>
     <div class="cards2">
       <div class="card"><h3>Kết quả kiểm tra</h3>
@@ -631,8 +650,8 @@ async function runAll() {
   bulk = null;
   await refresh();
   const st = S.stats;
-  toast(`Xong. ${st.auto_sent} tin đã tự gửi, ${st.partial + st.flip + st.invalid} tin chờ bạn duyệt${fail ? `, ${fail} lỗi` : ""}.`);
-  if (st.partial + st.flip + st.invalid) { view = "review"; render(); }
+  toast(`Xong. ${st.auto_sent} tin đã tự gửi, ${st.partial + st.flip + st.invalid + st.held} tin chờ bạn duyệt${fail ? `, ${fail} lỗi` : ""}.`);
+  if (st.partial + st.flip + st.invalid + st.held) { view = "review"; render(); }
 }
 
 function sheet(title, html, onMount) {

@@ -1,9 +1,10 @@
 """ABNQ Store support inbox: an AI writes two reply drafts and an AI judge picks one.
 
 The judge is checked against itself: it sees the two drafts in both orders
-(see arbiter.py). Only a pick that survives the swap is sent automatically;
-everything else lands in the "Cần bạn duyệt" queue for a person. This is the
-position-bias experiment turned into a routing rule.
+(see arbiter.py). Only a pick that survives the swap, and whose draft states no
+fact the policy or stock table contradicts (see factcheck.py), is sent
+automatically; everything else lands in the "Cần bạn duyệt" queue for a person.
+This is the position-bias experiment turned into a routing rule.
 
 The shop, its policy (data/policy.md) and the customers (data/tickets.json)
 are made up. Progress is kept in data/state.json (gitignored) so a restart
@@ -28,6 +29,7 @@ APP = Path(__file__).resolve().parent
 sys.path.insert(0, str(APP))
 
 import arbiter  # noqa: E402
+import factcheck  # noqa: E402
 import llm  # noqa: E402
 
 DATA = APP / "data"
@@ -149,9 +151,10 @@ def process(tid: str, redraft: bool, autosend: bool) -> dict:
         drafts = t["drafts"]
     question = JUDGE_QUESTION.format(policy=POLICY, customer=t["customer"], message=t["message"])
     decision = arbiter.arbitrate(s["judge"], question, drafts[0]["text"], drafts[1]["text"])
+    decision = factcheck.gate(decision, [factcheck.check(d["text"], t, PRODUCTS, POLICY) for d in drafts])
     with lock:
         t.update(drafts=drafts, decision=decision, sent=None)
-        if decision["status"] in arbiter.SAFE:
+        if trusted(decision):
             t["status"] = "ready"
             if autosend:
                 send(t, decision["winner"], drafts[decision["winner"] - 1]["text"], by="auto")
@@ -161,17 +164,25 @@ def process(tid: str, redraft: bool, autosend: bool) -> dict:
         return t
 
 
+def trusted(d: dict) -> bool:
+    """The judge's pick survived the order swap and its draft passed the fact check."""
+    return d.get("status") in arbiter.SAFE and not d.get("held")
+
+
 def send(t: dict, draft: int, text: str, by: str) -> None:
     d = t["decision"] or {}
     t["sent"] = {"draft": draft, "text": text, "by": by, "at": now(),
                  "edited": bool(t["drafts"]) and text != t["drafts"][draft - 1]["text"],
-                 "followed_ai": d.get("winner") == draft if d.get("status") in arbiter.SAFE else None}
+                 "followed_ai": d.get("winner") == draft if trusted(d) else None}
     t["status"] = "sent"
 
 
 def stats() -> dict:
     done = [t for t in state["tickets"] if t["decision"]]
-    by = {k: sum(t["decision"]["status"] == k for t in done) for k in ("agree", "tie", "partial", "flip", "invalid")}
+    # "held": a consistent pick stopped by the fact check; it is not counted under agree/tie.
+    held = [t for t in done if t["decision"].get("held")]
+    by = {k: sum(t["decision"]["status"] == k for t in done if t not in held) for k in ("agree", "tie", "partial", "flip", "invalid")}
+    by["held"] = len(held)
     slot_a = sum(r["verdict"] == "A" for t in done for r in t["decision"]["runs"])
     picks = sum(r["verdict"] in ("A", "B") for t in done for r in t["decision"]["runs"])
     # Tickets a single-pass judge would have sent although the swap shows the pick is not stable.

@@ -10,14 +10,24 @@ draft 1, draft 2 ──► run 1: A = draft 1, B = draft 2 ──► pick ┐
                  └─► run 2: A = draft 2, B = draft 1 ──► pick ┴─► same draft in both runs? ──► send
                                                                   otherwise (flip, half tie,
                                                                   bad format) ─────────────► a person picks
+                                                     picked draft breaks a checked fact ──► a person picks
 ```
 
 The experiment found that a 7B judge changes its verdict on 48.7% of pairs
 when only the order changes. The app turns that finding into a routing rule:
 a reply is sent automatically only if the judge's pick survives the swap.
+The swap removes position bias, but the experiment also found that a
+consistent judge is not a correct one: keeping only consistent verdicts
+agreed with humans on 27.6% of pairs, while a plain comparison against the
+gold answer reached 68.9%. In a shop the policy and stock table are the gold
+answer, so a second layer (`factcheck.py`) checks each draft's amounts,
+percentages, stock claims and promised dates against them by rule, and holds
+a consistent pick whose draft contradicts them. It cannot judge cases that
+need reading (is a bicycle knock "impact damage"?); those stay with the judge.
+
 The report page shows, for the current inbox, how often the judge flipped,
-how often it picked slot A, and how many replies a single-pass judge would
-have sent on position alone.
+how often it picked slot A, how many replies a single-pass judge would have
+sent on position alone, and how many consistent picks the fact check held.
 
 ## Run
 
@@ -34,14 +44,15 @@ draft writers and the judge from the models your keys can reach.
 | File | Role |
 |---|---|
 | `arbiter.py` | The core: judge both orders, combine into agree / tie / partial / flip / invalid |
+| `factcheck.py` | Rule check of each draft against the policy and stock table; holds a consistent pick that breaks a fact |
 | `llm.py` | Provider client (Groq, Gemini, OpenRouter); also used by `demo/server.py` |
 | `server.py` | Inbox state and JSON API |
 | `index.html` | The inbox UI |
 | `data/policy.md`, `data/tickets.json` | Made-up shop policy and customer messages. Tickets with `canned` ship a fixed draft pair (one breaks a policy detail) instead of AI drafts; "Soạn gợi ý khác" switches them to AI drafts. Tickets marked `reserve` stay out of the inbox until the presenter presses N |
 | `DEMO.md` | Demo script with the answer key for the canned tickets |
-| `data/products.json` | Catalog with stock; the policy's stock table is generated from it |
+| `data/products.json` | Catalog with stock; the policy's stock table is generated from it. `aliases`/`not` let the fact check spot a product named in a draft |
 | `static/products/` | Product photos from Wikimedia Commons; authors and licenses at `/nguon-anh` |
-| `test_arbiter.py` | Guards the routing rule |
+| `test_arbiter.py` | Guards the routing rule and the fact check against the canned trap pairs |
 
 Inbox progress is saved to `data/state.json` (gitignored); "Làm mới hộp thư"
 in the settings sheet clears it.
