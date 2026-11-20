@@ -39,6 +39,14 @@ python app/server.py      # then open http://localhost:8010
 Python 3.10+, standard library only. Settings (gear icon) pick the two
 draft writers and the judge from the models your keys can reach.
 
+To measure what each layer buys, run every trap ticket through the judge
+several times and score the same judgments as single-pass, swap, and
+swap + fact check (results in `results/bench.md`; the JSONL resumes):
+
+```
+python app/bench.py --judges groq-gpt-oss-20b,groq-gpt-oss-120b --repeats 3
+```
+
 ## Files
 
 | File | Role |
@@ -48,7 +56,8 @@ draft writers and the judge from the models your keys can reach.
 | `llm.py` | Provider client (Groq, Gemini, OpenRouter); also used by `demo/server.py` |
 | `server.py` | Inbox state and JSON API |
 | `index.html` | The inbox UI |
-| `data/policy.md`, `data/tickets.json` | Made-up shop policy and customer messages. Tickets with `canned` ship a fixed draft pair (one breaks a policy detail) instead of AI drafts; "Soạn gợi ý khác" switches them to AI drafts. Tickets marked `reserve` stay out of the inbox until the presenter presses N |
+| `data/policy.md`, `data/tickets.json` | Made-up shop policy and customer messages. Tickets with `canned` ship a fixed draft pair (one breaks a policy detail; `answer` names the correct one) instead of AI drafts; "Soạn gợi ý khác" switches them to AI drafts. Tickets marked `reserve` stay out of the inbox until the presenter presses N |
+| `bench.py` | Batch run over the trap tickets: wrong / right / to-a-person for single-pass, swap, and swap + fact check |
 | `DEMO.md` | Demo script with the answer key for the canned tickets |
 | `data/products.json` | Catalog with stock; the policy's stock table is generated from it. `aliases`/`not` let the fact check spot a product named in a draft |
 | `static/products/` | Product photos from Wikimedia Commons; authors and licenses at `/nguon-anh` |

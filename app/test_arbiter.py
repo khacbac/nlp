@@ -29,7 +29,7 @@ import factcheck  # noqa: E402
 CANNED = {t["id"]: t for t in server.all_tickets() if t.get("canned")}
 
 
-@pytest.mark.parametrize("tid, wrong", [("T-1042", 1), ("T-1044", 2), ("T-1055", 1)])
+@pytest.mark.parametrize("tid, wrong", [("T-1042", 1), ("T-1044", 2), ("T-1055", 1), ("T-1059", 2), ("T-1060", 1)])
 def test_factcheck_catches_wrong_fact(tid, wrong):
     t = CANNED[tid]
     issues = [factcheck.check(d, t, server.PRODUCTS, server.POLICY) for d in t["canned"]]
@@ -37,12 +37,10 @@ def test_factcheck_catches_wrong_fact(tid, wrong):
 
 
 def test_factcheck_never_flags_correct_draft():
-    # The correct draft of every trap pair (from DEMO.md); a false flag sends good replies to a person.
-    correct = {"T-1042": 2, "T-1044": 1, "T-1045": 2, "T-1046": 1, "T-1047": 2, "T-1049": 1, "T-1054": 2,
-               "T-1055": 2, "T-1057": 1, "T-1058": 2}
-    for tid, n in correct.items():
-        t = CANNED[tid]
-        assert factcheck.check(t["canned"][n - 1], t, server.PRODUCTS, server.POLICY) == [], tid
+    # The correct draft of every trap pair (its `answer`); a false flag sends good replies to a person.
+    for tid, t in CANNED.items():
+        for n in (1, 2) if t["answer"] == "any" else (t["answer"],):
+            assert factcheck.check(t["canned"][n - 1], t, server.PRODUCTS, server.POLICY) == [], tid
 
 
 @pytest.mark.parametrize("v1, v2, issues, held", [
