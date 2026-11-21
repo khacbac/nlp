@@ -13,6 +13,8 @@ What this catches:
 - thuế khoán or lệ phí môn bài presented as still applying;
 - a percentage that is not a rate in the law;
 - an income-method rate (15%, 17%, 20% of taxable income) applied to revenue;
+- a GTGT or TNCN rate that is not the rate of the industry group, when the group is known
+  (from the question, the person's answer, or a group the draft names);
 - a tax amount that does not match the law for the revenue in the question;
 - the revenue-percentage method used where revenue is above 03 tỷ;
 - a missing "Căn cứ:" line, or a cited article or clause the draft was not given,
@@ -173,8 +175,12 @@ def check(draft: str, ticket: dict, retrieved: set[str], records: dict[str, dict
             issues.append(f"Thuế suất {', '.join(f'{r:g}%' for r in sorted(rates))} là của phương pháp thu nhập "
                           "(doanh thu trừ chi phí), không áp lên doanh thu (Nghị định 68/2026/NĐ-CP Điều 4 khoản 5)")
 
-    # 4–5. Amounts and method, when the revenue is known.
     group = next((g for g in RATES["groups"] if g["id"] == ticket.get("group")), None) or group_named(draft)
+    # 3c. Rates of the wrong group ("dịch vụ" is 5% GTGT and 2% TNCN, not distribution's 1%).
+    if group:
+        issues += group_rate_issues(draft, group)
+
+    # 4–5. Amounts and method, when the revenue is known.
     if revenue:
         cap = RATES["tncn_revenue_method"]["max_revenue"]
         if revenue > cap and group and any(close(v, round((revenue - th) * group["tncn"] * f)) for v, _, _ in money(draft) for f in (1, 0.7)):
@@ -240,6 +246,33 @@ def citation_issues(refs: list[tuple[int, int | None, str]], retrieved: set[str]
                 continue
             where = "không nằm trong các khoản đã cung cấp" if (dieu, khoan, so) in known else "không có trong kho văn bản"
             issues.append(f"Trích khoản {khoan} Điều {dieu} văn bản {so}, {where}")
+    return issues
+
+
+TAX_NAME = re.compile(r"gtgt|giá trị gia tăng|tncn|thu nhập cá nhân", re.I)
+
+
+def group_rate_issues(draft: str, group: dict) -> list[str]:
+    """Percentages stated for GTGT or TNCN that are not this group's rate.
+
+    Each percentage belongs to the tax named last before it in its sentence. Sentences about a
+    reduction ("giảm 20%", "giảm 30%") are left alone, and so are the income method's rates.
+    """
+    allowed = {"gtgt": {group["gtgt"] * 100, group["gtgt"] * 80} if group.get("gtgt") is not None else None,
+               "tncn": {group["tncn"] * 100} | {b["rate"] * 100 for b in RATES["tncn_income_method"]["brackets"]}}
+    issues = []
+    for s in sentences(draft):
+        if "giảm" in s.lower():
+            continue
+        names = [(m.start(), "gtgt" if "gt" in m[0].lower() or "gia tăng" in m[0].lower() else "tncn") for m in TAX_NAME.finditer(s)]
+        for m in PERCENT.finditer(s):
+            tax = next((t for pos, t in reversed(names) if pos < m.start()), None)
+            ok = allowed.get(tax) if tax else None
+            p = float(m[1].replace(",", "."))
+            if ok is not None and not any(abs(p - a) < 1e-6 for a in ok):
+                label = "GTGT" if tax == "gtgt" else "TNCN"
+                rate = f"{group[tax] * 100:g}%"
+                issues.append(f"Tỷ lệ {label} {p:g}% không phải tỷ lệ của nhóm \"{group['ten']}\" ({rate} trên doanh thu)")
     return issues
 
 

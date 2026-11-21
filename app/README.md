@@ -5,6 +5,8 @@ Trả lời câu hỏi về thuế của hộ kinh doanh, cá nhân kinh doanh t
 ```
 câu hỏi ──► ngoài phạm vi (doanh nghiệp, tiền lương, bất động sản…) ──► từ chối, không gọi AI
    │
+   ▼ thiếu thông tin làm đổi câu trả lời (doanh thu, ngành, cách nhận tiền) ──► hỏi lại một lần, không gọi AI
+   │   (người hỏi luôn bỏ qua được để nhận câu trả lời chung)
    ▼ tìm các khoản luật liên quan (BM25 trên articles.jsonl, + khoản cốt lõi)
    │   không khoản nào đủ khớp ──► "chưa đủ căn cứ", không gọi AI
    ▼
@@ -58,6 +60,7 @@ Mỗi trình duyệt có một hộp thư riêng, nhận diện bằng cookie v�
 | File | Vai trò |
 |---|---|
 | `server.py` | Phiên theo trình duyệt, lọc phạm vi, gọi tìm kiếm, soạn, chấm, đối chiếu; API JSON |
+| `clarify.py` | Quyết định bằng luật khi nào hỏi lại: câu hỏi về nghĩa vụ hoặc số thuế mà thiếu doanh thu, ngành, hay (người làm tự do) cách nhận tiền |
 | `retrieve.py` | BM25 theo âm tiết và cặp âm tiết, bảng đồng nghĩa, khoản cốt lõi; câu gõ không dấu tìm trên bản bỏ dấu |
 | `arbiter.py` | Chấm hai thứ tự, gộp kết quả thành agree / tie / partial / flip / invalid |
 | `factcheck.py` | Đối chiếu bản nháp với `rates.json` và các khoản đã đưa, bằng luật, không dùng AI |
@@ -81,6 +84,7 @@ python app/bench.py --judges groq-gpt-oss-20b,groq-gpt-oss-120b --repeats 3 --no
 
 - Mới có AI kiểm chứng số liệu (`VERIFICATION.md`, trạng thái `ai`). Cần người kiểm lại trước khi giới thiệu rộng.
 - Chưa có văn bản của Bộ Tài chính xếp chi tiết ngành nghề vào nhóm tỷ lệ. Tỷ lệ GTGT cho nhóm "cho thuê tài sản, đại lý" và nhóm "nội dung số" đang để trống. Xếp một ngành cụ thể (quán ăn, cà phê…) vào nhóm nào là việc của AI soạn và AI chấm, lớp đối chiếu không quyết.
-- Người làm tự do ("IT tự do", "freelancer", "hợp đồng dịch vụ"…) luôn kèm một lưu ý cố định: câu trả lời chỉ áp dụng cho thu nhập từ kinh doanh. Tiền công, tiền thù lao nhận từ tổ chức theo hợp đồng (Luật Thuế TNCN Điều 3 khoản 2) nằm ngoài phạm vi.
+- Người làm tự do ("IT tự do", "freelancer", "hợp đồng dịch vụ"…) được hỏi cách nhận tiền. Tiền công, tiền thù lao nhận từ tổ chức theo hợp đồng (Luật Thuế TNCN Điều 3 khoản 2) nằm ngoài phạm vi và nhận câu trả lời cố định; nếu bỏ qua hoặc chọn "cả hai", câu trả lời kèm một lưu ý cố định.
+- Câu hỏi đã có ngành nghề (kể cả "IT") không bị hỏi ngành: việc xếp ngành vào nhóm tỷ lệ vẫn do AI soạn và AI chấm, lớp đối chiếu chưa kiểm tỷ lệ % theo nhóm.
 - Không tự tính thuế theo phương pháp thu nhập (doanh thu trừ chi phí): chỉ nhận ra trường hợp này và khuyên hỏi cơ quan thuế hoặc kế toán.
 - Luật Quốc hội thông qua ngày 20/11/2026 (nâng mốc 03 tỷ lên 10 tỷ từ kỳ tính thuế 2027) chưa đăng Công báo, nên chưa đưa vào. Xem `rates.json` → `pending`.

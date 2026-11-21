@@ -96,3 +96,53 @@ def test_income_rate_on_revenue(draft, flagged):
     t = {"message": "Làm IT tự do thì đóng thuế như thế nào?"}
     found = factcheck.check(draft + "\nCăn cứ: Điều 4 khoản 5 Nghị định 68/2026/NĐ-CP", t, {"nd-68-2026:d4:k5"}, RECORDS)
     assert any("phương pháp thu nhập" in i for i in found) is flagged
+
+
+# Follow-up questions: asked by rule, only for facts that change the answer, never for demo questions.
+import clarify  # noqa: E402
+
+
+@pytest.mark.parametrize("message, asked", [
+    ("làm IT tự do thì đóng thuế như thế nào", ["income", "revenue", "group"]),  # IT fits several groups
+    ("lam IT tu do thi dong thue nhu the nao", ["income", "revenue", "group"]),  # typed without marks
+    ("Tôi kinh doanh thì đóng thuế bao nhiêu?", ["revenue", "group"]),        # no amount, no line of business
+    ("Tôi bán hàng online thì phải đóng thuế bao nhiêu?", ["revenue"]),       # the writers place the business
+    ("Tôi mới mở tiệm, mỗi tháng thu khoảng 50 triệu, có phải đóng thuế không?", []),  # an amount is given
+    ("Hộ kinh doanh phải khai thuế theo tháng hay theo quý? Hạn nộp là khi nào?", []),  # answer does not depend on revenue
+    ("Năm 2026 tôi có phải nộp lệ phí môn bài không?", []),
+])
+def test_clarify_questions(message, asked):
+    assert [q["id"] for q in clarify.questions(message)] == asked
+
+
+def test_demo_questions_are_never_asked_back():
+    assert all(not clarify.questions(t["message"]) for t in TRAPS if t.get("revenue"))
+
+
+@pytest.mark.parametrize("text, value", [("1,2 tỷ", 1_200_000_000), ("800 triệu", 800_000_000), ("1200", 1_200_000_000), ("", None)])
+def test_parse_revenue(text, value):
+    assert clarify.parse_revenue(text) == value
+
+
+def test_clarify_rejects_unknown_answers():
+    asked = clarify.questions("Tôi kinh doanh thì đóng thuế bao nhiêu?")
+    with pytest.raises(ValueError):
+        clarify.accept(asked, {"group": "khong-co"})
+    with pytest.raises(ValueError):
+        clarify.accept(asked, {"revenue": "nhiều lắm"})
+    # an answer to a question that was not asked is ignored
+    assert clarify.accept(asked, {"income": "wage", "revenue": "2 tỷ"}) == {"revenue": 2_000_000_000}
+
+
+@pytest.mark.parametrize("draft, group, flagged", [
+    # A live draft gave IT services the 1% GTGT rate of distribution.
+    ("Tính thuế giá trị gia tăng theo phương pháp trực tiếp: thuế suất 1% trên doanh thu.", "dich-vu", True),
+    ("Thuế GTGT 5% và thuế TNCN 2% trên doanh thu.", "dich-vu", False),
+    ("Thuế GTGT 5% và thuế TNCN 1% trên doanh thu.", "dich-vu", True),       # each rate goes with its tax
+    ("Hàng hóa được giảm 20% mức tỷ lệ GTGT, còn 4%.", "dich-vu", False),     # a reduction
+    ("Thuế GTGT 5% trên tiền cho thuê.", "cho-thue-dai-ly", False),            # no GTGT rate in the law for this group
+])
+def test_group_rates(draft, group, flagged):
+    t = {"message": "Doanh thu 1,5 tỷ thì đóng thuế bao nhiêu?", "group": group}
+    found = factcheck.check(draft + "\nCăn cứ: Điều 4 khoản 5 Nghị định 68/2026/NĐ-CP", t, {"nd-68-2026:d4:k5"}, RECORDS)
+    assert any("không phải tỷ lệ của nhóm" in i for i in found) is flagged

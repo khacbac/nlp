@@ -4,6 +4,8 @@ For each question:
 
     scope rule ──► out of scope (companies, salaries…) ──► polite refusal, no model call
         │
+    a fact the answer turns on is missing (clarify.py) ──► ask once, no model call; skippable
+        │
     BM25 over the clauses in force (retrieve.py) ──► no clause scores high enough ──► "no legal basis found"
         │
     two models write a draft each, citing the clauses they were given
@@ -45,6 +47,7 @@ APP = Path(__file__).resolve().parent
 sys.path.insert(0, str(APP))
 
 import arbiter  # noqa: E402
+import clarify  # noqa: E402
 import factcheck  # noqa: E402
 import llm  # noqa: E402
 import retrieve  # noqa: E402
@@ -71,10 +74,8 @@ OUT_OF_SCOPE_REPLY = (
     "Anh/chị vui lòng liên hệ cơ quan thuế quản lý hoặc tổng đài hỗ trợ của Cục Thuế.")
 # Freelancers ("làm IT tự do", "nhận dự án") may be running a business or may be paid wages by
 # a company under a contract; the two are taxed differently and the corpus only answers the first.
-# A fixed note says so, and the two clauses that draw the line go to the writers.
-FREELANCE = re.compile(
-    r"\b(tự do|freelanc\w*|hợp đồng dịch vụ|hợp đồng khoán|cộng tác viên|ctv|thù lao|nhận dự án|nhận job|"
-    r"upwork|fiverr|làm remote|làm từ xa)\b", re.I)
+# The inbox asks which it is (clarify.py); a fixed note covers a skipped or "both" answer, a wage
+# answer gets a fixed reply, and the two clauses that draw the line go to the writers.
 FREELANCE_CLAUSES = ("vbhn-112-2026:d3:k1", "vbhn-112-2026:d3:k2")
 FREELANCE_CAVEAT = (
     "Lưu ý cho người làm tự do: câu trả lời chỉ áp dụng khi anh/chị tự kinh doanh hàng hóa, dịch vụ "
@@ -82,6 +83,11 @@ FREELANCE_CAVEAT = (
     "từ công ty hay tổ chức theo hợp đồng, khoản đó là thu nhập từ tiền lương, tiền công (Điều 3 khoản 2), "
     "tính thuế theo cách khác và nằm ngoài phạm vi hộp thư. Trường hợp này anh/chị nên hỏi bên trả tiền "
     "hoặc cơ quan thuế quản lý.")
+WAGE_REPLY = (
+    "Tiền công, tiền thù lao anh/chị nhận từ công ty hay tổ chức theo hợp đồng là thu nhập từ tiền lương, tiền công "
+    "(Luật Thuế thu nhập cá nhân Điều 3 khoản 2), không phải thu nhập của cá nhân kinh doanh. Hộp thư chỉ trả lời về "
+    "thuế của hộ kinh doanh, cá nhân kinh doanh, nên không trả lời trường hợp này để tránh thông tin sai. "
+    "Anh/chị vui lòng hỏi bên trả tiền hoặc cơ quan thuế quản lý.")
 NO_BASIS_REPLY = (
     "Hộp thư chưa tìm thấy điều luật nào trong các văn bản đang có (hiệu lực đến {cutoff}) đủ khớp với câu hỏi, "
     "nên không trả lời để tránh đoán sai. Anh/chị có thể hỏi lại cụ thể hơn (loại hình kinh doanh, doanh thu năm, "
@@ -202,9 +208,31 @@ def clause_view(h: dict) -> dict:
             "url": src["url_trang"], "score": h["score"], "matched": h["matched"], "core": h.get("core", False)}
 
 
+def question_text(t: dict) -> str:
+    """The question as the models read it: the message, then the facts the person added when asked."""
+    extra = clarify.summary(t.get("clarified") or {})
+    return f"{t['message']}\n{extra}" if extra else t["message"]
+
+
+def clarify_ticket(sid: str, tid: str, answers: dict, skip: bool) -> None:
+    """Store the person's answers to the inbox's questions; the ticket is then processed as usual."""
+    with lock:
+        t = find(session(sid), tid)
+        if t["status"] != "need_info":
+            raise ValueError("Câu hỏi này không cần thêm thông tin.")
+        got = {} if skip else clarify.accept(t.get("need") or [], answers)
+        t.update(clarified=got, need=None)
+        # The amount and group checks in factcheck.py read these, as they do for the demo questions.
+        if "revenue" in got:
+            t["revenue"] = got["revenue"]
+        if got.get("group", "unknown") != "unknown":
+            t["group"] = got["group"]
+        save(sid)
+
+
 def write_draft(model: str, t: dict, ctx: str) -> dict:
     msgs = [{"role": "system", "content": WRITER_SYSTEM.format(cutoff=CUTOFF_VI)},
-            {"role": "user", "content": WRITER_USER.format(context=ctx, customer=t["customer"], message=redact(t["message"]))}]
+            {"role": "user", "content": WRITER_USER.format(context=ctx, customer=t["customer"], message=redact(question_text(t)))}]
     text, _, _ = llm.chat(model, msgs, 700, temperature=0.7)
     return {"model": model, "text": text.strip()}
 
@@ -227,11 +255,27 @@ def process(sid: str, tid: str, redraft: bool, autosend: bool) -> dict:
                      processed_at=stamp())
             save(sid)
         return public(t)
-    caveat = bool(FREELANCE.search(t["message"]))
-    if caveat:
+    # Ask once for the facts the answer turns on; demo questions carry theirs already.
+    if not t.get("canned") and "clarified" not in t:
+        need = clarify.questions(t["message"])
+        if need:
+            with lock:
+                t.update(status="need_info", need=need, processed_at=stamp())
+                save(sid)
+            return public(t)
+    answers = t.get("clarified") or {}
+    if answers.get("income") == "wage":
         with lock:
-            t["caveat"] = FREELANCE_CAVEAT
-    found = INDEX.search(t["message"])
+            t.update(status="out_of_scope", reply=WAGE_REPLY, decision=None, drafts=None,
+                     retrieved=[clause_view({"id": c, "score": None, "matched": []}) for c in FREELANCE_CLAUSES],
+                     processed_at=stamp())
+            save(sid)
+        return public(t)
+    freelance = clarify.has("freelance", t["message"])
+    caveat = freelance and answers.get("income") != "business"
+    with lock:
+        t["caveat"] = FREELANCE_CAVEAT if caveat else None
+    found = INDEX.search(question_text(t))
     if not found["enough"]:
         with lock:
             t.update(status="no_basis", reply=NO_BASIS_REPLY.format(cutoff=CUTOFF_VI), decision=None, drafts=None,
@@ -243,7 +287,7 @@ def process(sid: str, tid: str, redraft: bool, autosend: bool) -> dict:
             raise TooMany(f"Đã đạt giới hạn {HOURLY_LIMIT} câu hỏi mỗi giờ. Vui lòng thử lại sau.")
         st["usage"].append(time.time())
     hits = found["hits"]
-    if caveat:
+    if freelance:
         seen = {h["id"] for h in hits}
         hits += [{"id": c, "score": None, "matched": [], "core": False} for c in FREELANCE_CLAUSES if c not in seen]
     ctx = context(hits)
@@ -259,9 +303,9 @@ def process(sid: str, tid: str, redraft: bool, autosend: bool) -> dict:
         drafts = t["drafts"]
     if st.get("demo") and s.get("judge_law") is False:
         # Presenter's switch: the judge reads no clauses and must rely on memory (bench.py --nolaw).
-        question = JUDGE_QUESTION_NOLAW.format(customer=t["customer"], message=redact(t["message"]))
+        question = JUDGE_QUESTION_NOLAW.format(customer=t["customer"], message=redact(question_text(t)))
     else:
-        question = JUDGE_QUESTION.format(cutoff=CUTOFF_VI, context=ctx, customer=t["customer"], message=redact(t["message"]))
+        question = JUDGE_QUESTION.format(cutoff=CUTOFF_VI, context=ctx, customer=t["customer"], message=redact(question_text(t)))
     decision = arbiter.arbitrate(s["judge"], question, drafts[0]["text"], drafts[1]["text"])
     given = {h["id"] for h in hits}
     decision = factcheck.gate(decision, [factcheck.check(d["text"], t, given, RECORDS) for d in drafts])
@@ -323,6 +367,7 @@ def snapshot(st: dict) -> dict:
     models = llm.available()
     return {"settings": settings(st), "tickets": [public(t) for t in st["tickets"]], "stats": stats(st), "demo": st.get("demo", False),
             "cutoff": CUTOFF_VI, "pending_human_check": True,
+            "clarify_options": {"income": clarify.INCOME_OPTIONS, "group": clarify.GROUP_OPTIONS},
             "sources": [{"id": d["id"], "label": d.get("trich_dan", d["so_hieu"]), "url": d["url_trang"]}
                         for d in SOURCES.values() if d.get("text_file")],
             "models": [{"id": k, "label": v[0], "provider": v[1]} for k, v in models.items()]}
@@ -416,9 +461,14 @@ class Handler(BaseHTTPRequestHandler):
                     return self.send_json(public(t))
             if len(parts) == 4 and parts[:2] == ["api", "tickets"]:
                 tid, action = parts[2], parts[3]
-                if action == "process":
+                if action in ("process", "clarify"):
                     if not llm.available():
                         return self.send_json({"error": "Chưa có API key nào trong .env."}, 400)
+                    if action == "clarify":
+                        try:
+                            clarify_ticket(sid, tid, body.get("answers") or {}, bool(body.get("skip")))
+                        except ValueError as e:
+                            return self.send_json({"error": str(e)}, 400)
                     return self.send_json(process(sid, tid, bool(body.get("redraft")), bool(body.get("autosend"))))
                 if action == "send":
                     with lock:

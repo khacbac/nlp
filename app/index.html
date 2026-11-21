@@ -115,6 +115,7 @@ a{color:var(--brand)}
 .pill.ready{background:var(--ok-soft);color:var(--ok)}
 .pill.sent{background:transparent;color:var(--ok);padding:0}
 .pill.out_of_scope,.pill.no_basis{background:var(--warn-soft);color:var(--warn)}
+.pill.need_info{background:var(--brand-soft);color:var(--brand)}
 .pill.busy{background:var(--brand-soft);color:var(--brand)}
 .pill .spin{width:10px;height:10px;border-width:1.5px}
 .chan{font-size:11.5px;color:var(--muted)}
@@ -174,6 +175,17 @@ a{color:var(--brand)}
 .answer.warn{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
 .answer.warn .hd{color:var(--warn)}
 .answer.caveat{margin-bottom:14px}.answer.caveat .txt{font-size:14px}
+.clar{display:grid;gap:18px}
+.clar fieldset{border:0;padding:0;margin:0;min-width:0}
+.clar legend{font-weight:600;font-size:14px;margin-bottom:8px;padding:0}
+.clar .opts{display:flex;flex-wrap:wrap;gap:6px}
+.clar .opts label{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;max-width:100%}
+.clar .opts label:has(input:checked){border-color:var(--brand);color:var(--brand);background:var(--brand-soft)}
+.clar .opts input{accent-color:var(--brand);margin:0}
+.clar .fld{margin:0}
+.clar .fld input{max-width:280px}
+.clar .row{display:flex;flex-wrap:wrap;gap:8px}
+.added{font-size:13px;color:var(--ink2);margin-bottom:12px}
 .answer.unsure{background:var(--flip-soft);border-color:color-mix(in srgb,var(--flip) 35%,transparent)}
 .answer.unsure .hd{color:var(--flip)}
 .after{margin:14px 0 0;color:var(--ink2);font-size:14px}
@@ -414,10 +426,11 @@ const ICON = {
 const STATUS = {
   new:["new","Chưa xử lý"], ready:["ready","Đã có trả lời"], sent:["sent","Đã trả lời"],
   review:["review","Chưa chắc chắn"], out_of_scope:["out_of_scope","Ngoài phạm vi"], no_basis:["no_basis","Chưa đủ căn cứ"],
+  need_info:["need_info","Cần thêm thông tin"],
 };
 const statusLabel = k => k === "review" && reviewer ? "Cần người duyệt" : STATUS[k][1];
 const VIEWS = [
-  ["all",ICON.all], ["sent",ICON.sent], ["ready",ICON.ready], ["review",ICON.review],
+  ["all",ICON.all], ["need_info",ICON.inbox], ["sent",ICON.sent], ["ready",ICON.ready], ["review",ICON.review],
   ["new",ICON.inbox], ["out_of_scope",ICON.out], ["no_basis",ICON.nobasis],
 ];
 const viewLabel = k => k === "all" ? "Tất cả" : statusLabel(k);
@@ -429,6 +442,7 @@ const EMPTY = {
   new:["Không có câu nào chưa xử lý.",""],
   out_of_scope:["Không có câu nào ngoài phạm vi.",""],
   no_basis:["Không có câu nào thiếu căn cứ.",""],
+  need_info:["Không có câu nào đang chờ thêm thông tin.",""],
 };
 const SAMPLES = [
   "Tiệm tạp hóa của tôi doanh thu khoảng 800 triệu một năm. Năm 2026 tôi có phải đóng thuế không?",
@@ -655,6 +669,19 @@ function workingBox(t) {
     }).join("")}</div><div style="display:grid;gap:8px;margin-top:18px"><div class="sk" style="width:92%"></div><div class="sk" style="width:78%"></div><div class="sk" style="width:85%"></div></div></div>`;
 }
 
+// The inbox's follow-up questions: the facts the answer turns on, asked once, always skippable.
+function clarifyForm(t) {
+  const q = x => x.kind === "choice"
+    ? `<fieldset><legend>${esc(x.text)}</legend><div class="opts">${x.options.map(([v, l]) =>
+        `<label><input type="radio" name="${esc(x.id)}" value="${esc(v)}">${esc(l)}</label>`).join("")}</div></fieldset>`
+    : `<div class="fld"><label for="cl-${esc(x.id)}">${esc(x.text)}</label><input id="cl-${esc(x.id)}" name="${esc(x.id)}" inputmode="decimal" autocomplete="off" placeholder="Ví dụ: 1,2 tỷ">${x.hint ? `<small>${esc(x.hint)}</small>` : ""}</div>`;
+  return `<div class="answer warn"><div class="hd">Cần thêm thông tin</div>
+      <div class="txt" style="font-size:14px">Câu trả lời phụ thuộc vào các thông tin dưới đây. Anh/chị cho biết thêm để được trả lời chính xác, hoặc bỏ qua để nhận câu trả lời chung.</div></div>
+    <form class="clar" id="clarF" novalidate>${(t.need || []).map(q).join("")}
+      <div class="row"><button class="btn pri" type="submit">${ICON.send}Gửi thông tin</button>
+      <button class="btn ghost" type="button" data-act="skipclar">Trả lời chung</button></div></form>`;
+}
+
 function askForm() {
   return `<div class="dwrap">
     <button class="btn ghost back" type="button" data-act="back">${ICON.back}Câu hỏi</button>
@@ -682,6 +709,8 @@ function renderDetail() {
   } else if (st === "new") {
     body = `<div class="start"><div><h4>Chưa xử lý</h4><p>Câu hỏi này chưa được trả lời.</p></div>
       <button class="btn pri" type="button" data-act="process">${ICON.play}Trả lời câu này</button></div>`;
+  } else if (st === "need_info") {
+    body = clarifyForm(t);
   } else if (st === "out_of_scope" || st === "no_basis") {
     body = answerBox(t.reply, st === "out_of_scope" ? "Ngoài phạm vi hộp thư" : "Chưa đủ căn cứ để trả lời", "warn") +
       (st === "no_basis" ? clauseList(t.retrieved) : "") + feedbackBox(t);
@@ -705,6 +734,8 @@ function renderDetail() {
   // A fixed note for freelancers: the answer covers business income only, not wages from a contract.
   if (t.caveat && !busy.has(t.id) && st !== "new" && st !== "out_of_scope")
     body = `<div class="answer warn caveat"><div class="hd">Lưu ý</div><div class="txt">${esc(t.caveat)}</div></div>` + body;
+  const added = clarifiedText(t.clarified);
+  if (added && !busy.has(t.id)) body = `<p class="added">Thông tin anh/chị bổ sung: ${esc(added)}</p>` + body;
   el.innerHTML = `<div class="dwrap">
     <button class="btn ghost back" type="button" data-act="back">${ICON.back}Câu hỏi</button>
     <div class="dh"><h1>${esc(t.subject)}</h1><span class="chip mono">${esc(t.id)}</span>${pillFor(t)}</div>
@@ -786,11 +817,18 @@ function startTick() {
     if (sel && busy.has(sel)) renderDetail();
   }, 1000);
 }
-async function processTicket(id, opts = {}) {
+function clarifiedText(c) {
+  if (!c) return "";
+  const vnd = v => v >= 1e9 ? `${String(+(v / 1e9).toFixed(3)).replace(".", ",")} tỷ đồng` : `${Math.round(v / 1e6)} triệu đồng`;
+  const opt = (k, v) => ((S.clarify_options || {})[k] || []).find(o => o[0] === v)?.[1] || v;
+  return [c.income && opt("income", c.income), c.revenue && `doanh thu năm khoảng ${vnd(c.revenue)}`,
+          c.group && c.group !== "unknown" && `ngành ${opt("group", c.group)}`].filter(Boolean).join("; ");
+}
+async function processTicket(id, opts = {}, action = "process") {
   busy.set(id, Date.now()); startTick();
   render();
   try {
-    upsert(await api(`/api/tickets/${encodeURIComponent(id)}/process`, opts));
+    upsert(await api(`/api/tickets/${encodeURIComponent(id)}/${action}`, opts));
   } finally {
     busy.delete(id);
   }
@@ -798,7 +836,8 @@ async function processTicket(id, opts = {}) {
 }
 function doneToast(t) {
   const m = {sent:"Đã có câu trả lời.", ready:"Đã có câu trả lời.", review:"Hệ thống chưa đủ chắc chắn để trả lời câu này.",
-    out_of_scope:"Câu hỏi nằm ngoài phạm vi hộp thư.", no_basis:"Chưa tìm thấy căn cứ để trả lời."}[t.status];
+    out_of_scope:"Câu hỏi nằm ngoài phạm vi hộp thư.", no_basis:"Chưa tìm thấy căn cứ để trả lời.",
+    need_info:"Cần thêm thông tin để trả lời chính xác."}[t.status];
   if (m) toast(m);
 }
 
@@ -904,7 +943,20 @@ async function sendFeedback(box, vote) {
   render();
 }
 
-document.addEventListener("submit", e => { if (e.target.id === "askF") submitAsk(e); });
+async function submitClarify(answers, skip) {
+  const id = sel, autosend = !!S.settings.autopilot;
+  try { await processTicket(id, {answers, skip, autosend}, "clarify"); if (sel === id) doneToast(tk(id)); }
+  catch (err) { toast(err.message, true); }
+  render();
+}
+document.addEventListener("submit", e => {
+  if (e.target.id === "askF") submitAsk(e);
+  if (e.target.id === "clarF") {
+    e.preventDefault();
+    const answers = Object.fromEntries([...new FormData(e.target)].filter(([, v]) => String(v).trim()));
+    submitClarify(answers, !Object.keys(answers).length);
+  }
+});
 document.addEventListener("click", async e => {
   const q = s => e.target.closest(s);
   if (q("[data-close]")) return closeSheet();
@@ -928,6 +980,7 @@ document.addEventListener("click", async e => {
     const act = a.dataset.act;
     if (act === "back") { document.body.classList.remove("show-detail"); return render(); }
     if (act === "ask") return showAsk();
+    if (act === "skipclar") return submitClarify({}, true);
     const id = sel;
     const opts = act === "process" ? {autosend: !!S.settings.autopilot} : act === "redraft" ? {redraft:true} : {};
     try { await processTicket(id, opts); if (sel === id) doneToast(tk(id)); } catch (err) { toast(err.message, true); }
