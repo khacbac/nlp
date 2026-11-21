@@ -1,0 +1,30 @@
+{"q": "Doanh thu bao nhiêu một năm thì không phải nộp thuế?", "expect": ["nd-68-2026:d3:k1", "nd-68-2026:d4:k1"]}
+{"q": "Em bán hàng trên Shopee thì sàn có tự khấu trừ thuế cho em không?", "expect": ["nd-68-2026:d11:k1"]}
+{"q": "Năm nay còn phải nộp lệ phí môn bài không?", "expect": ["nq-198-2025:d10:k7"]}
+{"q": "Thuế khoán bị bỏ từ khi nào vậy?", "expect": ["nq-198-2025:d10:k6"]}
+{"q": "Mấy năm trước tôi đóng thuế khoán, giờ chuyển sang kê khai có bị truy thu lại không?", "expect": ["nd-68-2026:d17:k5"]}
+{"q": "Doanh thu dưới 1 tỷ mà lỡ nộp thuế rồi thì có được hoàn lại không?", "expect": ["nd-141-2026:d4:k1", "nd-68-2026:d12:k2"]}
+{"q": "Hạn nộp tờ khai thuế theo quý là ngày nào?", "expect": ["nd-68-2026:d8:k3"]}
+{"q": "Doanh thu trên 3 tỷ thì tính thuế thu nhập cá nhân thế nào?", "expect": ["nd-68-2026:d4:k5", "vbhn-112-2026:d7:k2"]}
+{"q": "Tỷ lệ thuế GTGT khi bán hàng hóa là bao nhiêu phần trăm?", "expect": ["vbhn-114-2026:d12:k2"]}
+{"q": "Dịch vụ cắt tóc thì thuế thu nhập cá nhân tính mấy phần trăm trên doanh thu?", "expect": ["vbhn-112-2026:d7:k3"]}
+{"q": "Cho thuê nhà mỗi năm 400 triệu có phải nộp thuế không?", "expect": ["vbhn-112-2026:d7:k4", "nd-68-2026:d4:k4"]}
+{"q": "Có bắt buộc phải dùng máy tính tiền để xuất hóa đơn điện tử không?", "expect": ["nd-68-2026:d8:k5"]}
+{"q": "Tôi mới mở cửa hàng từ tháng 8 thì khai thuế thế nào?", "expect": ["nd-68-2026:d9:k1"]}
+{"q": "Tạm nghỉ bán 3 tháng thì có phải nộp tờ khai không?", "expect": ["nd-68-2026:d8:k6"]}
+{"q": "Tính thuế theo thu nhập thì những chi phí nào được trừ?", "expect": ["nd-68-2026:d6:k1"]}
+{"q": "Tiền lương trả cho người trong nhà có được tính vào chi phí không?", "expect": ["nd-68-2026:d6:k2"]}
+{"q": "Điều kiện để được giảm 30% thuế thu nhập cá nhân là gì?", "expect": ["nd-398-2026:d2:k1", "nq-43-2026:d1:k1"]}
+{"q": "Nếu cuối năm doanh thu vượt 10 tỷ thì số thuế đã được giảm xử lý sao?", "expect": ["nd-398-2026:d2:k4"]}
+{"q": "Tôi có ba cửa hàng ở hai tỉnh thì khai thuế ở đâu?", "expect": ["nd-68-2026:d8:k4"]}
+{"q": "Bán online không có cửa hàng thì nộp thuế ở cơ quan thuế nào?", "expect": ["nd-68-2026:d8:k4"]}
+{"q": "Có phải báo số tài khoản ngân hàng, ví điện tử cho cơ quan thuế không?", "expect": ["nd-68-2026:d13:k4"]}
+{"q": "Mẹ tôi lớn tuổi không biết khai thuế qua mạng thì nộp giấy được không?", "expect": ["nd-68-2026:d8:k4"]}
+{"q": "Tiền thưởng doanh số, tiền hỗ trợ khuyến mại của hãng có tính vào doanh thu không?", "expect": ["nd-68-2026:d5:k1"]}
+{"q": "Giảm 20% tỷ lệ thuế GTGT cho hộ kinh doanh áp dụng đến khi nào?", "expect": ["nd-174-2025:d1:k2"]}
+{"q": "Tôi đang tính thuế theo thu nhập thì bao lâu mới được đổi sang tính theo doanh thu?", "expect": ["nd-68-2026:d4:k5"]}
+{"q": "Làm đại lý bảo hiểm thì thuế thu nhập cá nhân bao nhiêu phần trăm?", "expect": ["vbhn-112-2026:d7:k3"]}
+{"q": "Làm YouTube có tiền quảng cáo thì nộp thuế mấy phần trăm?", "expect": ["vbhn-112-2026:d7:k3"]}
+{"q": "doanh thu bao nhieu thi khong phai nop thue", "expect": ["nd-68-2026:d4:k1"]}
+{"q": "con phai nop le phi mon bai khong", "expect": ["nq-198-2025:d10:k7"]}
+{"q": "ban hang tren shopee thi ai nop thue", "expect": ["nd-68-2026:d11:k1"]}

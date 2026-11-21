@@ -19,4 +19,4 @@ papers/pdf/
 .env
 
 # Local inbox state of the support app.
-app/data/state.json
+app/data/state/

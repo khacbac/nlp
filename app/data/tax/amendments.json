@@ -1,0 +1,32 @@
+[
+  {
+    "by": "nd-141-2026",
+    "where": "Điều 1 khoản 1 Nghị định 141/2026/NĐ-CP",
+    "targets": [
+      "nd-68-2026:d3",
+      "nd-68-2026:d4",
+      "nd-68-2026:d8:k1",
+      "nd-68-2026:d9",
+      "nd-68-2026:d10",
+      "nd-68-2026:d11:k3",
+      "nd-68-2026:d12:k1",
+      "nd-68-2026:d12:k2",
+      "nd-68-2026:d17:k4",
+      "nd-68-2026:d18:k3"
+    ],
+    "replace": [
+      [
+        "500 triệu đồng",
+        "01 tỷ đồng"
+      ]
+    ]
+  },
+  {
+    "by": "nd-141-2026",
+    "where": "Điều 1 khoản 2 Nghị định 141/2026/NĐ-CP, sửa đổi, bổ sung khoản 5 Điều 8; cấu trúc điểm a–c theo VBHN 25/2026/VBHN-NĐ-BTC",
+    "targets": [
+      "nd-68-2026:d8:k5"
+    ],
+    "text": "5. Sử dụng hóa đơn điện tử\na) Hộ kinh doanh, cá nhân kinh doanh có doanh thu năm trên 01 tỷ đồng thì phải áp dụng hóa đơn điện tử có mã của cơ quan thuế, hóa đơn điện tử khởi tạo từ máy tính tiền có kết nối dữ liệu với cơ quan thuế.\nTrường hợp hộ kinh doanh, cá nhân kinh doanh có nhiều địa điểm kinh doanh thì sử dụng mã số thuế của hộ kinh doanh, cá nhân kinh doanh cho tất cả các cửa hàng và phải ghi rõ mã địa điểm kinh doanh trên hóa đơn.\nb) Trường hợp hộ kinh doanh, cá nhân kinh doanh có doanh thu năm từ 01 tỷ đồng trở xuống đáp ứng điều kiện và có nhu cầu sử dụng hóa đơn điện tử thì đăng ký sử dụng hóa đơn điện tử có mã của cơ quan thuế hoặc hóa đơn điện tử khởi tạo từ máy tính tiền có kết nối dữ liệu với cơ quan thuế.\nc) Hộ kinh doanh, cá nhân kinh doanh mới ra kinh doanh tại Điều 9 Nghị định này hoặc hộ kinh doanh, cá nhân kinh doanh có doanh thu năm trước chưa trên 01 tỷ đồng (trừ trường hợp đã đăng ký sử dụng hóa đơn điện từ theo điểm b khoản này) nhưng trong năm tính thuế có doanh thu trên 01 tỷ đồng trở lên thì phải áp dụng hóa đơn điện tử có mã của cơ quan thuế, hóa đơn điện tử khởi tạo từ máy tính tiền có kết nối dữ liệu với cơ quan thuế. Hộ kinh doanh, cá nhân kinh doanh đăng ký sử dụng hóa đơn điện tử trong thời gian 30 ngày kể từ ngày cuối cùng của kỳ tính thuế có doanh thu lũy kế trên 01 tỷ đồng."
+  }
+]

@@ -54,6 +54,8 @@ Wang et al. [6] define the Conflict Rate, the share of examples whose result cha
 
 Shi et al. [11] give the most systematic study of position bias, with 15 judges. They show the bias is not random noise: strong judges have repetition stability above 0.85. Position bias is strongly affected by the quality gap between answers, its direction can change between tasks for the same judge, and answer length has only a weak effect. They also show that high position consistency does not guarantee fairness, so both consistency and direction should be reported.
 
+The studies above use judges from 2023 and 2024, but stronger and newer judges are not free of these biases either. Wang et al. [13] test large reasoning models such as DeepSeek-R1 and OpenAI-o1 for bandwagon, authority, position and distraction bias, and find that they remain susceptible to all four despite their reasoning abilities. They show notable position bias, but prefer options in *later* positions, the opposite direction to GPT-4 in [5, 6]. The authors also report a new "superficial reflection bias": phrases that only mimic reasoning, such as "wait, let me think...", shift the verdict. Tan et al. [14] build JudgeBench, a set of hard response pairs in knowledge, reasoning, math and coding whose labels follow objective correctness rather than human preference. On it, many strong judges, such as GPT-4o, perform only slightly better than random guessing. A stronger judge therefore reduces these problems without removing them, and the question of when a judge's verdict can be trusted still applies to current models, not only to older or smaller ones.
+
 Two lines of work suggest causes on the model side. Zheng et al. [7] show that LLMs answering multiple-choice questions have a prior preference for certain option ID tokens, such as "A". Liu et al. [8] show that models use information unevenly across positions in a long context. Zheng et al. [5] suggest the training data or the left-to-right causal architecture.
 
 ### 2.3 Mitigation
@@ -356,3 +358,5 @@ Future work:
 10. Gu et al. A Survey on LLM-as-a-Judge. arXiv:2411.15594
 11. Shi, L., Ma, C., Liang, W., Diao, X., Ma, W., & Vosoughi, S. (2024). Judging the Judges: A Systematic Study of Position Bias in LLM-as-a-Judge. arXiv:2406.07791 (v9)
 12. Nguyen, K. V., Tran, S. Q., Nguyen, L. T., Huynh, T. V., Luu, S. T., & Nguyen, N. L.-T. (2022). VLSP 2021 - ViMRC Challenge: Vietnamese Machine Reading Comprehension. arXiv:2203.11400. Dataset: https://huggingface.co/datasets/taidng/UIT-ViQuAD2.0
+13. Wang, Q., Lou, Z., Tang, Z., Chen, N., Zhao, X., Zhang, W., Song, D., & He, B. (2025). Assessing Judging Bias in Large Reasoning Models: An Empirical Study. arXiv:2504.09946
+14. Tan, S., Zhuang, S., Montgomery, K., Tang, W. Y., Cuadron, A., Wang, C., Popa, R. A., & Stoica, I. (2025). JudgeBench: A Benchmark for Evaluating LLM-based Judges. ICLR 2025. arXiv:2410.12784

@@ -1,67 +1,85 @@
-# ABNQ Store support inbox: an AI judge checked against reply order
+# Hộp thư thuế hộ kinh doanh
 
-A working support tool for a made-up online xiangqi (Chinese chess) shop, ABNQ Store. For each customer
-message two models write a reply draft, and an LLM judge picks the better
-one. The judge is the one from the experiment (MT-Bench pair-v2 prompt,
-`[[A]]`/`[[B]]`/`[[C]]` verdict), and it is checked against itself:
+Trả lời câu hỏi về thuế của hộ kinh doanh, cá nhân kinh doanh tại Việt Nam, dựa trên văn bản pháp luật gốc có hiệu lực đến ngày cắt (`data/tax/rates.json` → `cutoff`). Mỗi câu trả lời ghi căn cứ (Điều, khoản, số hiệu văn bản) và đi qua ba lớp kiểm tra trước khi đến người hỏi.
 
 ```
-draft 1, draft 2 ──► run 1: A = draft 1, B = draft 2 ──► pick ┐
-                 └─► run 2: A = draft 2, B = draft 1 ──► pick ┴─► same draft in both runs? ──► send
-                                                                  otherwise (flip, half tie,
-                                                                  bad format) ─────────────► a person picks
-                                                     picked draft breaks a checked fact ──► a person picks
+câu hỏi ──► ngoài phạm vi (doanh nghiệp, tiền lương, bất động sản…) ──► từ chối, không gọi AI
+   │
+   ▼ tìm các khoản luật liên quan (BM25 trên articles.jsonl, + khoản cốt lõi)
+   │   không khoản nào đủ khớp ──► "chưa đủ căn cứ", không gọi AI
+   ▼
+ 2 mô hình soạn 2 bản nháp, chỉ dùng các khoản luật được đưa, bắt buộc dòng "Căn cứ:"
+   ▼
+ AI chấm so 2 bản nháp ở CẢ HAI thứ tự (arbiter.py) ── đổi ý khi đảo thứ tự ──► chưa chắc chắn
+   ▼
+ đối chiếu bằng luật (factcheck.py): ngưỡng cũ, thuế khoán/môn bài, tỷ lệ %, số tiền, phương pháp, trích dẫn
+   │   mâu thuẫn ──► chưa chắc chắn
+   ▼
+ trả lời (người hỏi thấy câu trả lời + các khoản luật đã dùng, mở được văn bản gốc)
 ```
 
-The experiment found that a 7B judge changes its verdict on 48.7% of pairs
-when only the order changes. The app turns that finding into a routing rule:
-a reply is sent automatically only if the judge's pick survives the swap.
-The swap removes position bias, but the experiment also found that a
-consistent judge is not a correct one: keeping only consistent verdicts
-agreed with humans on 27.6% of pairs, while a plain comparison against the
-gold answer reached 68.9%. In a shop the policy and stock table are the gold
-answer, so a second layer (`factcheck.py`) checks each draft's amounts,
-percentages, stock claims and promised dates against them by rule, and holds
-a consistent pick whose draft contradicts them. It cannot judge cases that
-need reading (is a bicycle knock "impact damage"?); those stay with the judge.
+"Chưa chắc chắn": người hỏi **không thấy bản nháp chưa kiểm**, chỉ thấy các khoản luật liên quan và lý do. Bản nháp chỉ hiện ở chế độ người duyệt.
 
-The report page shows, for the current inbox, how often the judge flipped,
-how often it picked slot A, how many replies a single-pass judge would have
-sent on position alone, and how many consistent picks the fact check held.
+Đây là kết quả của đồ án (thiên vị vị trí của AI chấm) biến thành quy tắc định tuyến. Đồ án cho hai bài học:
+- AI chấm đổi ý khi chỉ đổi thứ tự câu trả lời, nên phải chấm cả hai thứ tự.
+- AI chấm nhất quán chưa chắc đã đúng: so với đáp án chuẩn thì tốt hơn. Ở đây, đáp án chuẩn chính là văn bản luật.
 
-## Run
+## Chạy
 
 ```
-cp .env.example .env      # add GROQ_API_KEY and/or GEMINI_API_KEY
-python app/server.py      # then open http://localhost:8010
+cp .env.example .env              # GROQ_API_KEY và/hoặc GEMINI_API_KEY
+python app/server.py              # mở http://localhost:8010
+python app/server.py --host 0.0.0.0 --port 8080 --max-wait 90
 ```
 
-Python 3.10+, standard library only. Settings (gear icon) pick the two
-draft writers and the judge from the models your keys can reach.
+Yêu cầu Python 3.10+. Ứng dụng chỉ dùng thư viện chuẩn. Riêng `preprocess.py` cần `pdftotext` (poppler) khi văn bản nguồn là PDF.
 
-To measure what each layer buys, run every trap ticket through the judge
-several times and score the same judgments as single-pass, swap, and
-swap + fact check (results in `results/bench.md`; the JSONL resumes):
+Mỗi trình duyệt có một hộp thư riêng, nhận diện bằng cookie và lưu trong `data/state/` (không đưa lên git). Người này không thấy câu hỏi của người khác. Hệ thống tự che chuỗi giống mã số thuế hoặc số CCCD trước khi gửi cho nhà cung cấp AI. Mỗi phiên được hỏi tối đa 30 câu mỗi giờ.
 
-```
-python app/bench.py --judges groq-gpt-oss-20b,groq-gpt-oss-120b --repeats 3
-```
+**Hạn mức:** gói miễn phí của Groq cho 8.000 token mỗi phút, trong khi một lượt chấm có kèm khoản luật tốn khoảng 5.000 token. Vì vậy mỗi câu hỏi có thể phải chờ tới khoảng một phút (`--max-wait`). Khi có nhiều người dùng thật, cần dùng key trả phí.
+
+## Dữ liệu (`data/tax/`)
+
+| File | Vai trò | Ai sửa |
+|---|---|---|
+| `sources/` | Văn bản gốc tải từ Công báo hoặc cổng Chính phủ (DOCX, PDF, bản scan). Không sửa | Tải về |
+| `sources.json` | Thông tin từng văn bản: số hiệu, hiệu lực (trích nguyên câu), văn bản sửa đổi hoặc hợp nhất, URL, sha256 | Tay |
+| `amendments.json` | Văn bản sửa đổi được áp vào văn bản gốc (ví dụ NĐ 141 thay "500 triệu" bằng "01 tỷ" trong NĐ 68) | Tay |
+| `articles.jsonl` | Mỗi dòng là một khoản luật đang có hiệu lực, kèm bản gốc nếu đã bị sửa | `preprocess.py` sinh ra |
+| `rates.json` | Ngưỡng, tỷ lệ GTGT và TNCN theo nhóm ngành, khoản giảm thuế, chế độ đã bỏ, ngưỡng cũ. Mỗi số đều có trích dẫn | Tay |
+| `VERIFICATION.md` | Nhật ký kiểm chứng: mỗi con số kèm câu gốc, trạng thái `ai` hoặc `nguoi` | Tay |
+| `core.json` | Các khoản luôn đưa vào prompt (ngưỡng, phương pháp, tỷ lệ) | Tay |
+| `synonyms.json` | Cách nói thường ngày → thuật ngữ trong luật ("bán online" → "thương mại điện tử") | Tay |
+| `retrieval_eval.jsonl` | 30 câu hỏi kiểu người dùng, mỗi câu có khoản luật đúng, để đo tìm kiếm | Tay |
+| `../tickets.json` | Câu hỏi bẫy cho chế độ trình bày: mỗi câu có một cặp bản nháp soạn sẵn, một bản sai đúng một chi tiết luật | Tay |
 
 ## Files
 
-| File | Role |
+| File | Vai trò |
 |---|---|
-| `arbiter.py` | The core: judge both orders, combine into agree / tie / partial / flip / invalid |
-| `factcheck.py` | Rule check of each draft against the policy and stock table; holds a consistent pick that breaks a fact |
-| `llm.py` | Provider client (Groq, Gemini, OpenRouter); also used by `demo/server.py` |
-| `server.py` | Inbox state and JSON API |
-| `index.html` | The inbox UI |
-| `data/policy.md`, `data/tickets.json` | Made-up shop policy and customer messages. Tickets with `canned` ship a fixed draft pair (one breaks a policy detail; `answer` names the correct one) instead of AI drafts; "Soạn gợi ý khác" switches them to AI drafts. Tickets marked `reserve` stay out of the inbox until the presenter presses N |
-| `bench.py` | Batch run over the trap tickets: wrong / right / to-a-person for single-pass, swap, and swap + fact check |
-| `DEMO.md` | Demo script with the answer key for the canned tickets |
-| `data/products.json` | Catalog with stock; the policy's stock table is generated from it. `aliases`/`not` let the fact check spot a product named in a draft |
-| `static/products/` | Product photos from Wikimedia Commons; authors and licenses at `/nguon-anh` |
-| `test_arbiter.py` | Guards the routing rule and the fact check against the canned trap pairs |
+| `server.py` | Phiên theo trình duyệt, lọc phạm vi, gọi tìm kiếm, soạn, chấm, đối chiếu; API JSON |
+| `retrieve.py` | BM25 theo âm tiết và cặp âm tiết, bảng đồng nghĩa, khoản cốt lõi; câu gõ không dấu tìm trên bản bỏ dấu |
+| `arbiter.py` | Chấm hai thứ tự, gộp kết quả thành agree / tie / partial / flip / invalid |
+| `factcheck.py` | Đối chiếu bản nháp với `rates.json` và các khoản đã đưa, bằng luật, không dùng AI |
+| `preprocess.py` | Văn bản gốc → `articles.jsonl` |
+| `eval_retrieval.py` | Đo recall của tìm kiếm trên `retrieval_eval.jsonl` |
+| `bench.py` | Chạy tin bẫy qua các AI chấm: một lượt, đảo thứ tự, đảo thứ tự kèm đối chiếu; `--nolaw` đo AI chấm khi không có khoản luật |
+| `test_arbiter.py` | Kiểm quy tắc định tuyến và lớp đối chiếu trên các cặp tin bẫy |
+| `index.html` | Giao diện |
+| `UPDATING.md` | Quy trình cập nhật khi có văn bản mới |
 
-Inbox progress is saved to `data/state.json` (gitignored); "Làm mới hộp thư"
-in the settings sheet clears it.
+## Kiểm tra
+
+```
+python app/preprocess.py --check   # dựng lại articles.jsonl
+python app/eval_retrieval.py       # mục tiêu recall >= 0,90
+python -m pytest app/test_arbiter.py
+python app/bench.py --judges groq-gpt-oss-20b,groq-gpt-oss-120b --repeats 3 --nolaw
+```
+
+## Giới hạn đã biết
+
+- Mới có AI kiểm chứng số liệu (`VERIFICATION.md`, trạng thái `ai`). Cần người kiểm lại trước khi giới thiệu rộng.
+- Chưa có văn bản của Bộ Tài chính xếp chi tiết ngành nghề vào nhóm tỷ lệ. Tỷ lệ GTGT cho nhóm "cho thuê tài sản, đại lý" và nhóm "nội dung số" đang để trống. Xếp một ngành cụ thể (quán ăn, cà phê…) vào nhóm nào là việc của AI soạn và AI chấm, lớp đối chiếu không quyết.
+- Không tự tính thuế theo phương pháp thu nhập (doanh thu trừ chi phí): chỉ nhận ra trường hợp này và khuyên hỏi cơ quan thuế hoặc kế toán.
+- Luật Quốc hội thông qua ngày 20/11/2026 (nâng mốc 03 tỷ lên 10 tỷ từ kỳ tính thuế 2027) chưa đăng Công báo, nên chưa đưa vào. Xem `rates.json` → `pending`.

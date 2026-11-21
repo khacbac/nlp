@@ -1,0 +1,535 @@
+[
+  {
+    "id": "nd-68-2026",
+    "so_hieu": "68/2026/NĐ-CP",
+    "ten": "Nghị định quy định về chính sách thuế và quản lý thuế đối với hộ kinh doanh, cá nhân kinh doanh",
+    "co_quan": "Chính phủ",
+    "ngay_ban_hanh": "2026-03-05",
+    "hieu_luc_tu": "2026-03-05",
+    "hieu_luc_den": null,
+    "hieu_luc_trich": "Điều 19: \"Nghị định này có hiệu lực thi hành kể từ ngày ký ban hành.\"",
+    "sua_doi_boi": [
+      "nd-141-2026"
+    ],
+    "url_trang": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-68-2026-nd-cp-469047.htm",
+    "url_file": "https://congbaocdn.chinhphu.vn/180507251028987904/2026/3/18/469047-1773796836_v1_1773803477_signed.pdf",
+    "files": [
+      "nd-68-2026.docx",
+      "nd-68-2026.congbao.pdf"
+    ],
+    "text_file": "nd-68-2026.docx",
+    "ghi_chu": "Công báo số 152. Nội dung sửa đổi của NĐ 141 áp bằng amendments.json.",
+    "sha256": {
+      "nd-68-2026.docx": "86608f37d6fbe38cd16339fece5cc9dcd99518787480c3557bc472ba93a40a6b",
+      "nd-68-2026.congbao.pdf": "aa26c94d4591ba65552d08194a97da62b18ed1562892a8ec00b2b01fc5569ec9"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "trich_dan": "Nghị định 68/2026/NĐ-CP",
+    "aliases": [
+      "68/2026/NĐ-CP"
+    ]
+  },
+  {
+    "id": "nd-141-2026",
+    "so_hieu": "141/2026/NĐ-CP",
+    "ten": "Nghị định sửa đổi, bổ sung một số điều của Nghị định số 68/2026/NĐ-CP và Nghị định số 320/2025/NĐ-CP",
+    "co_quan": "Chính phủ",
+    "ngay_ban_hanh": "2026-04-29",
+    "hieu_luc_tu": "2026-01-01",
+    "hieu_luc_den": null,
+    "hieu_luc_trich": "Điều 3: \"Nghị định này có hiệu lực thi hành từ ngày 01 tháng 01 năm 2026.\"",
+    "sua_doi": [
+      "nd-68-2026"
+    ],
+    "url_trang": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-141-2026-nd-cp-469455.htm",
+    "url_file": "https://congbaocdn.chinhphu.vn/180507251028987904/2026/5/14/469455-1778231931_v1_1778720623_signed.pdf",
+    "files": [
+      "nd-141-2026.docx",
+      "nd-141-2026.pdf",
+      "nd-141-2026.scan.pdf"
+    ],
+    "text_file": "nd-141-2026.docx",
+    "ghi_chu": "Công báo số 272. Bản scan lấy từ vanban.chinhphu.vn (docid 217960).",
+    "sha256": {
+      "nd-141-2026.docx": "7b3eb42752f0cf68a6112fa89afdabb066f1609222a8572e616bf2d0ff5266fe",
+      "nd-141-2026.pdf": "5336a6dcbffc1a6ddff8e2629033dd0b02867f2d6ec12f7e9d2b69c237fac50f",
+      "nd-141-2026.scan.pdf": "fa9a7c47b637f47528225d9cdd03dbde1032607ec8c39648071178ce4091413f"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "trich_dan": "Nghị định 141/2026/NĐ-CP",
+    "aliases": [
+      "141/2026/NĐ-CP"
+    ]
+  },
+  {
+    "id": "vbhn-25-2026",
+    "so_hieu": "25/2026/VBHN-NĐ-BTC",
+    "ten": "Văn bản hợp nhất Nghị định quy định về chính sách thuế và quản lý thuế đối với hộ kinh doanh, cá nhân kinh doanh",
+    "co_quan": "Bộ Tài chính",
+    "ngay_ban_hanh": "2026-08-13",
+    "hieu_luc_tu": null,
+    "hieu_luc_den": null,
+    "hop_nhat": [
+      "nd-68-2026",
+      "nd-141-2026"
+    ],
+    "url_trang": "https://vanban.chinhphu.vn/?docid=219194&pageid=27160",
+    "url_file": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2026/8/25-vbhn-btc.signed.pdf",
+    "files": [
+      "vbhn-25-2026-btc.scan.pdf"
+    ],
+    "text_file": null,
+    "ghi_chu": "Chỉ có bản scan. Dùng để đối chiếu kết quả áp amendments.json (đã khớp qua OCR), không đưa vào articles.jsonl.",
+    "sha256": {
+      "vbhn-25-2026-btc.scan.pdf": "f26a121b3f3c8d5e3c77563f83ba6bd658e6d243eea2de3a195b8b916878ba57"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "aliases": [
+      "25/2026/VBHN-NĐ-BTC"
+    ]
+  },
+  {
+    "id": "vbhn-112-2026",
+    "so_hieu": "112/VBHN-VPQH",
+    "ten": "Văn bản hợp nhất Luật Thuế thu nhập cá nhân (Luật 109/2025/QH15, sửa đổi bởi Luật 09/2026/QH16)",
+    "co_quan": "Văn phòng Quốc hội",
+    "ngay_ban_hanh": "2026-05-20",
+    "hieu_luc_tu": "2026-01-01",
+    "hieu_luc_den": null,
+    "hieu_luc_trich": "Điều 29 khoản 2: \"Các quy định liên quan đến thu nhập từ kinh doanh, từ tiền lương, tiền công của cá nhân cư trú áp dụng từ kỳ tính thuế năm 2026.\" (các quy định khác từ 01/7/2026)",
+    "hop_nhat": [
+      "luat-109-2025",
+      "luat-09-2026"
+    ],
+    "url_trang": "https://congbao.chinhphu.vn/van-ban/van-ban-hop-nhat-so-112-vbhn-vpqh-469595.htm",
+    "url_file": "https://congbaocdn.chinhphu.vn/180507251028987904/2026/6/2/469595-1780306669_v1_1780362442_signed.pdf",
+    "files": [
+      "vbhn-112-2026-vpqh.docx",
+      "vbhn-112-2026-vpqh.pdf",
+      "vbhn-112-2026-vpqh.txt"
+    ],
+    "text_file": "vbhn-112-2026-vpqh.docx",
+    "ghi_chu": "Công báo số 302.",
+    "sha256": {
+      "vbhn-112-2026-vpqh.docx": "f29d71b593fce45a8a93cd5ffb384a3fb9ff3a9c1bad624392df0831c4ec80da",
+      "vbhn-112-2026-vpqh.pdf": "f7283adab325822befe7cf9e232346ba40e47f2d91d28918b2fb2fab4e5fd8e5",
+      "vbhn-112-2026-vpqh.txt": "1712a0c0dadf38be3a9dbc1199e3dabe8f9fed80c9083506d800bd2df387eae7"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "trich_dan": "Luật Thuế thu nhập cá nhân 109/2025/QH15 (hợp nhất 112/VBHN-VPQH)",
+    "aliases": [
+      "112/VBHN-VPQH",
+      "109/2025/QH15"
+    ]
+  },
+  {
+    "id": "luat-109-2025",
+    "so_hieu": "109/2025/QH15",
+    "ten": "Luật Thuế thu nhập cá nhân",
+    "co_quan": "Quốc hội",
+    "ngay_ban_hanh": "2025-12-10",
+    "hieu_luc_tu": "2026-07-01",
+    "hieu_luc_den": null,
+    "sua_doi_boi": [
+      "luat-09-2026"
+    ],
+    "url_trang": "https://congbao.chinhphu.vn/van-ban/luat-so-109-2025-qh15-468671.htm",
+    "url_file": "https://congbaocdn.chinhphu.vn/180507251028987904/2026/1/24/109signed-17692403594311667615452.pdf",
+    "files": [
+      "luat-109-2025.docx",
+      "luat-109-2025.pdf",
+      "luat-109-2025.txt"
+    ],
+    "text_file": null,
+    "ghi_chu": "Nội dung dùng qua VBHN 112/VBHN-VPQH.",
+    "sha256": {
+      "luat-109-2025.docx": "8a149170bf9219917c5b68c36f82946a4fdb4f72727a4921f278b41dbb5a972f",
+      "luat-109-2025.pdf": "051955b8e3a4d53279736573e7ee3f258b4d973341b23abb473f3054161c74db",
+      "luat-109-2025.txt": "0a4052b974d10fba636968ddb8fb59f447f90e7bb20bda0dd941d8c482727bff"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "aliases": [
+      "109/2025/QH15"
+    ]
+  },
+  {
+    "id": "luat-09-2026",
+    "so_hieu": "09/2026/QH16",
+    "ten": "Luật sửa đổi, bổ sung một số điều của Luật Thuế thu nhập cá nhân, Luật Thuế giá trị gia tăng, Luật Thuế thu nhập doanh nghiệp và Luật Thuế tiêu thụ đặc biệt",
+    "co_quan": "Quốc hội",
+    "ngay_ban_hanh": "2026-04-24",
+    "hieu_luc_tu": "2026-04-24",
+    "hieu_luc_den": null,
+    "hieu_luc_trich": "Điều 5 khoản 2: \"Quy định tại các điều 1, 2 và 3 của Luật này có hiệu lực thi hành từ ngày 01 tháng 01 năm 2026.\"",
+    "sua_doi": [
+      "luat-109-2025",
+      "luat-48-2024"
+    ],
+    "url_trang": "https://congbao.chinhphu.vn/van-ban/luat-so-09-2026-qh16-469536.htm",
+    "url_file": "https://congbaocdn.chinhphu.vn/180507251028987904/2026/5/27/469536-1779329464_v1_1779843299_signed.pdf",
+    "files": [
+      "luat-09-2026.docx",
+      "luat-09-2026.pdf",
+      "luat-09-2026.txt"
+    ],
+    "text_file": null,
+    "ghi_chu": "Giao Chính phủ quy định ngưỡng doanh thu. Nội dung dùng qua VBHN 112 và 114.",
+    "sha256": {
+      "luat-09-2026.docx": "3fcb0bd96b5daaa25c6f6f8c3fd6abf86a0cb77652ec9c973d2d28dd7e71718d",
+      "luat-09-2026.pdf": "3499f857fb0630353fc6cfaadc6e04997b273537013346f629aae3170b734da2",
+      "luat-09-2026.txt": "a131ba06fa7c54610dc60e818418a008f9decfd3b0bb9b164ec182be7d9998a5"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "aliases": [
+      "09/2026/QH16"
+    ]
+  },
+  {
+    "id": "vbhn-114-2026",
+    "so_hieu": "114/VBHN-VPQH",
+    "ten": "Văn bản hợp nhất Luật Thuế giá trị gia tăng (Luật 48/2024/QH15, sửa đổi bởi Luật 90/2025/QH15, 149/2025/QH15, 09/2026/QH16)",
+    "co_quan": "Văn phòng Quốc hội",
+    "ngay_ban_hanh": "2026-05-20",
+    "hieu_luc_tu": "2025-07-01",
+    "hieu_luc_den": null,
+    "hieu_luc_trich": "Điều 18 khoản 1: \"Luật này có hiệu lực thi hành từ ngày 01 tháng 7 năm 2025…\"",
+    "hop_nhat": [
+      "luat-48-2024",
+      "luat-149-2025",
+      "luat-09-2026"
+    ],
+    "url_trang": "https://congbao.chinhphu.vn/van-ban/van-ban-hop-nhat-so-114-vbhn-vpqh-469597.htm",
+    "url_file": "https://congbaocdn.chinhphu.vn/180507251028987904/2026/6/3/469597-1780392051_v1_1780448819_signed.pdf",
+    "files": [
+      "vbhn-114-2026-vpqh.docx",
+      "vbhn-114-2026-vpqh.pdf",
+      "vbhn-114-2026-vpqh.txt"
+    ],
+    "text_file": "vbhn-114-2026-vpqh.docx",
+    "ghi_chu": "Công báo số 305.",
+    "sha256": {
+      "vbhn-114-2026-vpqh.docx": "9a0993acc8c40876654287bdc12dc0791168d473b222ee9d26b953966bf28e0a",
+      "vbhn-114-2026-vpqh.pdf": "3ae9204946aa77c62877c3e5fcbf0186ac226d7e518b649c84c1c983bd08494d",
+      "vbhn-114-2026-vpqh.txt": "1d30f7e2e0809b6d3b8b3eabb901da4be0c1bf2883dba55ac9ed9b73fe68d8be"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "trich_dan": "Luật Thuế giá trị gia tăng 48/2024/QH15 (hợp nhất 114/VBHN-VPQH)",
+    "aliases": [
+      "114/VBHN-VPQH",
+      "48/2024/QH15"
+    ]
+  },
+  {
+    "id": "luat-48-2024",
+    "so_hieu": "48/2024/QH15",
+    "ten": "Luật Thuế giá trị gia tăng",
+    "co_quan": "Quốc hội",
+    "ngay_ban_hanh": "2024-11-26",
+    "hieu_luc_tu": "2025-07-01",
+    "hieu_luc_den": null,
+    "sua_doi_boi": [
+      "luat-149-2025",
+      "luat-09-2026"
+    ],
+    "url_trang": "https://congbao.chinhphu.vn/van-ban/luat-so-48-2024-qh15-43576.htm",
+    "url_file": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2024/11/43576/53720-1-20241527-152848-2024-qh15.pdf",
+    "files": [
+      "luat-48-2024.doc",
+      "luat-48-2024.pdf",
+      "luat-48-2024.txt"
+    ],
+    "text_file": null,
+    "ghi_chu": "Nội dung dùng qua VBHN 114. Bản gốc ghi ngưỡng 200 triệu đồng (Điều 5 khoản 25).",
+    "sha256": {
+      "luat-48-2024.doc": "5736fb8efb03aa9b4eb9f7009c08a7f94021116f6504f5584308a94aad975995",
+      "luat-48-2024.pdf": "8be4caa345b42bce86386831da0bf4a9ed2bebbc54b471535c758431a5277569",
+      "luat-48-2024.txt": "77498823ec6852ac7e5fca788d120454f319269750021249a7b1298553d5f94a"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "aliases": [
+      "48/2024/QH15"
+    ]
+  },
+  {
+    "id": "luat-149-2025",
+    "so_hieu": "149/2025/QH15",
+    "ten": "Luật sửa đổi, bổ sung một số điều của Luật Thuế giá trị gia tăng",
+    "co_quan": "Quốc hội",
+    "ngay_ban_hanh": "2025-12-11",
+    "hieu_luc_tu": "2026-01-01",
+    "hieu_luc_den": null,
+    "sua_doi": [
+      "luat-48-2024"
+    ],
+    "url_trang": "https://congbao.chinhphu.vn/van-ban/luat-so-149-2025-qh15-468709.htm",
+    "url_file": "https://congbaocdn.chinhphu.vn/180507251028987904/2026/1/26/149signed-1769416922782586908570.pdf",
+    "files": [
+      "luat-149-2025.docx",
+      "luat-149-2025.pdf",
+      "luat-149-2025.txt"
+    ],
+    "text_file": null,
+    "ghi_chu": "Ngưỡng 500 triệu (sau bị Luật 09/2026 thay); bãi bỏ khoản 3 Điều 12 (khoán GTGT).",
+    "sha256": {
+      "luat-149-2025.docx": "b02c2754d1290c41ee2730a805e4fe40b2bc387861c8a5f4391b1f8067f8932f",
+      "luat-149-2025.pdf": "47778195b5a6fbb25817db7bb95d8cd6a3ec2665cc49f79f111c8860627f203c",
+      "luat-149-2025.txt": "e72ff13cb4853b36bb107331f386497cb7c0272261992de9a297ad78c59ab293"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "aliases": [
+      "149/2025/QH15"
+    ]
+  },
+  {
+    "id": "nq-198-2025",
+    "so_hieu": "198/2025/QH15",
+    "ten": "Nghị quyết về một số cơ chế, chính sách đặc biệt phát triển kinh tế tư nhân",
+    "co_quan": "Quốc hội",
+    "ngay_ban_hanh": "2025-05-17",
+    "hieu_luc_tu": "2025-05-17",
+    "hieu_luc_den": null,
+    "hieu_luc_trich": "Điều 17 khoản 1: \"Nghị quyết này có hiệu lực thi hành từ ngày được Quốc hội thông qua.\"",
+    "url_trang": "https://congbao.chinhphu.vn/van-ban/nghi-quyet-so-198-2025-qh15-44898.htm",
+    "url_file": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2025/5/44898/56348-1-2025713-714198-2025-qh15.pdf",
+    "files": [
+      "nq-198-2025.doc",
+      "nq-198-2025.pdf",
+      "nq-198-2025.txt"
+    ],
+    "text_file": "nq-198-2025.txt",
+    "ghi_chu": "Công báo số 713+714. Chỉ có .doc; .txt chuyển bằng textutil.",
+    "sha256": {
+      "nq-198-2025.doc": "6fc63de432deeb8527251101da24fc2e1e30771aaa0416cbee58bccdb78a8d29",
+      "nq-198-2025.pdf": "e8d491128fe5f77e66b1e4801131c79b49e4bbf29e7a4ee482b8bbbf89930a62",
+      "nq-198-2025.txt": "55ab8996dc22ecad9ca371f7ce5b3ff9514ad8886315d238832809e5aefc0fdd"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "trich_dan": "Nghị quyết 198/2025/QH15",
+    "aliases": [
+      "198/2025/QH15"
+    ]
+  },
+  {
+    "id": "tt-18-2026",
+    "so_hieu": "18/2026/TT-BTC",
+    "ten": "Thông tư hướng dẫn hồ sơ, thủ tục khai thuế đối với hộ kinh doanh, cá nhân kinh doanh",
+    "co_quan": "Bộ Tài chính",
+    "ngay_ban_hanh": "2026-03-05",
+    "hieu_luc_tu": "2026-03-05",
+    "hieu_luc_den": null,
+    "hieu_luc_trich": "Điều 9 khoản 1: \"Thông tư này có hiệu lực thi hành kể từ ngày ký ban hành.\"",
+    "thay_the": [
+      "TT 40/2021/TT-BTC",
+      "TT 100/2021/TT-BTC"
+    ],
+    "sua_doi_boi": [
+      "tt-50-2026"
+    ],
+    "url_trang": "https://congbao.chinhphu.vn/van-ban/thong-tu-so-18-2026-tt-btc-469080.htm",
+    "url_file": "https://congbaocdn.chinhphu.vn/180507251028987904/2026/3/24/469080-1774341054_v1_1774343681_signed.pdf",
+    "files": [
+      "tt-18-2026.docx",
+      "tt-18-2026.pdf",
+      "tt-18-2026.txt"
+    ],
+    "text_file": "tt-18-2026.docx",
+    "ghi_chu": "Công báo số 159. Phụ lục là mẫu biểu, không có bảng tỷ lệ; phần mẫu biểu không đưa vào articles.jsonl.",
+    "sha256": {
+      "tt-18-2026.docx": "5f92260b53373bf8dc3a4521549ab4c27aba12ae062f360c6af93ecf833b9d17",
+      "tt-18-2026.pdf": "43c44617f8c7bf25b64f5434f0bd742259dc4db0f2150135638156f19516bf21",
+      "tt-18-2026.txt": "4975411266a48a8192080a710043888897be0b622282c554cd6a0b63487a50a6"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "trich_dan": "Thông tư 18/2026/TT-BTC",
+    "aliases": [
+      "18/2026/TT-BTC"
+    ]
+  },
+  {
+    "id": "tt-50-2026",
+    "so_hieu": "50/2026/TT-BTC",
+    "ten": "Thông tư sửa đổi, bổ sung Thông tư 18/2026/TT-BTC",
+    "co_quan": "Bộ Tài chính",
+    "ngay_ban_hanh": "2026-05-13",
+    "hieu_luc_tu": "2026-05-13",
+    "hieu_luc_den": null,
+    "sua_doi": [
+      "tt-18-2026"
+    ],
+    "url_trang": "https://congbao.chinhphu.vn/van-ban/thong-tu-so-50-2026-tt-btc-469544.htm",
+    "url_file": "https://congbaocdn.chinhphu.vn/180507251028987904/2026/5/29/469544-1779683499_v1_1780016821_signed.pdf",
+    "files": [
+      "tt-50-2026.docx",
+      "tt-50-2026.pdf",
+      "tt-50-2026.txt"
+    ],
+    "text_file": "tt-50-2026.docx",
+    "ghi_chu": "Công báo số 288. Sửa Điều 1, khoản 2 Điều 5 TT 18 và thay một số mẫu; chưa áp vào TT 18 (đọc song song).",
+    "sha256": {
+      "tt-50-2026.docx": "413ea16ed6f28da35578ee239e5a81f90ea8ccd37170522f9ec4324748cfed19",
+      "tt-50-2026.pdf": "8e0fed9647b0cdd04303de457873135ec9af4fccdb3c8b77279a14d05383bce1",
+      "tt-50-2026.txt": "d4e1f273b628a9bd6507029fc338d83c3ef3ddac03a7e111a9505742e1d8f410"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "trich_dan": "Thông tư 50/2026/TT-BTC",
+    "aliases": [
+      "50/2026/TT-BTC"
+    ]
+  },
+  {
+    "id": "vbhn-24-2026",
+    "so_hieu": "24/2026/VBHN-TT-BTC",
+    "ten": "Văn bản hợp nhất Thông tư 18/2026/TT-BTC",
+    "co_quan": "Bộ Tài chính",
+    "ngay_ban_hanh": "2026-08-05",
+    "hieu_luc_tu": null,
+    "hieu_luc_den": null,
+    "hop_nhat": [
+      "tt-18-2026",
+      "tt-50-2026"
+    ],
+    "url_trang": "https://vanban.chinhphu.vn/?pageid=27160&docid=219107",
+    "url_file": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2026/8/24-vbhn-btc.signed.pdf",
+    "files": [
+      "vbhn-24-2026-btc.scan.pdf"
+    ],
+    "text_file": null,
+    "ghi_chu": "Chỉ có bản scan.",
+    "sha256": {
+      "vbhn-24-2026-btc.scan.pdf": "21086b2f0047c9051cea5645a531aa4b6873fcb2a0750f3b67c249b6f5531b8c"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "aliases": [
+      "24/2026/VBHN-TT-BTC"
+    ]
+  },
+  {
+    "id": "nq-43-2026",
+    "so_hieu": "43/2026/QH16",
+    "ten": "Nghị quyết về giảm thuế thu nhập cá nhân, thuế thu nhập doanh nghiệp đối với cá nhân và doanh nghiệp",
+    "co_quan": "Quốc hội",
+    "ngay_ban_hanh": "2026-08-24",
+    "hieu_luc_tu": "2026-08-24",
+    "hieu_luc_den": null,
+    "hieu_luc_trich": "Điều 2 khoản 1: \"Nghị quyết này có hiệu lực thi hành từ ngày 24 tháng 8 năm 2026 và áp dụng cho kỳ tính thuế năm 2026, năm 2027.\"",
+    "url_trang": "https://vanban.chinhphu.vn/?pageid=27160&docid=219330",
+    "url_file": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2026/9/nq43vegiamthuetncntndn.signed.pdf",
+    "files": [
+      "nq-43-2026.scan.pdf",
+      "nq-43-2026.txt"
+    ],
+    "text_file": "nq-43-2026.txt",
+    "ghi_chu": "Chỉ có bản scan; .txt là bản chép tay, đã đối chiếu câu chính với OCR tiếng Việt.",
+    "sha256": {
+      "nq-43-2026.scan.pdf": "7da8b9edd159ed39e068ff87613a143150ac0ef1f886c1189cf63f680b1ffb28",
+      "nq-43-2026.txt": "6ef90cc5dffa18234638da54a4a93912b8fbe75d805740d3b04b81a021db11a5"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "trich_dan": "Nghị quyết 43/2026/QH16",
+    "aliases": [
+      "43/2026/QH16"
+    ]
+  },
+  {
+    "id": "nd-398-2026",
+    "so_hieu": "398/2026/NĐ-CP",
+    "ten": "Nghị định quy định chi tiết Nghị quyết số 43/2026/QH16 về giảm thuế thu nhập cá nhân, thuế thu nhập doanh nghiệp",
+    "co_quan": "Chính phủ",
+    "ngay_ban_hanh": "2026-10-29",
+    "hieu_luc_tu": "2026-10-29",
+    "hieu_luc_den": null,
+    "hieu_luc_trich": "Điều 4: \"Nghị định này có hiệu lực thi hành kể từ ngày 29 tháng 10 năm 2026 và áp dụng cho kỳ tính thuế năm 2026, năm 2027.\"",
+    "url_trang": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-398-2026-nd-cp-470896.htm",
+    "url_file": "https://congbaocdn.chinhphu.vn/180507251028987904/2026/11/11/470896-1794216465_v1_1794358991_signed.pdf",
+    "files": [
+      "nd-398-2026.docx",
+      "nd-398-2026.pdf",
+      "nd-398-2026.txt"
+    ],
+    "text_file": "nd-398-2026.docx",
+    "ghi_chu": "Công báo số 576.",
+    "sha256": {
+      "nd-398-2026.docx": "96922db1b8f8530b620793092928b15db881c8e777e386ffe065f28116fb43a8",
+      "nd-398-2026.pdf": "46178f86b81f7b23c1de10bb784bd182491608102935e537afd73b366a327574",
+      "nd-398-2026.txt": "79cfd13e70c6aeeebcbfb4113aef415f027ea07ab7b0c07dece43c6b8e4c7ae9"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "trich_dan": "Nghị định 398/2026/NĐ-CP",
+    "aliases": [
+      "398/2026/NĐ-CP"
+    ]
+  },
+  {
+    "id": "nq-204-2025",
+    "so_hieu": "204/2025/QH15",
+    "ten": "Nghị quyết về giảm thuế giá trị gia tăng",
+    "co_quan": "Quốc hội",
+    "ngay_ban_hanh": "2025-06-17",
+    "hieu_luc_tu": "2025-07-01",
+    "hieu_luc_den": "2027-01-01",
+    "hieu_luc_trich": "Điều 2: \"Nghị quyết này có hiệu lực thi hành từ ngày 01 tháng 7 năm 2025 đến hết ngày 31 tháng 12 năm 2026.\"",
+    "url_trang": "https://congbao.chinhphu.vn/van-ban/nghi-quyet-so-204-2025-qh15-45219.htm",
+    "url_file": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2025/6/45219/57028-1-2025849-850204-2025-qh15.pdf",
+    "files": [
+      "nq-204-2025.scan.pdf",
+      "nq-204-2025.txt"
+    ],
+    "text_file": "nq-204-2025.txt",
+    "ghi_chu": "Thân văn bản là ảnh; .txt là bản chép tay của AI, chưa đối chiếu OCR.",
+    "sha256": {
+      "nq-204-2025.scan.pdf": "3ea72d7be9d0c3d6c8956e26030c488dbf24aa4e3519d5e2faefe33a3c039ee4",
+      "nq-204-2025.txt": "b16bda0310d11250dbed4471ef7ae2e4ac9180664fadd0b47882949bb9c16ffe"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "trich_dan": "Nghị quyết 204/2025/QH15",
+    "aliases": [
+      "204/2025/QH15"
+    ]
+  },
+  {
+    "id": "nd-174-2025",
+    "so_hieu": "174/2025/NĐ-CP",
+    "ten": "Nghị định quy định chính sách giảm thuế giá trị gia tăng theo Nghị quyết số 204/2025/QH15",
+    "co_quan": "Chính phủ",
+    "ngay_ban_hanh": "2025-06-30",
+    "hieu_luc_tu": "2025-07-01",
+    "hieu_luc_den": "2027-01-01",
+    "hieu_luc_trich": "Điều 2 khoản 1: \"Nghị định này có hiệu lực thi hành từ ngày 01 tháng 7 năm 2025 đến hết ngày 31 tháng 12 năm 2026.\"",
+    "url_trang": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-174-2025-nd-cp-45374.htm",
+    "url_file": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2025/6/45374/57334-1-2025895-896174-2025-nd-cp.pdf",
+    "files": [
+      "nd-174-2025.doc",
+      "nd-174-2025.pdf",
+      "nd-174-2025.txt"
+    ],
+    "text_file": "nd-174-2025.txt",
+    "ghi_chu": "Phụ lục danh mục hàng hoá không được giảm không đưa vào articles.jsonl (quá dài); tra trong file gốc.",
+    "sha256": {
+      "nd-174-2025.doc": "6a5c6dc2a198d6f6feb9b83d181c986c736f191a2aba78ba4ef1a73359e9b1e5",
+      "nd-174-2025.pdf": "5d86306f556d4f8d461dfd2695c283268c622950b3884c27e8d0ad8bfb48a5f5",
+      "nd-174-2025.txt": "1786f8043dc2d286bb978f0a536f9bc427efe1efb2dcd9d78872991609e47a17"
+    },
+    "ngay_tai": "2026-11-21",
+    "kiem_chung": "ai",
+    "trich_dan": "Nghị định 174/2025/NĐ-CP",
+    "aliases": [
+      "174/2025/NĐ-CP"
+    ]
+  }
+]

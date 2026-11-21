@@ -1,0 +1,88 @@
+{
+  "cutoff": "2026-11-30",
+  "note": "Mọi con số chép tay từ văn bản gốc; `cite` là id bản ghi trong articles.jsonl. Trạng thái kiểm chứng xem VERIFICATION.md.",
+
+  "threshold": {
+    "value": 1000000000,
+    "meaning": "Doanh thu năm từ mức này trở xuống: không chịu thuế GTGT, không phải nộp thuế TNCN; chỉ thông báo doanh thu thực tế trước 31/01 năm sau.",
+    "since": "2026-01-01",
+    "cite": ["nd-68-2026:d3:k1", "nd-68-2026:d4:k1", "nd-68-2026:d8:k1", "nd-141-2026:d1:k1", "nd-141-2026:d3"]
+  },
+
+  "gtgt": {
+    "base": "toàn bộ doanh thu",
+    "base_note": "Doanh thu tính thuế GTGT là tổng số tiền bán hàng hóa, dịch vụ (không trừ ngưỡng 01 tỷ).",
+    "cite": ["vbhn-114-2026:d12:k2", "nd-68-2026:d3:k2"]
+  },
+
+  "tncn_revenue_method": {
+    "base": "phần doanh thu vượt ngưỡng",
+    "base_note": "Doanh thu tính thuế TNCN là phần doanh thu vượt trên 01 tỷ đồng.",
+    "max_revenue": 3000000000,
+    "max_revenue_note": "Được chọn phương pháp này khi doanh thu năm trên 01 tỷ đến 03 tỷ; trên 03 tỷ phải tính theo thu nhập.",
+    "cite": ["vbhn-112-2026:d7:k3", "nd-68-2026:d4:k5"]
+  },
+
+  "groups": [
+    {"id": "phan-phoi", "ten": "Phân phối, cung cấp hàng hóa", "vi_du": "tạp hóa, bán lẻ, bán hàng online tự nhập về bán",
+     "gtgt": 0.01, "tncn": 0.005, "cite": ["vbhn-114-2026:d12:k2", "vbhn-112-2026:d7:k3"]},
+    {"id": "dich-vu", "ten": "Dịch vụ, xây dựng không bao thầu nguyên vật liệu", "vi_du": "cắt tóc, sửa chữa, tư vấn, xây dựng chỉ nhận công",
+     "gtgt": 0.05, "tncn": 0.02, "cite": ["vbhn-114-2026:d12:k2", "vbhn-112-2026:d7:k3"]},
+    {"id": "cho-thue-dai-ly", "ten": "Cho thuê tài sản, đại lý bảo hiểm, đại lý xổ số, đại lý bán hàng đa cấp", "vi_du": "cho thuê xe, cho thuê máy móc",
+     "gtgt": null, "gtgt_note": "Luật GTGT không tách riêng nhóm này; xếp nhóm chi tiết do Bộ trưởng Bộ Tài chính quy định (Điều 12 khoản 4 Luật GTGT), chưa có văn bản trong kho.",
+     "tncn": 0.05, "cite": ["vbhn-112-2026:d7:k3"]},
+    {"id": "san-xuat", "ten": "Sản xuất, vận tải, dịch vụ có gắn với hàng hóa, xây dựng có bao thầu nguyên vật liệu", "vi_du": "quán ăn, quán cà phê, may mặc, vận tải",
+     "gtgt": 0.03, "tncn": 0.015, "cite": ["vbhn-114-2026:d12:k2", "vbhn-112-2026:d7:k3"],
+     "vi_du_note": "Xếp quán ăn, cà phê vào nhóm này là cách hiểu phổ biến (dịch vụ có gắn với hàng hóa), chưa có văn bản danh mục trong kho."},
+    {"id": "noi-dung-so", "ten": "Cung cấp sản phẩm và dịch vụ nội dung thông tin số về giải trí, trò chơi điện tử, phim số, ảnh số, nhạc số, quảng cáo số", "vi_du": "nhà sáng tạo nội dung, YouTuber, TikToker nhận tiền quảng cáo",
+     "gtgt": null, "gtgt_note": "Luật GTGT không tách riêng nhóm này; chưa có văn bản danh mục trong kho.",
+     "tncn": 0.05, "cite": ["vbhn-112-2026:d7:k3"]},
+    {"id": "khac", "ten": "Hoạt động kinh doanh khác", "vi_du": "",
+     "gtgt": 0.02, "tncn": 0.01, "cite": ["vbhn-114-2026:d12:k2", "vbhn-112-2026:d7:k3"]}
+  ],
+
+  "tncn_income_method": {
+    "note": "Thuế = thu nhập tính thuế (doanh thu − chi phí) × một thuế suất duy nhất, chọn theo mức doanh thu năm (không lũy tiến).",
+    "brackets": [
+      {"revenue_over": 1000000000, "revenue_to": 3000000000, "rate": 0.15},
+      {"revenue_over": 3000000000, "revenue_to": 50000000000, "rate": 0.17},
+      {"revenue_over": 50000000000, "revenue_to": null, "rate": 0.20}
+    ],
+    "cite": ["vbhn-112-2026:d7:k2", "nd-68-2026:d4:k5"],
+    "in_scope": false,
+    "scope_note": "Hệ thống không tự tính phương pháp này (cần chi phí có hóa đơn, chứng từ); chỉ nhận biết và chuyển chuyên viên."
+  },
+
+  "rental_real_estate": {
+    "tncn_rate": 0.05, "base": "phần doanh thu vượt ngưỡng",
+    "note": "Cá nhân cho thuê bất động sản (trừ kinh doanh lưu trú).",
+    "cite": ["vbhn-112-2026:d7:k4", "nd-68-2026:d4:k4"]
+  },
+
+  "reductions": [
+    {"id": "tncn-30", "tax": "tncn", "factor": 0.70, "years": [2026, 2027], "max_revenue": 10000000000,
+     "condition": "Cá nhân cư trú kinh doanh có doanh thu năm 2026, 2027 không quá 10 tỷ đồng; áp dụng cho mọi phương pháp tính thuế TNCN. Doanh thu thực tế vượt 10 tỷ thì nộp bổ sung số đã giảm.",
+     "cite": ["nq-43-2026:d1:k1", "nd-398-2026:d2:k2", "nd-398-2026:d2:k4"]},
+    {"id": "gtgt-20", "tax": "gtgt", "factor": 0.80, "valid_from": "2025-07-01", "valid_to": "2026-12-31",
+     "condition": "Giảm 20% mức tỷ lệ % tính thuế GTGT khi xuất hóa đơn với hàng hóa, dịch vụ thuộc diện giảm thuế GTGT (trừ các nhóm loại trừ ở phụ lục Nghị định 174/2025/NĐ-CP).",
+     "cite": ["nd-174-2025:d1:k2", "nq-204-2025:d1"]}
+  ],
+
+  "abolished": [
+    {"id": "thue-khoan", "what": "phương pháp khoán thuế", "from": "2026-01-01", "cite": ["nq-198-2025:d10:k6", "nd-68-2026:d17:k5"]},
+    {"id": "mon-bai", "what": "lệ phí môn bài", "from": "2026-01-01", "cite": ["nq-198-2025:d10:k7"]}
+  ],
+
+  "outdated_thresholds": [
+    {"value": 500000000, "label": "500 triệu đồng", "was": "ngưỡng theo NĐ 68/2026 bản gốc, Luật 149/2025 và Luật 109/2025 bản gốc", "until": "thay bằng 01 tỷ, áp dụng từ 01/01/2026 (NĐ 141/2026)"},
+    {"value": 200000000, "label": "200 triệu đồng", "was": "ngưỡng không chịu thuế GTGT theo Luật GTGT 48/2024 bản gốc (Điều 5 khoản 25)", "until": "chưa từng áp dụng: Luật 149/2025 sửa trước ngày 01/01/2026"},
+    {"value": 100000000, "label": "100 triệu đồng", "was": "ngưỡng theo Thông tư 40/2021/TT-BTC (đã bị Thông tư 18/2026/TT-BTC thay thế)", "until": "2025-12-31", "kiem_chung": "chua", "note": "Chưa có TT 40/2021 trong kho để trích nguyên văn."}
+  ],
+
+  "pending": [
+    {"what": "Nâng mốc doanh thu được chọn tính thuế theo tỷ lệ trên doanh thu từ 03 tỷ lên 10 tỷ đồng",
+     "from_tax_year": 2027, "status": "Quốc hội thông qua ngày 20/11/2026; chưa đăng Công báo, chưa có số hiệu",
+     "source": "https://baochinhphu.vn/sua-doi-bo-sung-mot-so-dieu-cua-cac-luat-ve-thue-thu-nhap-doanh-nghiep-thue-su-dung-dat-phi-nong-nghiep-thue-thu-nhap-ca-nhan-102261120154433529.htm",
+     "kiem_chung": "chua", "note": "Chỉ có bài báo; chưa đưa vào tính toán."}
+  ]
+}

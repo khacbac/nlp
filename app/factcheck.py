@@ -1,83 +1,213 @@
-"""Check a reply draft against the shop's facts, without asking an LLM.
+"""Check a reply draft against the tax rules, by rule, without asking an LLM.
 
 The experiment's strongest result is that a consistent judge is not a correct
 judge: keeping only verdicts that survive the order swap lowered agreement with
 humans (27.6%), while a plain comparison against the gold answer reached 68.9%.
-In a support inbox the policy and the stock table are the gold answer, so the
-facts they pin down (prices, percentages, stock, arrival dates) are checked by
-rule here. A draft the judge picked consistently is still held for a person if
-it states a fact the shop's data contradicts.
+Here the gold answer is the law: data/tax/rates.json holds the numbers (each
+cited to a clause), and articles.jsonl holds the clauses the drafts may cite.
+A draft the judge picked consistently is still held for a person when it
+contradicts them.
 
-What this catches: wrong amounts, invented percentages, "in stock" for a sold
-out product, promising an out-of-stock item arrives in time. What it cannot
-catch: judgment calls (is a bicycle knock "impact damage"?), which stay with
-the judge and the order swap.
+What this catches:
+- a threshold that is no longer in force ("từ 500 triệu đồng trở xuống");
+- thuế khoán or lệ phí môn bài presented as still applying;
+- a percentage that is not a rate in the law;
+- a tax amount that does not match the law for the revenue in the question;
+- the revenue-percentage method used where revenue is above 03 tỷ;
+- a missing "Căn cứ:" line, or a cited article the draft was not given.
+
+What it cannot catch: judgment calls (which industry group a business is in,
+whether a good is in the VAT-reduction list), which stay with the judge.
 """
 
+import json
 import re
-from itertools import combinations
+from datetime import date
+from pathlib import Path
 
-MONEY = re.compile(r"(\d{1,3}(?:\.\d{3})+)\s*(?:đ|đồng|vnđ)", re.I)
+TAX = Path(__file__).resolve().parent / "data" / "tax"
+RATES = json.loads((TAX / "rates.json").read_text(encoding="utf-8"))
+
+TY, TRIEU = 1_000_000_000, 1_000_000
+MONEY = re.compile(
+    r"(?P<ty>\d+(?:[.,]\d+)?)\s*(?:tỷ|tỉ)\s*(?P<trieu>\d+)\s*triệu"  # "1 tỷ 200 triệu"
+    r"|(?P<num>\d+(?:[.,]\d+)*)\s*(?P<unit>tỷ|tỉ|triệu|nghìn|ngàn|đồng|vnđ|vnd|đ)(?![a-zà-ỹ])"
+    r"|(?P<dotted>\d{1,3}(?:\.\d{3}){2,})",  # bare "15.000.000"
+    re.I)
 PERCENT = re.compile(r"(\d+(?:[.,]\d+)?)\s*%")
-DATE = re.compile(r"\b(\d{1,2})/(\d{1,2})\b")
-SHIPPING = 30000
-REFUND_SHARE = 0.2  # policy 3(b): keep the item, get 20% back
+CITE_LINE = re.compile(r"căn cứ\s*:", re.I)
+CITE_DIEU = re.compile(r"Điều\s+(\d+)")
+SO_HIEU = re.compile(r"\b(\d{1,3}/\d{4}/[A-ZĐ][A-ZĐ0-9\-]*)", re.I)
+
+# Whole-word matches only: "cũ" must not match inside "cũng".
+NEGATION = re.compile(r"\b(không|bỏ|bãi bỏ|chấm dứt|hết|ngừng|trước đây|đã được thay|thay vì|cũ)\b")
+# Words that mark an old threshold as history ("trước đây là 500 triệu"), not as the rule.
+OLD_MARKERS = re.compile(r"\b(trước đây|trước kia|đã được thay|đã được nâng|thay vì|cũ|năm 2025|không còn)\b")
+THRESHOLD_WORDS = ("trở xuống", "trở lên", "dưới", "không quá", "vượt", "ngưỡng", "mức doanh thu", "trên mức",
+                   "doanh thu trên", "doanh thu năm trên", "doanh thu từ", "doanh thu năm từ")
 
 
-def amounts(text: str) -> set[int]:
-    return {int(m.replace(".", "")) for m in MONEY.findall(text)}
+def _num(s: str) -> float:
+    if re.fullmatch(r"\d+,\d+", s):
+        return float(s.replace(",", "."))
+    if re.fullmatch(r"\d+\.\d{1,2}", s):  # "1.5 tỷ": decimal point
+        return float(s)
+    return float(s.replace(".", "").replace(",", ""))
 
 
-def percents(text: str) -> set[str]:
-    return {p.replace(",", ".") for p in PERCENT.findall(text)}
+def money(text: str) -> list[tuple[int, int, int]]:
+    """Amounts in đồng with their (start, end) offsets: '1,5 tỷ', '7.500.000 đồng', '15 triệu'."""
+    out = []
+    for m in MONEY.finditer(text):
+        if m["ty"]:
+            v = _num(m["ty"]) * TY + int(m["trieu"]) * TRIEU
+        elif m["dotted"]:
+            v = _num(m["dotted"])
+        else:
+            unit = m["unit"].lower()
+            scale = {"tỷ": TY, "tỉ": TY, "triệu": TRIEU, "nghìn": 1000, "ngàn": 1000}.get(unit, 1)
+            v = _num(m["num"]) * scale
+            if scale == 1 and v < 1000:
+                continue  # "5 đ" is never a tax amount; likely a stray unit
+        out.append((round(v), m.start(), m.end()))
+    return out
+
+
+def revenue_in(message: str) -> int | None:
+    """The yearly revenue a customer states, if any: the first amount near 'doanh thu'."""
+    for v, s, _ in money(message):
+        if "doanh thu" in message[max(0, s - 40):s].lower() or "doanh thu" in message[s:s + 30].lower():
+            return v
+    return None
 
 
 def sentences(text: str) -> list[str]:
-    return [s for s in re.split(r"(?<=[.!?;])\s+", text) if s]
+    return [s for s in re.split(r"(?<=[.!?;])\s+|\n+", text) if s.strip()]
 
 
-def day_month(text: str) -> tuple[int, int] | None:
-    m = DATE.search(text)
-    return (int(m[2]), int(m[1])) if m else None
+def fmt(v: float) -> str:
+    return f"{round(v):,}".replace(",", ".") + " đồng"
 
 
-def allowed_amounts(policy: str, products: list, ticket: dict) -> set[int]:
-    """Every amount a correct reply could state: policy figures, prices, 20% refunds, order totals."""
-    ok = amounts(policy) | amounts(ticket["message"])
-    prices = [p["price"] for p in products]
-    ok |= set(prices) | {round(p * REFUND_SHARE) for p in prices}
-    mine = [p["price"] for p in products if p["id"] in ticket.get("products", [])]
-    for k in range(2, len(mine) + 1):
-        ok |= {sum(c) for c in combinations(mine, k)}
-    ok |= {x + SHIPPING for x in set(ok)}
-    return ok
+def group_named(text: str) -> dict | None:
+    """The industry group a draft says applies, if it names exactly one."""
+    low = text.lower()
+    named = [g for g in RATES["groups"] if g["ten"].split(",")[0].lower() in low]
+    return named[0] if len(named) == 1 else None
 
 
-def check(draft: str, ticket: dict, products: list, policy: str) -> list[str]:
-    """Facts in `draft` that the policy or stock table contradicts, as short Vietnamese notes."""
+def expected(revenue: int, group: dict, year: int) -> dict[str, set[int]]:
+    """Every tax amount a correct draft could state for this revenue and group.
+
+    Allows the reductions in force (TNCN −30% for 2026–2027 and revenue ≤ 10 tỷ;
+    GTGT −20% for eligible goods until 31/12/2026), because the draft may or may
+    not apply them depending on facts the question does not give, and quarterly
+    shares (÷4) because households declare by quarter.
+    """
+    th = RATES["threshold"]["value"]
+    if revenue <= th:
+        return {"gtgt": {0}, "tncn": {0}}
+    gtgt, tncn = set(), set()
+    if group.get("gtgt") is not None:
+        g = revenue * group["gtgt"]
+        gtgt = {g, g * 0.8} if year <= 2026 else {g}
+    if revenue <= RATES["tncn_revenue_method"]["max_revenue"]:
+        t = (revenue - th) * group["tncn"]
+        tncn = {t, t * 0.7} if year in (2026, 2027) and revenue <= 10 * TY else {t}
+    both = {a + b for a in gtgt for b in tncn}
+    quarterly = {x / 4 for x in gtgt | tncn | both}
+    ok = {round(x) for x in gtgt | tncn | both | quarterly}
+    return {"gtgt": {round(x) for x in gtgt}, "tncn": {round(x) for x in tncn}, "any": ok}
+
+
+def close(a: int, b: int) -> bool:
+    return abs(a - b) <= max(1000, 0.005 * max(a, b))
+
+
+def check(draft: str, ticket: dict, retrieved: set[str], records: dict[str, dict]) -> list[str]:
+    """Facts in `draft` the law contradicts, as short Vietnamese notes (empty list: nothing found)."""
     issues = []
-    ok_money = allowed_amounts(policy, products, ticket)
-    for x in sorted(amounts(draft) - ok_money):
-        issues.append(f"Số tiền {x:,}đ không có trong chính sách hay bảng giá".replace(",", "."))
-    for p in sorted(percents(draft) - percents(policy) - percents(ticket["message"])):
-        issues.append(f"Mức {p}% không có trong chính sách")
+    msg = ticket.get("message", "")
+    asked = {v for v, _, _ in money(msg)}
+    year = ticket.get("year") or date.today().year
+    revenue = ticket.get("revenue") or revenue_in(msg)
+    th = RATES["threshold"]["value"]
+    # Amounts that describe the question, not the rule: the revenue and its part above the threshold.
+    own = asked | ({revenue, revenue - th} if revenue else set())
 
-    sold_out = [p for p in products if p["stock"] <= 0]
     for s in sentences(draft):
         low = s.lower()
-        for p in sold_out:
-            named = any(a in low for a in p.get("aliases", [])) and not any(x in low for x in p.get("not", []))
-            if named and "còn hàng" in low and "hết" not in low:
-                issues.append(f"Nói còn hàng nhưng {p['name']} đang hết hàng")
+        # 1. A threshold that is no longer in force, stated as the rule.
+        for old in RATES["outdated_thresholds"]:
+            for v, a, b in money(s):
+                if v == old["value"] and v not in asked:
+                    before, after = low[max(0, a - 25):a], low[b:b + 25]
+                    if revenue and v == revenue - th and "phần" in before and not after.lstrip().startswith(("trở", "đồng trở")):
+                        continue  # "phần vượt 500 triệu": the part of this revenue above the threshold
+                    if any(w in before + after for w in THRESHOLD_WORDS) and not OLD_MARKERS.search(low):
+                        issues.append(f"Dùng ngưỡng {old['label']} đã hết hiệu lực; ngưỡng hiện hành là "
+                                      f"{fmt(RATES['threshold']['value'])} (Nghị định 141/2026/NĐ-CP)")
+        # 2. Abolished regimes presented as current.
+        for ab, word in (("thue-khoan", "khoán"), ("mon-bai", "môn bài")):
+            if word in low.replace("chứng khoán", "") and not NEGATION.search(low):
+                what = next(x["what"] for x in RATES["abolished"] if x["id"] == ab)
+                issues.append(f"Nói {what} vẫn áp dụng, nhưng đã bãi bỏ từ 01/01/2026 (Nghị quyết 198/2025/QH15 Điều 10)")
 
-    # A deadline in the customer's message that falls before an out-of-stock item's arrival date.
-    need = day_month(ticket["message"])
-    if need:
-        for p in products:
-            eta = p["stock"] <= 0 and p.get("eta") and day_month(p["eta"])
-            if eta and p["id"] in ticket.get("products", []) and eta > need and re.search(r"(?<!không )kịp", draft.lower()):
-                issues.append(f"Hứa kịp ngày {need[1]}/{need[0]}, nhưng hàng về {p['eta']}")
-    return issues
+    # 3. Percentages that are not a rate, reduction or threshold share in the law.
+    valid = {0.5, 1, 1.5, 2, 3, 5, 15, 17, 20, 30, 70, 80, 100}
+    valid |= {float(p.replace(",", ".")) for p in PERCENT.findall(msg)}
+    for p in {float(x.replace(",", ".")) for x in PERCENT.findall(draft)} - valid:
+        issues.append(f"Mức {p:g}% không có trong luật thuế áp dụng cho hộ kinh doanh")
+
+    # 4–5. Amounts and method, when the revenue is known.
+    group = next((g for g in RATES["groups"] if g["id"] == ticket.get("group")), None) or group_named(draft)
+    if revenue:
+        cap = RATES["tncn_revenue_method"]["max_revenue"]
+        if revenue > cap and group and any(close(v, round((revenue - th) * group["tncn"] * f)) for v, _, _ in money(draft) for f in (1, 0.7)):
+            issues.append(f"Doanh thu {fmt(revenue)} trên 03 tỷ phải tính thuế TNCN theo thu nhập tính thuế × thuế suất, "
+                          "không được tính theo tỷ lệ trên doanh thu (Nghị định 68/2026/NĐ-CP Điều 4 khoản 5)")
+        elif group and revenue <= cap:
+            ok = expected(revenue, group, year)
+            plain = own | {th, cap, 10 * TY}
+            for v, a, _ in ((v, a, s) for s in sentences(draft) if "thuế" in s.lower() for v, a, _ in money(s)):
+                if v in plain or v >= revenue:
+                    continue
+                if not any(close(v, x) for x in ok.get("any", ok["gtgt"] | ok["tncn"])):
+                    gt = " hoặc ".join(fmt(x) for x in sorted(ok["gtgt"])) or "không có"
+                    tn = " hoặc ".join(fmt(x) for x in sorted(ok["tncn"])) or "không có"
+                    issues.append(f"Số thuế {fmt(v)} không khớp với luật cho doanh thu {fmt(revenue)}, nhóm "
+                                  f"\"{group['ten']}\": GTGT {gt}; TNCN {tn}")
+
+    # 6. Citations: a "Căn cứ:" line naming articles the draft was given.
+    if not CITE_LINE.search(draft):
+        issues.append("Thiếu dòng \"Căn cứ:\" nêu Điều luật")
+    else:
+        cite = draft[CITE_LINE.search(draft).start():]
+        given = {(records[r]["dieu"], a) for r in retrieved if r in records for a in records[r].get("aliases", [records[r]["so_hieu"]])}
+        known = {(r["dieu"], a) for r in records.values() for a in r.get("aliases", [r["so_hieu"]])}
+        for dieu, so in cited(cite):
+            if (dieu, so) not in known:
+                issues.append(f"Trích Điều {dieu} văn bản {so}, không có trong kho văn bản")
+            elif (dieu, so) not in given:
+                issues.append(f"Trích Điều {dieu} văn bản {so}, không nằm trong các Điều đã cung cấp")
+    return list(dict.fromkeys(issues))
+
+
+def cited(cite: str) -> list[tuple[int, str]]:
+    """(article, document number) pairs in a "Căn cứ:" line.
+
+    Each "Điều N" goes with the nearest document number, before or after it,
+    so both "Điều 4 Nghị định 68/2026/NĐ-CP" and "Nghị định 68/2026/NĐ-CP, Điều 4"
+    read the same. An article with no document number in the line is skipped.
+    """
+    pairs = []
+    for part in re.split(r"[;\n]", cite):  # items are usually separated by ";"
+        docs = [(m.start(), m.end(), m[1].upper()) for m in SO_HIEU.finditer(part)]
+        for m in CITE_DIEU.finditer(part):
+            if docs:
+                near = min(docs, key=lambda d: min(abs(m.start() - d[1]), abs(d[0] - m.end())))
+                pairs.append((int(m[1]), near[2]))
+    return list(dict.fromkeys(pairs))
 
 
 def gate(decision: dict, issues: list[list[str]]) -> dict:

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ABNQ Store · Hỗ trợ khách hàng</title>
+<title>Hộp thư thuế hộ kinh doanh</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -37,23 +37,27 @@ html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased;overflow:hidden}
 button,select,textarea,input{font:inherit;color:inherit}
 button{cursor:pointer}
+a{color:var(--brand)}
 .mono{font-family:var(--mono)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 
 /* ---------- shell ---------- */
-.app{display:grid;grid-template-rows:56px 1fr;grid-template-columns:minmax(0,1fr);height:100dvh}
-.top{display:flex;align-items:center;gap:14px;padding:0 16px;background:var(--panel);border-bottom:1px solid var(--line)}
-.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;letter-spacing:-.2px}
+.app{display:grid;grid-template-rows:56px auto minmax(0,1fr);grid-template-columns:minmax(0,1fr);height:100dvh}
+.top{display:flex;align-items:center;gap:14px;padding:0 16px;background:var(--panel);border-bottom:1px solid var(--line);min-width:0}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;letter-spacing:-.2px;min-width:0;line-height:1.2}
 .logo svg{flex:none}
-.ws{display:flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;color:var(--ink2);font-size:13px;white-space:nowrap}
-.ws i{width:8px;height:8px;border-radius:50%;background:var(--ok)}
 .grow{flex:1}
-.switch{display:flex;align-items:center;gap:10px;color:var(--ink2);font-size:13px;user-select:none;cursor:pointer;white-space:nowrap}
-.switch input{appearance:none;width:34px;height:20px;border-radius:999px;background:var(--line);position:relative;margin:0;cursor:pointer;transition:background .2s}
+.notice{padding:7px 16px;background:var(--warn-soft);color:var(--ink2);font-size:12.5px;line-height:1.45;border-bottom:1px solid var(--line)}
+.notice b{color:var(--ink)}
+.notice .pend{display:block;color:var(--muted);font-size:12px}
+.switch{display:flex;align-items:center;gap:10px;color:var(--ink2);font-size:13px;user-select:none;cursor:pointer}
+.switch input{appearance:none;width:34px;height:20px;border-radius:999px;background:var(--line);position:relative;margin:0;cursor:pointer;transition:background .2s;flex:none}
 .switch input::after{content:"";position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .2s}
 .switch input:checked{background:var(--brand)}
 .switch input:checked::after{transform:translateX(14px)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 14px;border-radius:9px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:13.5px;white-space:nowrap;transition:background .15s,border-color .15s,transform .05s}
+.top .switch{white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:36px;padding:0 14px;border-radius:9px;border:1px solid var(--line);background:var(--panel);font-weight:600;font-size:13.5px;white-space:nowrap;transition:background .15s,border-color .15s,transform .05s}
 .btn:hover{background:var(--panel2);border-color:color-mix(in srgb,var(--line) 60%,var(--ink2))}
 .btn:active{transform:translateY(1px)}
 .btn:disabled{opacity:.55;cursor:default;transform:none}
@@ -61,21 +65,24 @@ button{cursor:pointer}
 .btn.pri:hover{background:color-mix(in srgb,var(--brand) 88%,#000)}
 .btn.ghost{border-color:transparent;background:transparent}
 .btn.ghost:hover{background:var(--line2)}
-.btn.icon{width:36px;padding:0}
+.btn.icon{width:36px;padding:0;flex:none}
 .btn.danger{color:var(--flip)}
+.btn.on{background:var(--brand-soft);border-color:var(--brand);color:var(--brand)}
 .btn svg{flex:none}
 .spin{width:14px;height:14px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite;flex:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-.main{display:grid;grid-template-columns:236px 372px 1fr;min-height:0}
+.main{display:grid;grid-template-columns:236px 372px minmax(0,1fr);min-height:0}
 .side{background:var(--panel2);border-right:1px solid var(--line);padding:14px 10px;display:flex;flex-direction:column;gap:4px;overflow:auto}
 .nav{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:0;background:none;border-radius:8px;color:var(--ink2);font-weight:500;text-align:left}
 .nav:hover{background:var(--line2);color:var(--ink)}
 .nav.on{background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
 .nav .n{margin-left:auto;font:600 12px var(--mono);color:var(--muted)}
 .nav .n.hot{color:#fff;background:var(--flip);padding:1px 7px;border-radius:999px}
-.nav svg{color:var(--muted)}
+.nav svg{color:var(--muted);flex:none}
 .nav.on svg{color:var(--brand)}
+.nav.newb{color:var(--brand);font-weight:600}
+.nav.newb svg{color:var(--brand)}
 .side h4{margin:14px 10px 4px;font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);font-weight:600}
 .today{margin:8px 4px 0;padding:14px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);display:grid;grid-template-columns:1fr 1fr;gap:12px 8px}
 .today div b{display:block;font:600 22px/1.1 var(--mono);letter-spacing:-.5px}
@@ -85,12 +92,13 @@ button{cursor:pointer}
 .side .foot{margin-top:auto;padding:12px 10px 2px;font-size:12px;color:var(--muted);line-height:1.45}
 
 /* ---------- list ---------- */
-.list{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.list{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;min-width:0}
 .lh{display:flex;align-items:center;gap:8px;padding:14px 16px 10px;border-bottom:1px solid var(--line2)}
 .lh h2{margin:0;font-size:16px;letter-spacing:-.2px}
 .lh .c{color:var(--muted);font:500 13px var(--mono)}
+.lh .btn{margin-left:auto;min-height:32px;padding:0 10px;font-size:13px}
 .items{overflow:auto;flex:1}
-.it{display:grid;grid-template-columns:36px 1fr;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line2);cursor:pointer;position:relative}
+.it{display:grid;grid-template-columns:36px minmax(0,1fr);gap:10px;padding:12px 16px;border-bottom:1px solid var(--line2);cursor:pointer;position:relative}
 .it:hover{background:var(--panel2)}
 .it.on{background:var(--brand-soft)}
 .it.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--brand)}
@@ -100,12 +108,13 @@ button{cursor:pointer}
 .it .tm{margin-left:auto;color:var(--muted);font:500 12px var(--mono);flex:none}
 .it .sj{font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .it .sn{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.it .r3{display:flex;align-items:center;gap:6px;margin-top:6px}
-.pill{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.it .r3{display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:5px;min-height:22px;padding:0 8px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap}
 .pill.new{background:var(--line2);color:var(--ink2)}
 .pill.review{background:var(--flip-soft);color:var(--flip)}
 .pill.ready{background:var(--ok-soft);color:var(--ok)}
-.pill.sent{background:transparent;color:var(--muted);padding:0}
+.pill.sent{background:transparent;color:var(--ok);padding:0}
+.pill.out_of_scope,.pill.no_basis{background:var(--warn-soft);color:var(--warn)}
 .pill.busy{background:var(--brand-soft);color:var(--brand)}
 .pill .spin{width:10px;height:10px;border-width:1.5px}
 .chan{font-size:11.5px;color:var(--muted)}
@@ -113,87 +122,106 @@ button{cursor:pointer}
 .empty b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
 
 /* ---------- detail ---------- */
-.detail{overflow:auto;min-height:0}
+.detail{overflow:auto;min-height:0;min-width:0}
 .dwrap{max-width:980px;margin:0 auto;padding:22px 28px 64px}
 .back{display:none}
-.dh{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.dh h1{margin:0;font-size:20px;letter-spacing:-.3px}
-.chip{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border:1px solid var(--line);border-radius:7px;font-size:12px;color:var(--ink2);background:var(--panel)}
-.msg{margin:16px 0 0;display:grid;grid-template-columns:36px 1fr;gap:12px}
-.bubble{background:var(--panel);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:12px 16px;box-shadow:var(--shadow);font-size:15px;line-height:1.6}
-.bubble small{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}
-.prods{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 0 48px}
-.prod{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center;padding:8px 14px 8px 8px;border:1px solid var(--line);border-radius:12px;background:var(--panel);flex:1 1 280px;max-width:440px}
-.pimg{width:64px;height:64px;border-radius:9px;object-fit:cover;display:block;background:var(--line2)}
-.cover{display:grid;place-items:center;text-align:center;padding:6px;background:linear-gradient(160deg,#8C1D2C,#5A1019);color:#F6E7C8;font:700 10px/1.25 serif}
-.cover b{display:block;font-size:18px;margin-bottom:2px}
-.pn{font-weight:600;font-size:13.5px;line-height:1.35}
-.pm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:var(--ink2);margin-top:4px}
-.stk{font-weight:600;font-size:11.5px;padding:1px 8px;border-radius:999px;white-space:nowrap}
-.stk.in{background:var(--ok-soft);color:var(--ok)}
-.stk.low{background:var(--warn-soft);color:var(--warn)}
-.stk.out{background:var(--flip-soft);color:var(--flip)}
-.defect{font-size:12px;color:var(--warn);margin-top:3px}
-.it .th{width:26px;height:26px;border-radius:6px;object-fit:cover;margin-left:auto;flex:none}
-.it .th.cover{padding:0;font-size:12px}
-.cat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.cat .card{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
-.cat .pimg{width:100%;height:auto;aspect-ratio:1;border-radius:0}
-.cat .cover{font-size:15px}.cat .cover b{font-size:44px}
-.cat .ci{padding:10px 12px 12px}
-.ppick{display:flex;flex-wrap:wrap;gap:6px}
-.ppick button{border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:4px 10px;font-size:12px}
-.ppick button.on{background:var(--brand-soft);border-color:var(--brand);color:var(--brand)}
+.dh{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dh h1{margin:0;font-size:20px;letter-spacing:-.3px;overflow-wrap:anywhere;min-width:0}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:24px;padding:0 9px;border:1px solid var(--line);border-radius:7px;font-size:12px;color:var(--ink2);background:var(--panel)}
+.msg{margin:16px 0 0;display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px}
+.bubble{background:var(--panel);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:12px 16px;box-shadow:var(--shadow);font-size:15px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.bubble small{display:block;color:var(--muted);font-size:12px;margin-bottom:4px;white-space:normal}
 .sec{margin-top:26px}
 .sech{display:flex;align-items:center;gap:10px;margin:0 0 10px}
-.sech h3{margin:0;font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);font-weight:600}
+.sech h3{margin:0;font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);font-weight:600;white-space:nowrap}
 .sech .grow{height:1px;background:var(--line)}
+.sech .n{font:500 12px var(--mono);color:var(--muted)}
 
-.start{border:1.5px dashed var(--line);border-radius:16px;padding:28px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;background:var(--panel)}
+.start{border:1.5px dashed var(--line);border-radius:16px;padding:24px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:center;background:var(--panel)}
 .start h4{margin:0 0 6px;font-size:16px}
 .start p{margin:0;color:var(--ink2)}
 
+/* ask form */
+.ask{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--panel);box-shadow:var(--shadow);display:grid;gap:16px}
+.ask h1{margin:0;font-size:20px;letter-spacing:-.3px}
+.ask p.lead{margin:-8px 0 0;color:var(--ink2)}
+.ask .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ask .cnt{margin-left:auto;color:var(--muted);font:500 12px var(--mono)}
+.hint{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--warn);background:var(--warn-soft);border-radius:9px;padding:8px 10px}
+.samples{display:flex;flex-wrap:wrap;gap:6px}
+.samples button{border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:5px 11px;font-size:12.5px;text-align:left}
+.samples button:hover{border-color:var(--brand);color:var(--brand)}
+
 .working{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--panel)}
+.working .wt{margin:0 0 14px;color:var(--ink2);font-size:13.5px}
 .steps{display:grid;gap:12px}
 .stp{display:flex;align-items:center;gap:12px;color:var(--muted)}
 .stp.on{color:var(--ink)}
 .stp.done{color:var(--ok)}
-.stp .dot{width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center;flex:none}
+.stp .dot{width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center;flex:none;font-size:12px}
 .stp.on .dot{border-color:var(--brand);color:var(--brand)}
 .sk{height:10px;border-radius:6px;background:linear-gradient(90deg,var(--line2),var(--line),var(--line2));background-size:200% 100%;animation:sh 1.2s infinite}
 @keyframes sh{to{background-position:-200% 0}}
 
-/* verdict banner */
-.ban{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:16px 18px;border-radius:16px;border:1px solid}
+/* answer */
+.answer{border:1px solid color-mix(in srgb,var(--ok) 35%,transparent);background:var(--ok-soft);border-radius:16px;padding:16px 18px}
+.answer .hd{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-weight:700;color:var(--ok)}
+.answer .hd span{font-weight:500;color:var(--ink2);font-size:13px}
+.answer .txt{margin:10px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.65;color:var(--ink)}
+.answer .basis{margin:12px 0 0;padding-top:10px;border-top:1px dashed color-mix(in srgb,var(--ok) 35%,transparent);font-size:13.5px;color:var(--ink2);overflow-wrap:anywhere}
+.answer .basis b{color:var(--ink)}
+.answer .acts{margin-top:12px}
+.answer.warn{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
+.answer.warn .hd{color:var(--warn)}
+.answer.unsure{background:var(--flip-soft);border-color:color-mix(in srgb,var(--flip) 35%,transparent)}
+.answer.unsure .hd{color:var(--flip)}
+.after{margin:14px 0 0;color:var(--ink2);font-size:14px}
+
+/* clauses */
+.clauses{display:grid;gap:10px}
+.cl{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:12px 14px;min-width:0}
+.cl .ch{display:flex;align-items:baseline;gap:6px 10px;flex-wrap:wrap}
+.cl .lb{font-weight:600;font-size:14px;overflow-wrap:anywhere}
+.cl .ti{color:var(--ink2);font-size:13.5px;margin-top:2px;overflow-wrap:anywhere}
+.cl .meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tag2{display:inline-flex;align-items:center;min-height:20px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:600;white-space:nowrap}
+.tag2.amd{background:var(--warn-soft);color:var(--warn);white-space:normal}
+.tag2.core{background:var(--brand-soft);color:var(--brand)}
+.kw{display:inline-flex;align-items:center;min-height:20px;padding:0 7px;border-radius:6px;font-size:11.5px;background:var(--line2);color:var(--ink2)}
+.cl .src{margin-left:auto;font-size:12.5px;font-weight:600;white-space:nowrap}
+.cl details{margin-top:8px}
+.cl summary{cursor:pointer;color:var(--brand);font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;list-style:none}
+.cl summary::-webkit-details-marker{display:none}
+.cl summary::before{content:"▸";transition:transform .15s}
+.cl details[open] summary::before{transform:rotate(90deg)}
+.cl pre{margin:8px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.6 var(--font);color:var(--ink2);background:var(--panel2);border:1px solid var(--line2);border-radius:9px;padding:10px 12px;max-height:420px;overflow:auto}
+
+/* feedback */
+.fb{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:14px 16px;display:grid;gap:10px}
+.fb .q{font-weight:600}
+.fb .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fb .saved{font-size:12.5px;color:var(--ok)}
+.fb textarea{width:100%;min-height:60px;border:1px solid var(--line);border-radius:9px;background:var(--panel);padding:8px 10px;resize:vertical}
+
+/* verdict banner (reviewer) */
+.ban{display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;align-items:center;padding:16px 18px;border-radius:16px;border:1px solid}
 .ban .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center}
 .ban h4{margin:0;font-size:16px;letter-spacing:-.2px}
 .ban p{margin:2px 0 0;color:var(--ink2);font-size:13.5px}
 .ban.agree,.ban.tie{background:var(--ok-soft);border-color:color-mix(in srgb,var(--ok) 35%,transparent)}
 .ban.agree .ic,.ban.tie .ic{background:var(--ok);color:#fff}
-.ban.flip{background:var(--flip-soft);border-color:color-mix(in srgb,var(--flip) 35%,transparent)}
-.ban.flip .ic{background:var(--flip);color:#fff}
-.ban.facts{background:var(--flip-soft);border-color:color-mix(in srgb,var(--flip) 35%,transparent)}
-.ban.facts .ic{background:var(--flip);color:#fff}
-.run.fc{grid-template-columns:auto 1fr}
-.run.fc .res{justify-self:end}
-.run.fc .lbl{white-space:nowrap}
-.run.fc .res b.bad{color:var(--flip)}
-.run.fc .res b.good{color:var(--ok)}
-.fchk{margin:0;padding:10px 14px;border-top:1px solid var(--line2);list-style:none;display:grid;gap:4px;font-size:13px}
-.fchk li{color:var(--flip)}
-.fchk li::before{content:"✗ ";font-weight:700}
-.fchk.ok li{color:var(--ok)}
-.fchk.ok li::before{content:"✓ "}
+.ban.flip,.ban.held{background:var(--flip-soft);border-color:color-mix(in srgb,var(--flip) 35%,transparent)}
+.ban.flip .ic,.ban.held .ic{background:var(--flip);color:#fff}
 .ban.partial,.ban.invalid{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
 .ban.partial .ic,.ban.invalid .ic{background:var(--warn);color:#fff}
+.rvtag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--brand);margin-bottom:8px}
 
 /* runs */
 .runs{display:grid;gap:8px;margin-top:12px}
-.credit{display:inline-block;margin-top:12px;font-size:12.5px;color:var(--muted)}
-.run{display:grid;grid-template-columns:52px auto 18px 1fr;gap:10px;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.run{display:grid;grid-template-columns:52px auto 18px minmax(0,1fr);gap:10px;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
 .run .lbl{font-size:12px;color:var(--muted);font-weight:600}
-.slots{display:flex;gap:4px}
-.slot{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 8px;border-radius:7px;font-size:12px;font-weight:600;border:1px solid transparent}
+.slots{display:flex;gap:4px;flex-wrap:wrap}
+.slot{display:inline-flex;align-items:center;gap:5px;min-height:26px;padding:0 8px;border-radius:7px;font-size:12px;font-weight:600;border:1px solid transparent;white-space:nowrap}
 .slot.s1{background:var(--d1-soft);color:var(--d1)}
 .slot.s2{background:var(--d2-soft);color:var(--d2)}
 .slot.pick{border-color:currentColor;box-shadow:0 0 0 2px color-mix(in srgb,currentColor 18%,transparent)}
@@ -208,42 +236,43 @@ details.why summary::-webkit-details-marker{display:none}
 .whys pre{margin:0;white-space:pre-wrap;word-break:break-word;font:12px/1.55 var(--mono);color:var(--ink2);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px;max-height:240px;overflow:auto}
 .whys h5{margin:0 0 6px;font-size:12px;color:var(--muted)}
 
-/* drafts */
+/* drafts (reviewer) */
 .drafts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.draft{border:1px solid var(--line);border-radius:16px;background:var(--panel);display:flex;flex-direction:column;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.draft{border:1px solid var(--line);border-radius:16px;background:var(--panel);display:flex;flex-direction:column;overflow:hidden;min-width:0;transition:border-color .2s,box-shadow .2s}
 .draft.win{border-color:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 16%,transparent)}
-.dhd{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line2)}
+.dhd{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 14px;border-bottom:1px solid var(--line2)}
 .dhd .tag{font-weight:700;font-size:13.5px}
 .dhd .tag.t1{color:var(--d1)} .dhd .tag.t2{color:var(--d2)}
 .dhd .mdl{color:var(--muted);font-size:12px}
 .badge{margin-left:auto;display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--ok);background:var(--ok-soft);padding:3px 8px;border-radius:999px}
-.draft textarea{border:0;resize:none;background:transparent;padding:14px;font-size:14.5px;line-height:1.6;min-height:180px;outline:none;flex:1}
+.draft textarea{border:0;resize:none;background:transparent;padding:14px;font-size:14.5px;line-height:1.6;min-height:180px;outline:none;flex:1;width:100%;field-sizing:content}
 .draft textarea:focus{background:var(--panel2)}
+.fchk{margin:0;padding:10px 14px;border-top:1px solid var(--line2);list-style:none;display:grid;gap:4px;font-size:13px}
+.fchk li{color:var(--flip)}
+.fchk li::before{content:"✗ ";font-weight:700}
+.fchk.ok li{color:var(--ok)}
+.fchk.ok li::before{content:"✓ "}
 .dft{display:flex;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--line2)}
 .dft .wc{color:var(--muted);font:500 12px var(--mono)}
 .dft .btn{margin-left:auto}
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 
-.sent{border:1px solid color-mix(in srgb,var(--ok) 35%,transparent);background:var(--ok-soft);border-radius:16px;padding:16px 18px}
-.sent .hd{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--ok)}
-.sent .hd span{font-weight:500;color:var(--ink2);font-size:13px}
-.sent p{margin:10px 0 0;white-space:pre-wrap;font-size:14.5px;line-height:1.6}
-
 /* ---------- report ---------- */
-.report{grid-column:2/4;overflow:auto;min-height:0}
+.report{grid-column:2/4;overflow:auto;min-height:0;min-width:0}
 .rwrap{max-width:1080px;margin:0 auto;padding:26px 28px 64px}
 .rh h1{margin:0;font-size:24px;letter-spacing:-.4px}
 .rh p{margin:4px 0 0;color:var(--ink2)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:20px}
-.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
 .kpi b{display:block;font:600 30px/1 var(--mono);letter-spacing:-1px;margin-top:8px}
 .kpi span{color:var(--muted);font-size:12.5px;font-weight:500}
 .kpi small{display:block;color:var(--ink2);font-size:12px;margin-top:8px;line-height:1.4}
 .kpi.hl{border-color:color-mix(in srgb,var(--flip) 40%,transparent)}
 .kpi.hl b{color:var(--flip)}
+.kpi.wn b{color:var(--warn)}
 .cards2{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;margin-top:12px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
-.card h3{margin:0 0 4px;font-size:15px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;min-width:0}
+.card h3{margin:0 0 10px;font-size:15px}
 .stack{display:flex;height:34px;border-radius:8px;overflow:hidden;gap:2px;background:var(--panel)}
 .stack div{min-width:2px;position:relative}
 .stack div:first-child{border-radius:8px 0 0 8px}
@@ -255,14 +284,14 @@ details.why summary::-webkit-details-marker{display:none}
 .meter{position:relative;height:34px;background:var(--line2);border-radius:8px;overflow:hidden}
 .meter .f{height:100%;background:var(--flip);border-radius:8px 0 0 8px}
 .meter .mid{position:absolute;left:50%;top:-4px;bottom:-4px;border-left:2px dashed var(--ink2)}
-.mlab{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}
+.mlab{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);margin-top:6px}
 .big2{font:600 34px/1 var(--mono);letter-spacing:-1px}
 table.tb{width:100%;border-collapse:collapse;font-size:13px}
-.tb th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;padding:8px 10px;border-bottom:1px solid var(--line)}
+.tb th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
 .tb td{padding:9px 10px;border-bottom:1px solid var(--line2)}
-.tb tr{cursor:pointer}
-.tb tr:hover td{background:var(--panel2)}
-.tb .mono{font-size:12px}
+.tb tr[data-id]{cursor:pointer}
+.tb tr[data-id]:hover td{background:var(--panel2)}
+.tb .mono{font-size:12px;white-space:nowrap}
 
 /* ---------- sheets ---------- */
 .scrim{position:fixed;inset:0;background:rgba(10,15,20,.38);z-index:20;animation:fade .15s}
@@ -272,41 +301,39 @@ table.tb{width:100%;border-collapse:collapse;font-size:13px}
 .sheet .sh{display:flex;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}
 .sheet .sh h3{margin:0;font-size:16px}
 .sheet .sb{padding:18px;overflow:auto;flex:1;display:grid;gap:16px;align-content:start}
+.sheet .grp{border-top:1px solid var(--line);padding-top:16px;display:grid;gap:12px}
+.sheet .grp h4{margin:0;font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
 .fld label{display:block;font-weight:600;font-size:13px;margin-bottom:6px}
-.fld small{display:block;color:var(--muted);font-size:12px;margin-top:5px;line-height:1.4}
+.fld small,.sheet small{display:block;color:var(--muted);font-size:12px;margin-top:5px;line-height:1.4}
 .fld select,.fld input,.fld textarea{width:100%;height:38px;border:1px solid var(--line);border-radius:9px;background:var(--panel);padding:0 10px}
-.fld textarea{height:auto;min-height:120px;padding:10px;resize:vertical;line-height:1.5}
-.policy{white-space:pre-wrap;font-size:13.5px;line-height:1.65;color:var(--ink2)}
-.samples{display:flex;flex-wrap:wrap;gap:6px}
-.samples button{border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:4px 10px;font-size:12px}
-.box{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--panel2);font-size:13px;color:var(--ink2);line-height:1.5}
+.fld textarea{height:auto;min-height:130px;padding:10px;resize:vertical;line-height:1.5}
+.srcs{margin:0;padding-left:18px;display:grid;gap:6px;font-size:13px}
+.srcs a{overflow-wrap:anywhere}
 
-.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:13.5px;z-index:40;box-shadow:var(--shadow);max-width:min(560px,calc(100% - 32px));animation:up .2s}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:13.5px;z-index:40;box-shadow:var(--shadow);width:max-content;max-width:min(560px,calc(100% - 32px));animation:up .2s}
 .toast.err{background:var(--flip);color:#fff}
 @keyframes up{from{transform:translate(-50%,8px);opacity:0}}
 
 /* ---------- responsive ---------- */
 @media (max-width:1180px){
-  .main{grid-template-columns:72px 340px 1fr}
+  .main{grid-template-columns:72px 340px minmax(0,1fr)}
   .side .lbl-t,.side h4,.today,.side .foot,.nav .n:not(.hot){display:none}
-  .nav{justify-content:center;padding:10px}
+  .nav{justify-content:center;padding:10px;position:relative}
   .nav .n.hot{position:absolute;margin:0;transform:translate(12px,-10px);font-size:10px;padding:0 5px}
-  .nav{position:relative}
-  .side .newb span{display:none}
   .kpis{grid-template-columns:1fr 1fr}
 }
 @media (max-width:860px){
   body{overflow:auto}
-  .app{height:auto;min-height:100dvh}
-  .top{position:sticky;top:0;z-index:5;gap:8px;padding:0 12px}
-  .ws,.switch .lbl-t,.top .hide-m{display:none}
+  .app{height:auto;min-height:100dvh;grid-template-rows:56px auto auto}
+  .top{position:sticky;top:0;z-index:5;gap:6px;padding:0 16px}
+  .top .switch,.top .hide-m{display:none}
   #runAllT{display:none}
-  #runAll{width:36px;padding:0}
-  .logo{font-size:15px}
+  #runAll{width:36px;padding:0;flex:none}
+  .logo{font-size:14.5px;gap:8px}
+  .logo svg{width:24px;height:24px}
   .main{display:block}
   .side{flex-direction:row;overflow-x:auto;padding:8px 10px;border-right:0;border-bottom:1px solid var(--line);gap:4px;position:sticky;top:56px;z-index:4}
   .nav{width:auto;flex:none}
-  .side .newb{margin-left:auto}
   .list{border-right:0;min-height:calc(100dvh - 112px)}
   .detail,.report{display:none}
   body.show-detail .list{display:none}
@@ -315,14 +342,16 @@ table.tb{width:100%;border-collapse:collapse;font-size:13px}
   body.show-report .report{display:block}
   .back{display:inline-flex}
   .dwrap,.rwrap{padding:16px 16px 48px}
+  .ask{padding:16px}
   .drafts,.whys,.cards2{grid-template-columns:1fr}
   .start{grid-template-columns:1fr}
-  .run{grid-template-columns:auto 1fr;row-gap:6px}
+  .run{grid-template-columns:auto minmax(0,1fr);row-gap:6px}
   .run .arrow{display:none}
   .run .res{grid-column:1/-1;justify-self:start;text-align:left}
-  .ban{grid-template-columns:40px 1fr}
+  .ban{grid-template-columns:40px minmax(0,1fr)}
   .ban .ic{width:40px;height:40px}
-  .ban > .btn{grid-column:1/-1}
+  .kpis{grid-template-columns:1fr 1fr}
+  .kpi b{font-size:26px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -331,23 +360,21 @@ table.tb{width:100%;border-collapse:collapse;font-size:13px}
 <div class="app">
   <header class="top">
     <div class="logo">
-      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="13" fill="var(--d1)"/><circle cx="14" cy="14" r="10" fill="none" stroke="#fff" stroke-width="1.2" opacity=".85"/><text x="14" y="18.6" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="serif">帥</text></svg>
-      ABNQ Store
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="1" y="1" width="26" height="26" rx="8" fill="var(--d1)"/><path d="M8 9.5h12M8 14h12M8 18.5h7" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span>Hộp thư thuế hộ kinh doanh</span>
     </div>
-    <div class="ws"><i></i>Hỗ trợ khách hàng</div>
     <div class="grow"></div>
-    <label class="switch" title="Tự gửi câu trả lời khi AI chắc chắn">
-      <input type="checkbox" id="auto"><span class="lbl-t">Tự gửi khi AI chắc chắn</span>
+    <label class="switch" title="Tự đưa ra câu trả lời khi hệ thống đủ chắc chắn">
+      <input type="checkbox" id="auto"><span>Tự trả lời khi chắc chắn</span>
     </label>
-    <button class="btn pri" id="runAll"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.5v11l9-5.5z"/></svg><span id="runAllT">AI xử lý tin mới</span></button>
-    <button class="btn icon ghost" id="shopB" title="Kho hàng" aria-label="Kho hàng"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 7.5 10 4l7 3.5v8L10 19l-7-3.5z"/><path d="m3 7.5 7 3.5 7-3.5M10 11v8"/></svg></button>
-    <button class="btn icon ghost hide-m" id="policyB" title="Chính sách cửa hàng" aria-label="Chính sách cửa hàng"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3.5h9a3 3 0 0 1 3 3v10H7a3 3 0 0 1-3-3z"/><path d="M7 7.5h6M7 10.5h6M7 13.5h3"/></svg></button>
-    <button class="btn icon ghost" id="setB" title="Cài đặt AI" aria-label="Cài đặt AI"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 6h8M15 6h2M3 14h2M9 14h8"/><circle cx="13" cy="6" r="2"/><circle cx="7" cy="14" r="2"/></svg></button>
-    <button class="btn icon ghost" id="themeB" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện sáng/tối"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="6.5"/><path d="M10 3.5a6.5 6.5 0 0 0 0 13z" fill="currentColor"/></svg></button>
+    <button class="btn pri" id="runAll" type="button" aria-label="Trả lời các câu chưa xử lý"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.5v11l9-5.5z"/></svg><span id="runAllT">Trả lời câu chưa xử lý</span></button>
+    <button class="btn icon ghost" id="setB" type="button" title="Cài đặt" aria-label="Cài đặt"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 6h8M15 6h2M3 14h2M9 14h8"/><circle cx="13" cy="6" r="2"/><circle cx="7" cy="14" r="2"/></svg></button>
+    <button class="btn icon ghost" id="themeB" type="button" title="Đổi giao diện sáng/tối" aria-label="Đổi giao diện sáng/tối"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="6.5"/><path d="M10 3.5a6.5 6.5 0 0 0 0 13z" fill="currentColor"/></svg></button>
   </header>
+  <div class="notice" id="notice" role="note">Thông tin tham khảo, không thay thế hướng dẫn của cơ quan thuế.</div>
 
   <div class="main">
-    <nav class="side" id="side"></nav>
+    <nav class="side" id="side" aria-label="Hộp thư"></nav>
     <section class="list" id="list"></section>
     <section class="detail" id="detail"></section>
     <section class="report" id="report" hidden></section>
@@ -355,16 +382,19 @@ table.tb{width:100%;border-collapse:collapse;font-size:13px}
 </div>
 
 <div id="layer"></div>
-<div id="toast" class="toast" hidden></div>
+<div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
 
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeUrl = u => /^https?:\/\//i.test(String(u || "")) ? esc(u) : "#";
 const ICON = {
   inbox:'<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 11.5 5 4.5h10l2 7v4H3z"/><path d="M3 11.5h4l1 2h4l1-2h4"/></svg>',
-  review:'<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4 3 7l3 3M3 7h10M14 16l3-3-3-3M17 13H7"/></svg>',
+  review:'<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10" cy="10" r="7"/><path d="M8 8a2 2 0 1 1 2.6 1.9c-.4.2-.6.5-.6.9v.7M10 13.6v.4"/></svg>',
   ready:'<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><path d="m7 10 2 2 4-4"/></svg>',
   sent:'<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 9.5 17 3l-5 14-2.5-5.5z"/><path d="m9.5 11.5 3-3"/></svg>',
+  out:'<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10" cy="10" r="7"/><path d="m5 15 10-10"/></svg>',
+  nobasis:'<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3.5h7l3 3v10H5z"/><path d="M8 10h4"/></svg>',
   all:'<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 5h12M4 10h12M4 15h12"/></svg>',
   report:'<svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 16V9M8 16V4M12 16v-5M16 16V7"/></svg>',
   plus:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg>',
@@ -376,105 +406,141 @@ const ICON = {
   redo:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3v3.5H9.5"/><path d="M12.6 6.5A5 5 0 1 0 13 10"/></svg>',
   pen:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="m3 13 .6-2.6L10.5 3.5l2 2-6.9 6.9z"/></svg>',
   send:'<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2.5 7.5 13.5 2.5l-4 11-2-4.5z"/></svg>',
+  play:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.5v11l9-5.5z"/></svg>',
+  ext:'<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h4v4M13 3 7 9M11 9.5V13H3V5h3.5"/></svg>',
 };
+// Status → [css class, end-user label]. "review" is worded for the end user unless reviewer mode is on.
 const STATUS = {
-  new:["new","Mới"], review:["review","Cần bạn duyệt"], ready:["ready","Sẵn sàng gửi"], sent:["sent","Đã gửi"],
+  new:["new","Chưa xử lý"], ready:["ready","Đã có trả lời"], sent:["sent","Đã trả lời"],
+  review:["review","Chưa chắc chắn"], out_of_scope:["out_of_scope","Ngoài phạm vi"], no_basis:["no_basis","Chưa đủ căn cứ"],
 };
+const statusLabel = k => k === "review" && reviewer ? "Cần người duyệt" : STATUS[k][1];
 const VIEWS = [
-  ["new","Mới",ICON.inbox], ["review","Cần bạn duyệt",ICON.review], ["ready","Sẵn sàng gửi",ICON.ready],
-  ["sent","Đã gửi",ICON.sent], ["all","Tất cả",ICON.all],
+  ["all",ICON.all], ["sent",ICON.sent], ["ready",ICON.ready], ["review",ICON.review],
+  ["new",ICON.inbox], ["out_of_scope",ICON.out], ["no_basis",ICON.nobasis],
 ];
+const viewLabel = k => k === "all" ? "Tất cả" : statusLabel(k);
 const EMPTY = {
-  new:["Không có tin nhắn mới.","Khách hôm nay hiền thật."],
-  review:["Không có tin nào cần bạn duyệt.","AI tự lo được hết rồi."],
-  ready:["Chưa có câu trả lời nào chờ gửi.","Bấm “AI xử lý tin mới” để AI soạn trả lời."],
-  sent:["Chưa gửi gì.","Khách vẫn đang chờ, nhẹ nhàng thôi."],
-  all:["Hộp thư trống.","Đi pha trà đi."],
+  all:["Chưa có câu hỏi nào.","Bấm “Đặt câu hỏi” để hỏi về thuế hộ kinh doanh."],
+  sent:["Chưa có câu nào được trả lời.",""],
+  ready:["Không có câu trả lời nào đang chờ.",""],
+  review:["Không có câu nào chưa chắc chắn.",""],
+  new:["Không có câu nào chưa xử lý.",""],
+  out_of_scope:["Không có câu nào ngoài phạm vi.",""],
+  no_basis:["Không có câu nào thiếu căn cứ.",""],
 };
+const SAMPLES = [
+  "Tiệm tạp hóa của tôi doanh thu khoảng 800 triệu một năm. Năm 2026 tôi có phải đóng thuế không?",
+  "Quán cà phê doanh thu 1,5 tỷ một năm thì thuế GTGT và thuế TNCN tính thế nào?",
+  "Hộ kinh doanh phải khai thuế theo tháng hay theo quý? Hạn nộp là khi nào?",
+];
 
 let S = null;               // server snapshot
-let view = "new";           // list filter or "report"
-let sel = null;             // selected ticket id
-const busy = new Map();     // ticket id -> "draft" | "judge"
-let bulk = null;            // {done, total} while processing the inbox
+let view = "all";           // list filter or "report"
+let sel = null;             // selected ticket id; null shows the ask form
+const busy = new Map();     // ticket id -> start time (ms) while /process runs
+let bulk = null;            // {done, total} while processing all new questions
+let reviewer = false;
+try { reviewer = localStorage.getItem("hk-reviewer") === "1"; } catch {}
+let draftAsk = {name:"", msg:""};   // keeps the ask form's text across re-renders
 
-const label = id => (S.models.find(m => m.id === id) || {label:id}).label;
+const mlabel = id => (S.models.find(m => m.id === id) || {label:id}).label;
 const tk = id => S.tickets.find(t => t.id === id);
-const prod = id => S.products.find(p => p.id === id);
-const vnd = n => n.toLocaleString("vi-VN") + "đ";
-function pimg(p, cls = "pimg") {
-  return p.image ? `<img class="${cls}" src="/img/${p.image}" alt="${esc(p.name)}" loading="lazy">`
-    : `<div class="${cls} cover" role="img" aria-label="${esc(p.name)}"><span><b>將</b>Tàn cuộc<br>cờ tướng</span></div>`;
-}
-function stock(p) {
-  if (p.stock <= 0) return `<span class="stk out">Hết hàng${p.eta ? ` · về ${esc(p.eta)}` : ""}</span>`;
-  return `<span class="stk ${p.stock <= 3 ? "low" : "in"}">Còn ${p.stock}</span>`;
-}
-function prodCard(p) {
-  return `<div class="prod">${pimg(p)}<div><div class="pn">${esc(p.name)}</div>
-    <div class="pm"><span>${vnd(p.price)}</span>${stock(p)}</div>${p.defect ? `<div class="defect">Khuyết điểm: ${esc(p.defect)}</div>` : ""}</div></div>`;
-}
-function openShop() {
-  sheet("Kho hàng hôm nay", `<div class="cat">${S.products.map(p => `<div class="card">${pimg(p)}<div class="ci"><div class="pn">${esc(p.name)}</div>
-      <div class="pm"><span>${vnd(p.price)}</span>${stock(p)}</div>${p.defect ? `<div class="defect">${esc(p.defect)}</div>` : ""}</div></div>`).join("")}</div>
-    <a class="credit" href="/nguon-anh" target="_blank">Nguồn ảnh</a>`);
-}
 const AVC = ["#0B7285","#A35F00","#6D4BC4","#1E7B3C","#C0245A","#2F6FD0","#7A5C3E","#00897B"];
-const avatar = n => { let h = 0; for (const c of n) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+const avatar = n => { n = String(n || "Bạn"); let h = 0; for (const c of n) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   const ini = n.trim().split(/\s+/).slice(-2).map(w => w[0]).join("").toUpperCase();
-  return `<div class="av" style="background:${AVC[h % AVC.length]}">${esc(ini)}</div>`; };
-const words = s => (s.trim().match(/\S+/g) || []).length;
+  return `<div class="av" style="background:${AVC[h % AVC.length]}" aria-hidden="true">${esc(ini)}</div>`; };
+const words = s => (String(s).trim().match(/\S+/g) || []).length;
+const isMobile = () => matchMedia("(max-width:860px)").matches;
 
 function toast(msg, err) {
   const el = $("#toast"); el.textContent = msg; el.className = "toast" + (err ? " err" : ""); el.hidden = false;
-  clearTimeout(toast.t); toast.t = setTimeout(() => el.hidden = true, err ? 6000 : 3500);
+  clearTimeout(toast.t); toast.t = setTimeout(() => el.hidden = true, err ? 6500 : 3500);
 }
 async function api(path, body) {
   const r = await fetch(path, body === undefined ? {} : {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)});
   const d = await r.json().catch(() => ({error:"Máy chủ không trả lời."}));
-  if (!r.ok || d.error) throw new Error(d.error || r.statusText);
+  if (!r.ok || d.error) {
+    let m = d.error || r.statusText;
+    if (r.status === 429 && !d.error) m = "Đã đạt giới hạn số câu hỏi trong một giờ. Vui lòng thử lại sau.";
+    const e = new Error(m); e.status = r.status; throw e;
+  }
   return d;
 }
 async function refresh() { S = await api("/api/state"); render(); }
+async function refreshStats() { try { const s = await api("/api/state"); S.stats = s.stats; } catch {} }
 function upsert(t) { const i = S.tickets.findIndex(x => x.id === t.id); if (i >= 0) S.tickets[i] = t; else S.tickets.unshift(t); }
 
-/* ---------- render ---------- */
-function render() { renderSide(); renderList(); renderDetail(); renderReport(); renderTop(); }
-
-function renderTop() {
-  $("#auto").checked = !!S.settings.autopilot;
-  const n = S.tickets.filter(t => t.status === "new" && !busy.has(t.id)).length;
-  $("#runAll").disabled = !!bulk || !n;
-  $("#runAllT").textContent = bulk ? `Đang xử lý ${bulk.done}/${bulk.total}…` : n ? `AI xử lý tin mới (${n})` : "Đã xử lý hết tin mới";
-  $("#runAll").firstElementChild.outerHTML = bulk ? '<span class="spin"></span>' : '<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2.5v11l9-5.5z"/></svg>';
+/* ---------- helpers for answers ---------- */
+// Split an answer into its body and its "Căn cứ:" line(s), which are shown as is under the body.
+function splitBasis(text) {
+  const lines = String(text || "").split("\n");
+  const i = lines.findIndex(l => /^\s*Căn cứ\s*:/i.test(l));
+  if (i < 0) return [String(text || "").trim(), ""];
+  return [lines.slice(0, i).join("\n").trim(), lines.slice(i).join("\n").trim()];
+}
+function answerOf(t) {
+  if (t.sent) return t.sent.text;
+  const d = t.decision;
+  if (t.status === "ready" && d && d.winner && t.drafts) return t.drafts[d.winner - 1].text;
+  return "";
+}
+function reasonOf(d) {
+  if (!d) return "";
+  if (d.held) return "bản nháp được chọn có chi tiết mâu thuẫn với văn bản luật";
+  if (d.status === "flip") return "hai lần đánh giá cho kết quả khác nhau khi đổi thứ tự hai bản nháp";
+  return "đánh giá không rõ ràng";
 }
 
+/* ---------- render ---------- */
+function render() { renderTop(); renderSide(); renderList(); renderDetail(); renderReport(); }
+
+function renderTop() {
+  const notice = `Trả lời theo văn bản có hiệu lực đến <b>${esc(S.cutoff)}</b>. Thông tin tham khảo, không thay thế hướng dẫn của cơ quan thuế.` +
+    (S.pending_human_check ? `<span class="pend">Số liệu đã được AI đối chiếu với văn bản gốc, đang chờ người kiểm chứng.</span>` : "");
+  $("#notice").innerHTML = notice;
+  $("#auto").checked = !!S.settings.autopilot;
+  const n = S.tickets.filter(t => t.status === "new" && !busy.has(t.id)).length;
+  const rb = $("#runAll");
+  rb.hidden = !n && !bulk;
+  rb.disabled = !!bulk || !n;
+  $("#runAllT").textContent = bulk ? `Đang trả lời ${bulk.done}/${bulk.total}…` : `Trả lời câu chưa xử lý (${n})`;
+  rb.firstElementChild.outerHTML = bulk ? '<span class="spin"></span>' : ICON.play;
+  rb.title = rb.getAttribute("aria-label");
+}
+
+function count(k) { return k === "all" ? S.tickets.length : S.tickets.filter(t => t.status === k).length; }
+
 function renderSide() {
-  const c = k => k === "all" ? S.tickets.length : S.tickets.filter(t => t.status === k).length;
   const st = S.stats;
+  const unsure = st.partial + st.flip + st.invalid + st.held;
   $("#side").innerHTML =
-    `<h4>Hộp thư</h4>` +
-    VIEWS.map(([k, l, ic]) => `<button class="nav ${view === k ? "on" : ""}" data-view="${k}" title="${l}">${ic}<span class="lbl-t">${l}</span><span class="n ${k === "review" && c(k) ? "hot" : ""}">${c(k)}</span></button>`).join("") +
-    `<h4>Phân tích</h4><button class="nav ${view === "report" ? "on" : ""}" data-view="report" title="Hiệu quả AI">${ICON.report}<span class="lbl-t">Hiệu quả AI</span></button>` +
+    `<button class="nav newb" type="button" data-act="ask" title="Đặt câu hỏi">${ICON.plus}<span class="lbl-t">Đặt câu hỏi</span></button>` +
+    `<h4>Câu hỏi</h4>` +
+    VIEWS.filter(([k]) => k === "all" || k === view || count(k)).map(([k, ic]) => {
+      const l = viewLabel(k), c = count(k);
+      return `<button class="nav ${view === k ? "on" : ""}" type="button" data-view="${k}" title="${esc(l)}" ${view === k ? 'aria-current="page"' : ""}>${ic}<span class="lbl-t">${esc(l)}</span><span class="n ${k === "review" && c ? "hot" : ""}">${c}</span></button>`;
+    }).join("") +
+    `<h4>Phân tích</h4><button class="nav ${view === "report" ? "on" : ""}" type="button" data-view="report" title="Hiệu quả AI">${ICON.report}<span class="lbl-t">Hiệu quả AI</span></button>` +
     `<div class="today">
-      <div><b>${st.auto_sent}</b><span>tự động gửi</span></div>
-      <div><b>${st.partial + st.flip + st.invalid + st.held}</b><span>chờ bạn duyệt</span></div>
-      <div class="wide"><b>${st.saved}</b><span>lần AI suýt gửi nhầm vì thứ tự đọc đã được chặn lại</span></div>
-      <div class="wide"><b>${st.held}</b><span>lần AI chọn câu sai dữ kiện đã được chặn lại</span></div>
+      <div><b>${st.auto_sent + st.human_sent}</b><span>câu đã trả lời</span></div>
+      <div><b>${unsure}</b><span>câu chưa chắc chắn</span></div>
+      <div class="wide"><b>${st.saved}</b><span>lần suýt trả lời theo bản nháp chỉ vì được đọc trước, đã chặn lại</span></div>
+      <div class="wide"><b>${st.held}</b><span>lần bản nháp mâu thuẫn với văn bản luật, đã chặn lại</span></div>
     </div>
-    <button class="nav newb" id="newB" title="Tạo yêu cầu">${ICON.plus}<span class="lbl-t">Tạo yêu cầu</span></button>
-    <div class="foot">AI đánh giá: <b>${esc(label(S.settings.judge))}</b></div>`;
+    <div class="foot">${reviewer ? `Chế độ người duyệt đang bật.<br>AI chấm: <b>${esc(mlabel(S.settings.judge))}</b>` : "Không nhập mã số thuế, số CCCD hay số tài khoản vào câu hỏi."}</div>`;
 }
 
 function pillFor(t) {
-  if (busy.has(t.id)) return `<span class="pill busy"><span class="spin"></span>${busy.get(t.id) === "draft" ? "AI đang soạn" : "AI đang kiểm tra"}</span>`;
-  if (t.status === "sent") return `<span class="pill sent">✓ ${t.sent.by === "auto" ? "Tự động gửi" : "Bạn đã gửi"} · ${esc(t.sent.at)}</span>`;
-  if (t.status === "review") {
-    const s = t.decision.status;
-    if (t.decision.held) return `<span class="pill review">Sai dữ kiện</span>`;
-    return `<span class="pill review">${s === "flip" ? "AI đổi ý" : s === "partial" ? "AI phân vân" : "AI gặp lỗi"}</span>`;
+  if (busy.has(t.id)) return `<span class="pill busy"><span class="spin"></span>Đang tìm câu trả lời</span>`;
+  if (t.status === "sent") return `<span class="pill sent">✓ ${statusLabel("sent")} · ${esc(t.sent.at)}</span>`;
+  if (t.status === "review" && reviewer && t.decision) {
+    const d = t.decision;
+    const w = d.held ? "Mâu thuẫn với luật" : d.status === "flip" ? "AI chấm đổi ý" : d.status === "partial" ? "AI chấm phân vân" : "AI chấm lỗi";
+    return `<span class="pill review">${statusLabel("review")} · ${w}</span>`;
   }
-  return `<span class="pill ${STATUS[t.status][0]}">${STATUS[t.status][1]}</span>`;
+  const s = STATUS[t.status] || ["new", t.status];
+  return `<span class="pill ${s[0]}">${esc(STATUS[t.status] ? statusLabel(t.status) : t.status)}</span>`;
 }
 
 function renderList() {
@@ -482,44 +548,124 @@ function renderList() {
   list.hidden = view === "report";
   if (view === "report") return;
   const items = S.tickets.filter(t => view === "all" || t.status === view || (busy.has(t.id) && view === "new"));
-  const title = VIEWS.find(v => v[0] === view)[1];
-  list.innerHTML = `<div class="lh"><h2>${title}</h2><span class="c">${items.length}</span></div>
+  list.innerHTML = `<div class="lh"><h2>${esc(viewLabel(view))}</h2><span class="c">${items.length}</span>
+      <button class="btn" type="button" data-act="ask">${ICON.plus}Đặt câu hỏi</button></div>
     <div class="items">${items.length ? items.map(t => `
-      <div class="it ${t.id === sel ? "on" : ""}" data-id="${t.id}" tabindex="0">
+      <div class="it ${t.id === sel ? "on" : ""}" data-id="${esc(t.id)}" role="button" tabindex="0" aria-label="${esc(t.subject)}">
         ${avatar(t.customer)}
         <div style="min-width:0">
           <div class="r1"><span class="nm">${esc(t.customer)}</span><span class="tm">${esc(t.at)}</span></div>
           <div class="sj">${esc(t.subject)}</div>
           <div class="sn">${esc(t.message)}</div>
-          <div class="r3">${pillFor(t)}<span class="chan">· ${esc(t.channel)}</span>${(t.products || []).length ? pimg(prod(t.products[0]), "th") : ""}</div>
+          <div class="r3">${pillFor(t)}${t.feedback ? `<span class="chan">· đã phản hồi “${t.feedback.vote === "dung" ? "Đúng" : "Sai"}”</span>` : ""}</div>
         </div>
       </div>`).join("") : `<div class="empty"><b>${EMPTY[view][0]}</b>${EMPTY[view][1]}</div>`}</div>`;
 }
 
-function slot(n, pick) { return `<span class="slot s${n} ${pick ? "pick" : ""}">Gợi ý ${n}</span>`; }
-function pickText(p) { return p === "tie" ? "thấy ngang nhau" : p ? `chọn <b class="p${p}">Gợi ý ${p}</b>` : "không rõ"; }
-
-function runRow(d, i) {
-  const r = d.runs[i], p = d.picks[i], first = i === 0 ? 1 : 2, second = 3 - first;
-  return `<div class="run">
-    <span class="lbl">Lần ${i + 1}</span>
-    <span class="slots">${slot(first, p === first)}${slot(second, p === second)}</span>
-    <span class="arrow">→</span>
-    <span class="res">${pickText(p)}<span class="ms">${(r.ms / 1000).toFixed(1)}s</span></span>
-  </div>`;
+function clauseList(cls) {
+  if (!cls || !cls.length) return "";
+  return `<div class="sec"><div class="sech"><h3>Điều luật đã dùng</h3><span class="n">${cls.length}</span><div class="grow"></div></div>
+    <div class="clauses">${cls.map(c => `<div class="cl">
+      <div class="ch"><span class="lb">${esc(c.label)}</span></div>
+      ${c.title ? `<div class="ti">${esc(c.title)}</div>` : ""}
+      <div class="meta">
+        ${(c.amended_by || []).length ? `<span class="tag2 amd">đã sửa đổi bởi ${esc(c.amended_by.join(", "))}</span>` : ""}
+        ${c.core ? `<span class="tag2 core" title="Điều luật nền tảng, luôn được đưa vào khi trả lời">luôn kèm</span>` : ""}
+        ${(c.matched || []).map(w => `<span class="kw" title="Từ khớp với câu hỏi">${esc(w)}</span>`).join("")}
+        <a class="src" href="${safeUrl(c.url)}" target="_blank" rel="noopener noreferrer">Bản gốc ${ICON.ext}<span class="sr"> (mở thẻ mới)</span></a>
+      </div>
+      <details><summary>Xem toàn văn</summary><pre>${esc(c.text)}</pre></details>
+    </div>`).join("")}</div></div>`;
 }
 
-function banner(t) {
-  const d = t.decision, w = d.winner;
-  if (d.held) return `<div class="ban facts"><div class="ic">${ICON.half}</div><div><h4>AI chọn Gợi ý ${w}, nhưng câu này sai dữ kiện</h4><p>AI chọn giống nhau ở cả hai lần, nhưng đối chiếu với chính sách và kho hàng thấy lỗi. Bạn xem và chọn câu trả lời để gửi.</p></div></div>`;
+function feedbackBox(t) {
+  const f = t.feedback;
+  return `<div class="sec"><div class="fb" data-fb="${esc(t.id)}">
+    <div class="q">Câu trả lời này có đúng không?</div>
+    <div class="row">
+      <button class="btn ${f && f.vote === "dung" ? "on" : ""}" type="button" data-vote="dung" aria-pressed="${f && f.vote === "dung"}">Đúng</button>
+      <button class="btn ${f && f.vote === "sai" ? "on" : ""}" type="button" data-vote="sai" aria-pressed="${f && f.vote === "sai"}">Sai</button>
+      ${f ? `<span class="saved">✓ Đã ghi nhận lúc ${esc(f.at)}</span>` : ""}
+    </div>
+    <label class="sr" for="fbn">Ghi chú thêm</label>
+    <textarea id="fbn" maxlength="1000" placeholder="Ghi chú thêm (không bắt buộc), ví dụ chỗ nào chưa đúng">${esc(f ? f.note : "")}</textarea>
+  </div></div>`;
+}
+
+function answerBox(text, head, cls = "") {
+  const [body, basis] = splitBasis(text);
+  return `<div class="answer ${cls}"><div class="hd">${head}</div>
+    <div class="txt">${esc(body)}</div>${basis ? `<div class="basis">${esc(basis)}</div>` : ""}</div>`;
+}
+
+/* reviewer view */
+function slot(n, pick) { return `<span class="slot s${n} ${pick ? "pick" : ""}">Bản ${n}</span>`; }
+function pickText(p) { return p === "tie" ? "thấy ngang nhau" : p ? `chọn <b class="p${p}">Bản ${p}</b>` : "không rõ"; }
+function runRow(d, i) {
+  const r = (d.runs || [])[i] || {}, p = (d.picks || [])[i], first = i === 0 ? 1 : 2, second = 3 - first;
+  return `<div class="run">
+    <span class="lbl">Lần ${i + 1}</span>
+    <span class="slots" title="Thứ tự AI chấm đọc">${slot(first, p === first)}${slot(second, p === second)}</span>
+    <span class="arrow" aria-hidden="true">→</span>
+    <span class="res">${pickText(p)}${r.ms ? `<span class="ms">${(r.ms / 1000).toFixed(1)}s</span>` : ""}</span>
+  </div>`;
+}
+function banner(d) {
+  const w = d.winner;
+  if (d.held) return `<div class="ban held"><div class="ic">${ICON.half}</div><div><h4>AI chấm chọn Bản ${w} cả hai lần, nhưng bản này mâu thuẫn với văn bản luật</h4><p>Hệ thống không tự trả lời. Người duyệt xem lại và chọn bản để gửi.</p></div></div>`;
   const B = {
-    agree:["agree", ICON.check, `AI đề xuất gửi Gợi ý ${w}`, "Có thể gửi ngay."],
-    tie:["tie", ICON.eq, "Hai gợi ý đều ổn", "Gửi gợi ý nào cũng được."],
-    flip:["flip", ICON.swap, "AI đổi ý khi đảo thứ tự", "Bạn xem và chọn câu trả lời để gửi."],
-    partial:["partial", ICON.half, "AI phân vân", "Bạn xem và chọn câu trả lời để gửi."],
-    invalid:["invalid", ICON.half, "AI chưa đánh giá được", "Bạn chọn câu trả lời hoặc bấm “Đánh giá lại”."],
-  }[d.status];
-  return `<div class="ban ${B[0]}"><div class="ic">${B[1]}</div><div><h4>${B[2]}</h4><p>${B[3]}</p></div></div>`;
+    agree:["agree", ICON.check, `Hai lần chấm cùng chọn Bản ${w}`, "Kết quả ổn định khi đổi thứ tự, và không thấy mâu thuẫn với văn bản luật."],
+    tie:["tie", ICON.eq, "Hai lần chấm đều thấy hai bản ngang nhau", "Hệ thống dùng Bản 1."],
+    flip:["flip", ICON.swap, "Đổi thứ tự thì AI chấm đổi lựa chọn", "Lựa chọn phụ thuộc vào bản nào được đọc trước, không đáng tin."],
+    partial:["partial", ICON.half, "AI chấm phân vân", "Một lần chọn một bản, lần kia thấy ngang nhau."],
+    invalid:["invalid", ICON.half, "AI chấm không đưa ra kết luận rõ ràng", "Có thể bấm “Đánh giá lại”."],
+  }[d.status] || ["invalid", ICON.half, "Chưa rõ kết quả chấm", ""];
+  return `<div class="ban ${B[0]}"><div class="ic">${B[1]}</div><div><h4>${esc(B[2])}</h4><p>${esc(B[3])}</p></div></div>`;
+}
+function reviewerPanel(t) {
+  const d = t.decision, sent = t.sent, fx = d.facts;
+  const safe = ["agree","tie"].includes(d.status) && !d.held;
+  return `<div class="rvtag">Dành cho người duyệt</div>` + banner(d) +
+    `<div class="runs">${runRow(d, 0)}${runRow(d, 1)}</div>
+    <details class="why"><summary>Xem nhận xét của AI chấm</summary><div class="whys">
+      ${(d.runs || []).map((r, i) => `<div><h5>Lần ${i + 1} · đọc Bản ${i + 1} trước</h5><pre>${esc(r.judgment || "(trống)")}</pre></div>`).join("")}
+    </div></details>
+    <div class="sec"><div class="sech"><h3>Hai bản nháp</h3><div class="grow"></div></div>
+    <div class="drafts">${t.drafts.map((x, i) => {
+      const n = i + 1, win = safe && d.winner === n, f = fx ? fx[i] || [] : null;
+      return `<div class="draft ${win ? "win" : ""}">
+        <div class="dhd"><span class="tag t${n}">Bản ${n}</span><span class="mdl">${esc(mlabel(x.model))}</span>${win ? `<span class="badge">✓ AI chấm chọn</span>` : ""}${sent && sent.draft === n ? `<span class="badge">Đã gửi</span>` : ""}</div>
+        <label class="sr" for="dr${n}">Nội dung bản ${n}</label>
+        <textarea id="dr${n}" data-draft="${n}" ${sent ? "readonly" : ""}>${esc(x.text)}</textarea>
+        ${f ? (f.length ? `<ul class="fchk" aria-label="Đối chiếu văn bản luật">${f.map(s => `<li>${esc(s)}</li>`).join("")}</ul>` : `<ul class="fchk ok"><li>Không phát hiện mâu thuẫn</li></ul>`) : ""}
+        <div class="dft"><span class="wc">${words(x.text)} từ</span>${sent ? "" : `<button class="btn ${win ? "pri" : ""}" type="button" data-send="${n}">${ICON.send}Gửi bản này</button>`}</div>
+      </div>`; }).join("")}</div>
+    ${sent ? "" : `<div class="acts"><button class="btn ghost" type="button" data-act="rejudge">${ICON.redo}Đánh giá lại</button><button class="btn ghost" type="button" data-act="redraft">${ICON.pen}Soạn gợi ý khác</button></div>`}</div>`;
+}
+
+const STEPS = [["Tìm điều luật liên quan", 0], ["Soạn hai bản trả lời", 2], ["Kiểm tra hai lần, đổi thứ tự", 9], ["Đối chiếu số liệu với văn bản luật", 18]];
+function workingBox(t) {
+  const s = (Date.now() - busy.get(t.id)) / 1000;
+  const cur = STEPS.reduce((a, st, i) => s >= st[1] ? i : a, 0);
+  return `<div class="working" aria-busy="true"><p class="wt">Đang tìm câu trả lời, thường mất 10–40 giây. Anh/chị có thể đặt câu hỏi khác trong lúc chờ.</p>
+    <div class="steps">${STEPS.map(([l], i) => {
+      const cls = i < cur ? "done" : i === cur ? "on" : "";
+      return `<div class="stp ${cls}"><span class="dot">${cls === "done" ? "✓" : cls === "on" ? '<span class="spin" style="width:10px;height:10px;border-width:1.5px"></span>' : i + 1}</span>${l}</div>`;
+    }).join("")}</div><div style="display:grid;gap:8px;margin-top:18px"><div class="sk" style="width:92%"></div><div class="sk" style="width:78%"></div><div class="sk" style="width:85%"></div></div></div>`;
+}
+
+function askForm() {
+  return `<div class="dwrap">
+    <button class="btn ghost back" type="button" data-act="back">${ICON.back}Câu hỏi</button>
+    <form class="ask" id="askF" novalidate>
+      <h1>Đặt câu hỏi về thuế</h1>
+      <p class="lead">Hỏi về ngưỡng doanh thu, thuế GTGT, thuế TNCN của hộ kinh doanh, khai và nộp thuế, hóa đơn. Ghi rõ ngành nghề và doanh thu năm để được trả lời chính xác hơn.</p>
+      <div class="fld"><label for="askN">Tên của anh/chị (không bắt buộc)</label><input id="askN" maxlength="60" autocomplete="name" placeholder="Bạn" value="${esc(draftAsk.name)}"></div>
+      <div class="fld"><label for="askQ">Câu hỏi</label><textarea id="askQ" maxlength="2000" required placeholder="Ví dụ: Tiệm tạp hóa của tôi doanh thu khoảng 800 triệu một năm. Năm 2026 tôi có phải đóng thuế không?">${esc(draftAsk.msg)}</textarea></div>
+      <div class="hint" id="askH">⚠ Không nhập mã số thuế, số CCCD hay số tài khoản.</div>
+      <div class="fld"><label id="smpL">Câu hỏi mẫu</label><div class="samples" role="group" aria-labelledby="smpL">${SAMPLES.map((s, i) => `<button type="button" data-sample="${i}">${esc(s)}</button>`).join("")}</div></div>
+      <div class="row"><button class="btn pri" type="submit" id="askB">${ICON.send}Gửi câu hỏi</button><span class="cnt" id="askC">${draftAsk.msg.length}/2000</span></div>
+    </form></div>`;
 }
 
 function renderDetail() {
@@ -527,52 +673,46 @@ function renderDetail() {
   el.hidden = view === "report";
   if (view === "report") return;
   const t = sel && tk(sel);
-  if (!t) {
-    el.innerHTML = `<div class="dwrap"><div class="empty" style="padding-top:18vh"><b>Chọn một tin nhắn để bắt đầu</b></div></div>`;
-    return;
-  }
-  const b = busy.get(t.id), d = t.decision;
+  if (!t) { el.innerHTML = askForm(); return; }
+  const d = t.decision, st = t.status;
   let body = "";
-  if (b) {
-    const st = [["Soạn hai gợi ý trả lời", "draft"], ["Kiểm tra lần 1", "judge"], ["Kiểm tra lần 2", "judge"]];
-    body = `<div class="working"><div class="steps">${st.map(([l, k], i) => {
-      const cls = b === "draft" ? (k === "draft" ? "on" : "") : (k === "draft" ? "done" : "on");
-      return `<div class="stp ${cls}"><span class="dot">${cls === "done" ? "✓" : cls === "on" ? '<span class="spin" style="width:10px;height:10px;border-width:1.5px"></span>' : i + 1}</span>${l}</div>`;
-    }).join("")}</div><div style="display:grid;gap:8px;margin-top:18px"><div class="sk" style="width:92%"></div><div class="sk" style="width:78%"></div><div class="sk" style="width:85%"></div></div></div>`;
-  } else if (!t.drafts) {
-    body = `<div class="start"><div><h4>Chưa có câu trả lời</h4></div>
-      <button class="btn pri" data-act="process">${ICON.pen}Soạn trả lời</button></div>`;
+  if (busy.has(t.id)) {
+    body = workingBox(t);
+  } else if (st === "new") {
+    body = `<div class="start"><div><h4>Chưa xử lý</h4><p>Câu hỏi này chưa được trả lời.</p></div>
+      <button class="btn pri" type="button" data-act="process">${ICON.play}Trả lời câu này</button></div>`;
+  } else if (st === "out_of_scope" || st === "no_basis") {
+    body = answerBox(t.reply, st === "out_of_scope" ? "Ngoài phạm vi hộp thư" : "Chưa đủ căn cứ để trả lời", "warn") +
+      (st === "no_basis" ? clauseList(t.retrieved) : "") + feedbackBox(t);
+  } else if (st === "review" && !(reviewer && t.drafts && d)) {
+    body = `<div class="answer unsure"><div class="hd">Hệ thống chưa đủ chắc chắn để trả lời câu này</div>
+        <div class="txt" style="font-size:14px;color:var(--ink2)">Lý do: ${esc(reasonOf(d))}.</div></div>` +
+      clauseList(t.retrieved) +
+      `<p class="after">Anh/chị có thể đọc các điều luật trên hoặc hỏi cơ quan thuế quản lý.</p>`;
+  } else if (reviewer && t.drafts && d && (st === "review" || st === "ready" || st === "sent")) {
+    const ans = answerOf(t);
+    body = (st === "sent" ? answerBox(ans, `✓ Đã trả lời <span>· ${t.sent.by === "auto" ? "tự động" : "người duyệt gửi"} lúc ${esc(t.sent.at)}${t.sent.edited ? " · đã sửa" : ""}${t.sent.followed_ai === false ? " · khác lựa chọn của AI chấm" : ""}</span>`) + `<div class="sec"></div>` : "") +
+      reviewerPanel(t) + clauseList(t.retrieved) + (st !== "review" ? feedbackBox(t) : "");
+  } else if (st === "sent" || st === "ready") {
+    const ans = answerOf(t);
+    const head = st === "sent" ? `✓ Trả lời <span>· lúc ${esc(t.sent.at)}</span>` : `Câu trả lời`;
+    body = (ans ? answerBox(ans, head) : `<div class="answer warn"><div class="hd">Chưa có nội dung trả lời</div></div>`) +
+      clauseList(t.retrieved) + feedbackBox(t);
   } else {
-    const sent = t.sent;
-    const safe = ["agree","tie"].includes(d.status) && !d.held;
-    const fx = d.facts;  // absent on tickets judged before the fact check existed
-    const fsum = i => fx[i].length ? `<b class="bad">Gợi ý ${i + 1}: ${fx[i].length} lỗi</b>` : `<b class="good">Gợi ý ${i + 1}: khớp</b>`;
-    body = (sent ? `<div class="sent"><div class="hd">✓ Đã gửi Gợi ý ${sent.draft}${sent.edited ? " (đã sửa)" : ""} <span>· ${sent.by === "auto" ? "tự động" : "bởi bạn"} lúc ${esc(sent.at)}${sent.followed_ai === false ? " · khác đề xuất của AI" : ""}</span></div><p>${esc(sent.text)}</p></div><div class="sec"></div>` : "") +
-      banner(t) +
-      `<div class="runs">${runRow(d, 0)}${runRow(d, 1)}${fx ? `<div class="run fc"><span class="lbl">Đối chiếu</span><span class="res">${fsum(0)} · ${fsum(1)}</span></div>` : ""}</div>
-      <details class="why"><summary>Xem nhận xét của AI</summary><div class="whys">
-        ${d.runs.map((r, i) => `<div><h5>Lần ${i + 1} · đọc Gợi ý ${i + 1} trước</h5><pre>${esc(r.judgment || "(trống)")}</pre></div>`).join("")}
-      </div></details>
-      <div class="sec"><div class="sech"><h3>Câu trả lời gợi ý</h3><div class="grow"></div></div>
-      <div class="drafts">${t.drafts.map((x, i) => {
-        const n = i + 1, win = safe && d.winner === n;
-        return `<div class="draft ${win ? "win" : ""}">
-          <div class="dhd"><span class="tag t${n}">Gợi ý ${n}</span><span class="mdl">${esc(label(x.model))}</span>${win ? `<span class="badge">✓ AI đề xuất</span>` : ""}</div>
-          <textarea data-draft="${n}" ${sent ? "readonly" : ""} aria-label="Nội dung gợi ý ${n}">${esc(x.text)}</textarea>
-          ${fx ? (fx[i].length ? `<ul class="fchk">${fx[i].map(f => `<li>${esc(f)}</li>`).join("")}</ul>` : `<ul class="fchk ok"><li>Khớp chính sách và kho hàng</li></ul>`) : ""}
-          <div class="dft"><span class="wc">${words(x.text)} từ</span>${sent ? "" : `<button class="btn ${win ? "pri" : ""}" data-send="${n}">${ICON.send}Gửi gợi ý này</button>`}</div>
-        </div>`; }).join("")}</div>
-      ${sent ? "" : `<div class="acts"><button class="btn ghost" data-act="rejudge">${ICON.redo}Đánh giá lại</button><button class="btn ghost" data-act="redraft">${ICON.pen}Soạn gợi ý khác</button></div>`}</div>`;
+    body = clauseList(t.retrieved);
   }
   el.innerHTML = `<div class="dwrap">
-    <button class="btn ghost back" data-act="back">${ICON.back}Hộp thư</button>
-    <div class="dh"><h1>${esc(t.subject)}</h1><span class="chip">${esc(t.channel)}</span>${t.order ? `<span class="chip mono">${esc(t.order)}</span>` : ""}<span class="chip mono">${esc(t.id)}</span></div>
+    <button class="btn ghost back" type="button" data-act="back">${ICON.back}Câu hỏi</button>
+    <div class="dh"><h1>${esc(t.subject)}</h1><span class="chip mono">${esc(t.id)}</span>${pillFor(t)}</div>
     <div class="msg">${avatar(t.customer)}<div class="bubble"><small>${esc(t.customer)} · ${esc(t.at)}</small>${esc(t.message)}</div></div>
-    ${(t.products || []).length ? `<div class="prods">${t.products.map(prod).filter(Boolean).map(prodCard).join("")}</div>` : ""}
     <div class="sec">${body}</div></div>`;
-  el.querySelectorAll("textarea").forEach(autosize);
+  el.querySelectorAll(".draft textarea").forEach(autosize);
+  requestAnimationFrame(resizeDrafts);
 }
 function autosize(ta) { ta.style.height = "auto"; ta.style.height = ta.scrollHeight + 2 + "px"; }
+const resizeDrafts = () => document.querySelectorAll(".draft textarea").forEach(autosize);
+try { document.fonts.ready.then(resizeDrafts); } catch {}
+addEventListener("resize", resizeDrafts);
 
 function renderReport() {
   const el = $("#report");
@@ -581,58 +721,81 @@ function renderReport() {
   if (view !== "report") return;
   const st = S.stats, n = st.judged;
   const pct = (a, b) => b ? Math.round(100 * a / b) : 0;
-  const human = st.partial + st.flip + st.invalid + st.held;
-  const segs = [["agree","AI chắc chắn","var(--ok)"],["tie","Hai gợi ý ngang nhau","color-mix(in srgb,var(--ok) 45%,var(--panel))"],
-    ["partial","AI phân vân","var(--warn)"],["flip","AI đổi ý","var(--flip)"],["held","Sai dữ kiện","color-mix(in srgb,var(--flip) 55%,var(--panel))"],["invalid","AI gặp lỗi","var(--muted)"]];
-  const done = S.tickets.filter(t => t.decision);
+  const unsure = st.partial + st.flip + st.invalid + st.held;
+  const handled = n + st.out_of_scope + st.no_basis;
+  const segs = [["agree","Chắc chắn","var(--ok)"],["tie","Hai bản ngang nhau","color-mix(in srgb,var(--ok) 45%,var(--panel))"],
+    ["partial","AI chấm phân vân","var(--warn)"],["flip","AI chấm đổi ý","var(--flip)"],["held","Mâu thuẫn với luật","color-mix(in srgb,var(--flip) 55%,var(--panel))"],["invalid","AI chấm lỗi","var(--muted)"]];
+  const done = S.tickets.filter(t => t.status !== "new");
   const aShare = pct(st.slot_a, st.slot_picks);
   el.innerHTML = `<div class="rwrap">
-    <button class="btn ghost back" data-view="new">${ICON.back}Hộp thư</button>
-    <div class="rh"><h1>Hiệu quả AI</h1><p>Mô hình đánh giá: <b>${esc(label(S.settings.judge))}</b></p></div>
-    ${n ? `
+    <button class="btn ghost back" type="button" data-view="all">${ICON.back}Câu hỏi</button>
+    <div class="rh"><h1>Hiệu quả AI</h1><p>AI chấm: <b>${esc(mlabel(S.settings.judge))}</b></p></div>
+    ${handled ? `
     <div class="kpis">
-      <div class="kpi"><span>AI đã xử lý</span><b>${n}</b><small>tin nhắn · ${n * 2} lần kiểm tra</small></div>
-      <div class="kpi"><span>Tự gửi được</span><b>${pct(st.agree + st.tie, n)}%</b><small>${st.agree + st.tie} tin AI chắc chắn</small></div>
-      <div class="kpi"><span>Cần người duyệt</span><b>${pct(human, n)}%</b><small>${st.flip} đổi ý · ${st.partial} phân vân · ${st.held} sai dữ kiện · ${st.invalid} lỗi</small></div>
-      <div class="kpi hl"><span>Gửi nhầm đã chặn</span><b>${st.saved}</b><small>tin sẽ bị tự gửi nếu chỉ hỏi AI một lần</small></div>
-      <div class="kpi hl"><span>Sai dữ kiện đã chặn</span><b>${st.held}</b><small>AI chọn nhất quán nhưng câu đó sai chính sách hoặc kho</small></div>
+      <div class="kpi"><span>Câu đã xử lý</span><b>${handled}</b><small>${n} câu được AI soạn và chấm · ${n * 2} lần chấm</small></div>
+      <div class="kpi"><span>Trả lời được ngay</span><b>${pct(st.agree + st.tie, n)}%</b><small>${st.agree + st.tie} câu đủ chắc chắn</small></div>
+      <div class="kpi"><span>Chưa chắc chắn</span><b>${pct(unsure, n)}%</b><small>${st.flip} đổi ý · ${st.partial} phân vân · ${st.held} mâu thuẫn luật · ${st.invalid} lỗi</small></div>
+      <div class="kpi wn"><span>Ngoài phạm vi</span><b>${st.out_of_scope}</b><small>câu không thuộc thuế hộ kinh doanh, không gọi AI</small></div>
+      <div class="kpi wn"><span>Chưa đủ căn cứ</span><b>${st.no_basis}</b><small>không tìm thấy điều luật đủ khớp, không đoán</small></div>
+      <div class="kpi hl"><span>Trả lời sai đã chặn (thứ tự đọc)</span><b>${st.saved}</b><small>câu sẽ được trả lời nếu chỉ chấm một lần</small></div>
+      <div class="kpi hl"><span>Trả lời sai đã chặn (đối chiếu luật)</span><b>${st.held}</b><small>AI chấm chọn nhất quán nhưng bản đó mâu thuẫn với văn bản luật</small></div>
+      <div class="kpi"><span>Đã trả lời</span><b>${st.auto_sent + st.human_sent}</b><small>${st.auto_sent} tự động · ${st.human_sent} người duyệt gửi${st.overridden ? ` · ${st.overridden} khác lựa chọn của AI chấm` : ""}</small></div>
     </div>
-    <div class="cards2">
-      <div class="card"><h3>Kết quả kiểm tra</h3>
-        <div class="stack" role="img" aria-label="Phân bố kết quả kiểm tra">${segs.filter(s => st[s[0]]).map(s => `<div style="flex:${st[s[0]]};background:${s[2]}" title="${s[1]}: ${st[s[0]]}"></div>`).join("")}</div>
+    ${n ? `<div class="cards2">
+      <div class="card"><h3>Kết quả chấm</h3>
+        <div class="stack" role="img" aria-label="Phân bố kết quả chấm">${segs.filter(s => st[s[0]]).map(s => `<div style="flex:${st[s[0]]};background:${s[2]}" title="${s[1]}: ${st[s[0]]}"></div>`).join("")}</div>
         <div class="lg">${segs.map(s => `<span><i style="background:${s[2]}"></i>${s[1]} <b>${st[s[0]]}</b></span>`).join("")}</div></div>
-      <div class="card"><h3>Tỷ lệ chọn gợi ý đọc trước</h3>
-        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:10px"><span class="big2">${aShare}%</span><span style="color:var(--muted);font-size:13px">${st.slot_a}/${st.slot_picks} lần chọn gợi ý đọc trước</span></div>
-        <div class="meter"><div class="f" style="width:${aShare}%"></div><div class="mid"></div></div>
-        <div class="mlab"><span>luôn chọn câu sau</span><span>50% · không thiên vị</span><span>luôn chọn câu trước</span></div></div>
-    </div>` : `<div class="card" style="margin-top:20px"><div class="empty" style="padding:28px"><b>AI chưa xử lý tin nhắn nào.</b>Bấm “AI xử lý tin mới” ở góc trên, số liệu sẽ tự cập nhật.</div></div>`}
-    ${n ? `<div class="card" style="margin-top:12px"><h3>Chi tiết từng tin nhắn</h3>
-      <div style="overflow-x:auto"><table class="tb"><thead><tr><th>Mã</th><th>Khách</th><th>Lần 1</th><th>Lần 2</th><th>Kết quả</th><th>Người gửi</th></tr></thead><tbody>
-      ${done.map(t => { const d = t.decision; return `<tr data-id="${t.id}"><td class="mono">${t.id}</td><td>${esc(t.customer)}</td>
-        <td>${pickText(d.picks[0])}</td><td>${pickText(d.picks[1])}</td><td>${pillFor(t).replace(/pill sent/, "pill new")}</td>
-        <td>${t.sent ? (t.sent.by === "auto" ? "Tự động" : "Nhân viên") : "—"}</td></tr>`; }).join("")}
-      </tbody></table></div></div>` : ""}
+      <div class="card"><h3>Tỷ lệ AI chấm chọn bản đọc trước</h3>
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px"><span class="big2">${aShare}%</span><span style="color:var(--muted);font-size:13px">${st.slot_a}/${st.slot_picks} lần chọn bản đọc trước</span></div>
+        <div class="meter" role="img" aria-label="${aShare}% chọn bản đọc trước"><div class="f" style="width:${aShare}%"></div><div class="mid"></div></div>
+        <div class="mlab"><span>luôn chọn bản sau</span><span>50% · không thiên vị</span><span>luôn chọn bản trước</span></div></div>
+    </div>` : ""}
+    <div class="card" style="margin-top:12px"><h3>Chi tiết từng câu hỏi</h3>
+      <div style="overflow-x:auto"><table class="tb"><thead><tr><th>Mã</th><th>Người hỏi</th><th>Lần 1</th><th>Lần 2</th><th>Kết quả</th><th>Trả lời bởi</th></tr></thead><tbody>
+      ${done.map(t => { const d = t.decision; return `<tr data-id="${esc(t.id)}"><td class="mono">${esc(t.id)}</td><td>${esc(t.customer)}</td>
+        <td>${d ? pickText((d.picks || [])[0]) : "—"}</td><td>${d ? pickText((d.picks || [])[1]) : "—"}</td><td>${pillFor(t)}</td>
+        <td>${t.sent ? (t.sent.by === "auto" ? "Tự động" : "Người duyệt") : "—"}</td></tr>`; }).join("")}
+      </tbody></table></div></div>` :
+    `<div class="card" style="margin-top:20px"><div class="empty" style="padding:28px"><b>Chưa xử lý câu hỏi nào.</b>Khi có câu hỏi được trả lời, số liệu sẽ tự cập nhật.</div></div>`}
   </div>`;
 }
 
 /* ---------- actions ---------- */
 function open(id) {
   sel = id; document.body.classList.add("show-detail");
-  renderList(); renderDetail();
-  if (matchMedia("(max-width:860px)").matches) scrollTo(0, 0);
+  if (view === "report") view = "all";
+  render();
+  if (isMobile()) scrollTo(0, 0);
+}
+function showAsk() {
+  sel = null; if (view === "report") view = "all";
+  document.body.classList.add("show-detail"); render();
+  if (isMobile()) scrollTo(0, 0);
+  $("#askQ") && $("#askQ").focus();
 }
 
+let tick = null;
+function startTick() {
+  if (tick) return;
+  tick = setInterval(() => {
+    if (!busy.size) { clearInterval(tick); tick = null; return; }
+    if (sel && busy.has(sel)) renderDetail();
+  }, 1000);
+}
 async function processTicket(id, opts = {}) {
-  const t = tk(id);
-  busy.set(id, opts.redraft || !t.drafts ? "draft" : "judge");
+  busy.set(id, Date.now()); startTick();
   render();
-  // the step list moves to "judging" once drafts are typically done
-  const tm = setTimeout(() => { if (busy.get(id) === "draft") { busy.set(id, "judge"); if (sel === id) renderDetail(); renderList(); } }, 2600);
   try {
-    upsert(await api(`/api/tickets/${id}/process`, opts));
+    upsert(await api(`/api/tickets/${encodeURIComponent(id)}/process`, opts));
   } finally {
-    clearTimeout(tm); busy.delete(id);
+    busy.delete(id);
   }
+  await refreshStats();
+}
+function doneToast(t) {
+  const m = {sent:"Đã có câu trả lời.", ready:"Đã có câu trả lời.", review:"Hệ thống chưa đủ chắc chắn để trả lời câu này.",
+    out_of_scope:"Câu hỏi nằm ngoài phạm vi hộp thư.", no_basis:"Chưa tìm thấy căn cứ để trả lời."}[t.status];
+  if (m) toast(m);
 }
 
 async function runAll() {
@@ -642,127 +805,169 @@ async function runAll() {
   let fail = 0;
   for (const id of ids) {
     try { await processTicket(id, {autosend: !!S.settings.autopilot}); }
-    catch (e) { fail++; toast(`${id}: ${e.message}`, true); if (/hạn mức/.test(e.message)) break; }
+    catch (e) { fail++; toast(`${id}: ${e.message}`, true); if (e.status === 429) break; }
     bulk.done++;
-    S.stats = (await api("/api/state")).stats;
     render();
   }
   bulk = null;
   await refresh();
-  const st = S.stats;
-  toast(`Xong. ${st.auto_sent} tin đã tự gửi, ${st.partial + st.flip + st.invalid + st.held} tin chờ bạn duyệt${fail ? `, ${fail} lỗi` : ""}.`);
-  if (st.partial + st.flip + st.invalid + st.held) { view = "review"; render(); }
+  const st = S.stats, unsure = st.partial + st.flip + st.invalid + st.held;
+  toast(`Xong. ${st.auto_sent + st.human_sent} câu đã trả lời, ${unsure} câu chưa chắc chắn${fail ? `, ${fail} lỗi` : ""}.`, !!fail);
 }
 
 function sheet(title, html, onMount) {
-  $("#layer").innerHTML = `<div class="scrim" data-close></div><aside class="sheet" role="dialog" aria-label="${esc(title)}"><div class="sh"><h3>${esc(title)}</h3><div class="grow"></div><button class="btn icon ghost" data-close aria-label="Đóng">✕</button></div><div class="sb">${html}</div></aside>`;
+  $("#layer").innerHTML = `<div class="scrim" data-close></div><aside class="sheet" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="sh"><h3>${esc(title)}</h3><div class="grow"></div><button class="btn icon ghost" type="button" data-close aria-label="Đóng">✕</button></div><div class="sb">${html}</div></aside>`;
   onMount && onMount($("#layer .sheet"));
 }
 const closeSheet = () => $("#layer").innerHTML = "";
 
 function openSettings() {
-  const opt = cur => S.models.map(m => `<option value="${m.id}" ${m.id === cur ? "selected" : ""}>${esc(m.label)} · ${m.provider}</option>`).join("");
-  sheet("Cài đặt AI", `
-    <div class="fld"><label>Mô hình soạn Gợi ý 1</label><select id="w1">${opt(S.settings.writer1)}</select></div>
-    <div class="fld"><label>Mô hình soạn Gợi ý 2</label><select id="w2">${opt(S.settings.writer2)}</select></div>
-    <div class="fld"><label>Mô hình đánh giá</label><select id="jg">${opt(S.settings.judge)}</select></div>
-    <button class="btn pri" id="saveSet">Lưu</button>
-    <div style="border-top:1px solid var(--line);padding-top:16px"><button class="btn danger" id="reset">Làm mới hộp thư</button><div class="fld"><small>Xoá câu trả lời đã soạn, kết quả đánh giá và trạng thái gửi; giữ cài đặt mô hình.</small></div></div>`,
+  const opt = cur => S.models.map(m => `<option value="${esc(m.id)}" ${m.id === cur ? "selected" : ""}>${esc(m.label)} · ${esc(m.provider)}</option>`).join("");
+  const noModels = !S.models.length;
+  sheet("Cài đặt", `
+    <label class="switch"><input type="checkbox" id="setAuto" ${S.settings.autopilot ? "checked" : ""}><span>Tự trả lời khi hệ thống đủ chắc chắn</span></label>
+    <label class="switch"><input type="checkbox" id="setRev" ${reviewer ? "checked" : ""}><span>Chế độ người duyệt<small>Hiện hai bản nháp, kết quả AI chấm và cho phép sửa, gửi.</small></span></label>
+    ${S.demo ? `<label class="switch"><input type="checkbox" id="setNoLaw" ${S.settings.judge_law === false ? "checked" : ""}><span>AI chấm không xem văn bản luật<small>Chỉ trong chế độ trình bày: AI chấm phải dựa vào trí nhớ, để thấy nó chọn theo quy định cũ.</small></span></label>` : ""}
+    <div class="grp"><h4>Mô hình AI</h4>
+      ${noModels ? `<small>Chưa có mô hình nào dùng được. Thêm API key vào tệp .env rồi khởi động lại.</small>` : `
+      <div class="fld"><label for="w1">Soạn bản nháp 1</label><select id="w1">${opt(S.settings.writer1)}</select></div>
+      <div class="fld"><label for="w2">Soạn bản nháp 2</label><select id="w2">${opt(S.settings.writer2)}</select></div>
+      <div class="fld"><label for="jg">AI chấm</label><select id="jg">${opt(S.settings.judge)}</select></div>
+      <button class="btn pri" type="button" id="saveSet">Lưu mô hình</button>`}
+    </div>
+    <div class="grp"><h4>Văn bản đang dùng</h4>
+      <ul class="srcs">${(S.sources || []).map(s => `<li><a href="${safeUrl(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.label)}</a></li>`).join("") || "<li>Không có</li>"}</ul>
+      <small>Hiệu lực đến ${esc(S.cutoff)}.</small>
+    </div>
+    <div class="grp"><h4>Hộp thư</h4>
+      <div><button class="btn" type="button" id="demoB">Chế độ trình bày</button><small>Thay hộp thư bằng các câu hỏi mẫu để trình bày. Bấm phím N để thêm một câu hỏi mới.</small></div>
+      <div><button class="btn danger" type="button" id="resetB">Xoá hộp thư</button><small>Xoá mọi câu hỏi và câu trả lời trong hộp thư này; giữ cài đặt mô hình.</small></div>
+    </div>`,
   s => {
-    s.querySelector("#saveSet").onclick = async () => {
-      S = await api("/api/settings", {writer1:$("#w1").value, writer2:$("#w2").value, judge:$("#jg").value});
-      closeSheet(); render(); toast("Đã lưu cài đặt.");
+    s.querySelector("#setAuto").onchange = async e => {
+      try { S = await api("/api/settings", {autopilot:e.target.checked}); render(); }
+      catch (err) { e.target.checked = !e.target.checked; toast(err.message, true); }
     };
-    s.querySelector("#reset").onclick = async () => {
-      if (!confirm("Xoá toàn bộ câu trả lời và trạng thái gửi trong hộp thư?")) return;
-      S = await api("/api/reset", {}); sel = null; view = "new"; closeSheet(); render(); toast("Hộp thư đã được làm mới.");
+    const noLaw = s.querySelector("#setNoLaw");
+    if (noLaw) noLaw.onchange = async e => {
+      try { S = await api("/api/settings", {judge_law: !e.target.checked}); render(); }
+      catch (err) { e.target.checked = !e.target.checked; toast(err.message, true); }
+    };
+    s.querySelector("#setRev").onchange = e => {
+      reviewer = e.target.checked;
+      try { localStorage.setItem("hk-reviewer", reviewer ? "1" : "0"); } catch {}
+      render(); toast(reviewer ? "Đã bật chế độ người duyệt." : "Đã tắt chế độ người duyệt.");
+    };
+    const save = s.querySelector("#saveSet");
+    if (save) save.onclick = async () => {
+      try { S = await api("/api/settings", {writer1:$("#w1").value, writer2:$("#w2").value, judge:$("#jg").value}); render(); toast("Đã lưu cài đặt."); }
+      catch (err) { toast(err.message, true); }
+    };
+    s.querySelector("#demoB").onclick = async () => {
+      if (S.tickets.length && !confirm("Thay hộp thư hiện tại bằng các câu hỏi mẫu để trình bày?")) return;
+      try { S = await api("/api/reset", {demo:true}); sel = null; view = "all"; busy.clear(); closeSheet(); render(); toast("Đã nạp câu hỏi mẫu. Bấm N để thêm câu hỏi mới."); }
+      catch (err) { toast(err.message, true); }
+    };
+    s.querySelector("#resetB").onclick = async () => {
+      if (!confirm("Xoá mọi câu hỏi và câu trả lời trong hộp thư?")) return;
+      try { S = await api("/api/reset", {demo:false}); sel = null; view = "all"; busy.clear(); closeSheet(); render(); toast("Đã xoá hộp thư."); }
+      catch (err) { toast(err.message, true); }
     };
   });
 }
 
-const SAMPLES = [
-  ["Hoàng Nam","Shop ơi bàn cờ cẩm lai còn không? Mình đặt 2 cái làm quà được không?",["cam-lai"]],
-  ["Thanh Vy","Bộ quân cờ đá ngọc bao giờ có lại hàng vậy shop? Mình đặt trước được không?",["da-ngoc"]],
-  ["Bác Sáu","Tôi ở Hà Nội, mua bộ cờ gỗ sồi hôm nay thì bao giờ tới? Có khắc tên lên bàn được không?",["go-soi"]],
-];
-function openNew() {
-  sheet("Tạo yêu cầu", `
-    <div class="fld"><label for="nc">Tên khách</label><input id="nc" placeholder="Ví dụ: Hoàng Nam"></div>
-    <div class="fld"><label for="ns">Tiêu đề (không bắt buộc)</label><input id="ns" placeholder="Tự lấy từ nội dung nếu để trống"></div>
-    <div class="fld"><label for="nm">Nội dung</label><textarea id="nm" placeholder="Dán tin nhắn của khách vào đây"></textarea></div>
-    <div class="fld"><label>Sản phẩm khách nhắc tới (không bắt buộc)</label><div class="ppick">${S.products.map(p => `<button type="button" data-p="${p.id}">${esc(p.name.split(" (")[0].split(" kèm")[0])}</button>`).join("")}</div></div>
-    <div class="fld"><label>Mẫu có sẵn</label><div class="samples">${SAMPLES.map((s, i) => `<button data-s="${i}">${esc(s[0])}</button>`).join("")}</div></div>
-    <button class="btn pri" id="addT">${ICON.plus}Tạo và để AI soạn trả lời</button>`,
-  s => {
-    const chosen = () => [...s.querySelectorAll("[data-p].on")].map(b => b.dataset.p);
-    s.querySelectorAll("[data-p]").forEach(b => b.onclick = () => b.classList.toggle("on"));
-    s.querySelectorAll("[data-s]").forEach(b => b.onclick = () => {
-      const [n, m, ps] = SAMPLES[+b.dataset.s]; $("#nc").value = n; $("#nm").value = m;
-      s.querySelectorAll("[data-p]").forEach(x => x.classList.toggle("on", ps.includes(x.dataset.p)));
-    });
-    s.querySelector("#addT").onclick = async () => {
-      try {
-        const t = await api("/api/tickets", {customer:$("#nc").value, subject:$("#ns").value, message:$("#nm").value, products:chosen()});
-        upsert(t); closeSheet(); view = "all"; open(t.id); render();
-        await processTicket(t.id, {}); render();
-      } catch (e) { toast(e.message, true); render(); }
-    };
-    s.querySelector("#nc").focus();
-  });
+async function submitAsk(e) {
+  e.preventDefault();
+  const name = $("#askN").value.trim(), msg = $("#askQ").value.trim();
+  if (!msg) { toast("Câu hỏi đang trống.", true); $("#askQ").focus(); return; }
+  if (msg.length > 2000) { toast("Câu hỏi quá dài (tối đa 2000 ký tự).", true); return; }
+  const b = $("#askB"); b.disabled = true;
+  let t;
+  try { t = await api("/api/tickets", {customer:name || "Bạn", message:msg}); }
+  catch (err) { b.disabled = false; toast(err.message, true); return; }
+  draftAsk = {name, msg:""};
+  upsert(t); if (view !== "all" && view !== "new") view = "all";
+  open(t.id);
+  try { await processTicket(t.id, {autosend: !!S.settings.autopilot}); doneToast(tk(t.id)); }
+  catch (err) { toast(err.message, true); }
+  render();
 }
 
+async function sendFeedback(box, vote) {
+  const id = box.dataset.fb, note = box.querySelector("textarea").value;
+  try { upsert(await api(`/api/tickets/${encodeURIComponent(id)}/feedback`, {vote, note})); toast("Cảm ơn anh/chị đã phản hồi."); }
+  catch (err) { toast(err.message, true); }
+  render();
+}
+
+document.addEventListener("submit", e => { if (e.target.id === "askF") submitAsk(e); });
 document.addEventListener("click", async e => {
   const q = s => e.target.closest(s);
   if (q("[data-close]")) return closeSheet();
+  const smp = q("[data-sample]");
+  if (smp) { draftAsk.msg = SAMPLES[+smp.dataset.sample]; $("#askQ").value = draftAsk.msg; $("#askC").textContent = `${draftAsk.msg.length}/2000`; $("#askQ").focus(); return; }
   const v = q("[data-view]");
   if (v) { view = v.dataset.view; document.body.classList.remove("show-detail"); if (view !== "report" && sel && !(view === "all" || tk(sel)?.status === view)) sel = null; return render(); }
   const it = q("[data-id]");
-  if (it) { if (view === "report") view = "all"; open(it.dataset.id); return render(); }
-  if (q("#newB")) return openNew();
+  if (it) return open(it.dataset.id);
   if (q("#setB")) return openSettings();
-  if (q("#shopB")) return openShop();
-  if (q("#policyB")) return sheet("Chính sách ABNQ Store", `<div class="policy">${esc(S.policy)}</div>`);
   if (q("#themeB")) {
     const r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
     r.dataset.theme = dark ? "light" : "dark"; try { localStorage.setItem("nd-theme", r.dataset.theme); } catch {}
     return;
   }
   if (q("#runAll")) return runAll();
+  const vb = q("[data-vote]");
+  if (vb) return sendFeedback(vb.closest("[data-fb]"), vb.dataset.vote);
   const a = q("[data-act]");
   if (a) {
     const act = a.dataset.act;
-    if (act === "back") { document.body.classList.remove("show-detail"); return; }
-    try { await processTicket(sel, {redraft: act === "redraft"}); } catch (err) { toast(err.message, true); }
+    if (act === "back") { document.body.classList.remove("show-detail"); return render(); }
+    if (act === "ask") return showAsk();
+    const id = sel;
+    const opts = act === "process" ? {autosend: !!S.settings.autopilot} : act === "redraft" ? {redraft:true} : {};
+    try { await processTicket(id, opts); if (sel === id) doneToast(tk(id)); } catch (err) { toast(err.message, true); }
     return render();
   }
   const sb = q("[data-send]");
   if (sb) {
-    const n = +sb.dataset.send, text = $(`textarea[data-draft="${n}"]`).value;
-    try { upsert(await api(`/api/tickets/${sel}/send`, {draft:n, text})); S.stats = (await api("/api/state")).stats; toast(`Đã gửi trả lời cho ${tk(sel).customer}.`); }
+    const n = +sb.dataset.send, ta = $(`textarea[data-draft="${n}"]`);
+    sb.disabled = true;
+    try { upsert(await api(`/api/tickets/${encodeURIComponent(sel)}/send`, {draft:n, text: ta ? ta.value : ""})); await refreshStats(); toast(`Đã gửi bản ${n}.`); }
     catch (err) { toast(err.message, true); }
     return render();
   }
 });
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") closeSheet();
-  if (e.key === "Enter" && e.target.matches(".it")) e.target.click();
-  // Presenter shortcut: a customer message "arrives" from the reserve pool (see DEMO.md).
-  if (e.key.toLowerCase() === "n" && !e.metaKey && !e.ctrlKey && !e.altKey && !e.target.closest("input,textarea,select,[contenteditable]")) {
-    api("/api/release", {}).then(t => { upsert(t); render(); toast(`Tin nhắn mới từ ${t.customer}.`); }).catch(err => toast(err.message, true));
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches(".it")) { e.preventDefault(); e.target.click(); }
+  // Presenter shortcut: in "Chế độ trình bày" a reserve question arrives.
+  if (e.key.toLowerCase() === "n" && S && S.demo && !e.metaKey && !e.ctrlKey && !e.altKey && !e.target.closest("input,textarea,select,[contenteditable]")) {
+    api("/api/release", {}).then(t => { upsert(t); render(); toast(`Câu hỏi mới từ ${t.customer}.`); }).catch(err => toast(err.message, true));
   }
 });
-document.addEventListener("input", e => { if (e.target.matches(".draft textarea")) autosize(e.target); });
-$("#auto").addEventListener("change", async e => { S = await api("/api/settings", {autopilot:e.target.checked}); render(); });
+document.addEventListener("input", e => {
+  if (e.target.matches(".draft textarea")) autosize(e.target);
+  if (e.target.id === "askQ") { draftAsk.msg = e.target.value; $("#askC").textContent = `${e.target.value.length}/2000`; }
+  if (e.target.id === "askN") draftAsk.name = e.target.value;
+});
+$("#auto").addEventListener("change", async e => {
+  try { S = await api("/api/settings", {autopilot:e.target.checked}); render(); }
+  catch (err) { e.target.checked = !e.target.checked; toast(err.message, true); }
+});
 
 try { const th = localStorage.getItem("nd-theme"); if (th) document.documentElement.dataset.theme = th; } catch {}
 refresh().then(() => {
-  // deep links: #report, #review, #T-1046
+  // deep links: #report, #review, #Q-1001
   const h = decodeURIComponent(location.hash.slice(1));
   if (h === "report" || VIEWS.some(v => v[0] === h)) view = h;
-  if (tk(h)) { view = "all"; return open(h), render(); }
-  const first = S.tickets.find(t => view === "all" || t.status === (view === "report" ? "review" : view)) || S.tickets[0];
-  if (first && !matchMedia("(max-width:860px)").matches) sel = first.id;
+  if (tk(h)) return open(h);
+  if (!isMobile()) {
+    const first = S.tickets.find(t => view === "all" || t.status === view);
+    sel = first ? first.id : null;
+  }
   render();
+  scrollTo(0, 0);  // "#report" also names a section, which the browser would otherwise jump to
 }).catch(err => {
   $("#detail").innerHTML = `<div class="dwrap"><div class="empty" style="padding-top:18vh"><b>Không kết nối được máy chủ</b>Chạy <span class="mono">python app/server.py</span> rồi mở lại trang này.<br><span style="font-size:12px">${esc(err.message)}</span></div></div>`;
 });
