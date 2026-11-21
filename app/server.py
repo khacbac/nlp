@@ -69,6 +69,19 @@ OUT_OF_SCOPE_REPLY = (
     "thuế TNCN tính trên doanh thu, khai và nộp thuế, hóa đơn). Câu hỏi của anh/chị thuộc phạm vi khác "
     "(doanh nghiệp, tiền lương, bất động sản, đầu tư…), nên hộp thư không trả lời để tránh thông tin sai. "
     "Anh/chị vui lòng liên hệ cơ quan thuế quản lý hoặc tổng đài hỗ trợ của Cục Thuế.")
+# Freelancers ("làm IT tự do", "nhận dự án") may be running a business or may be paid wages by
+# a company under a contract; the two are taxed differently and the corpus only answers the first.
+# A fixed note says so, and the two clauses that draw the line go to the writers.
+FREELANCE = re.compile(
+    r"\b(tự do|freelanc\w*|hợp đồng dịch vụ|hợp đồng khoán|cộng tác viên|ctv|thù lao|nhận dự án|nhận job|"
+    r"upwork|fiverr|làm remote|làm từ xa)\b", re.I)
+FREELANCE_CLAUSES = ("vbhn-112-2026:d3:k1", "vbhn-112-2026:d3:k2")
+FREELANCE_CAVEAT = (
+    "Lưu ý cho người làm tự do: câu trả lời chỉ áp dụng khi anh/chị tự kinh doanh hàng hóa, dịch vụ "
+    "(thu nhập từ kinh doanh, Luật Thuế thu nhập cá nhân Điều 3 khoản 1). Nếu anh/chị nhận tiền công, tiền thù lao "
+    "từ công ty hay tổ chức theo hợp đồng, khoản đó là thu nhập từ tiền lương, tiền công (Điều 3 khoản 2), "
+    "tính thuế theo cách khác và nằm ngoài phạm vi hộp thư. Trường hợp này anh/chị nên hỏi bên trả tiền "
+    "hoặc cơ quan thuế quản lý.")
 NO_BASIS_REPLY = (
     "Hộp thư chưa tìm thấy điều luật nào trong các văn bản đang có (hiệu lực đến {cutoff}) đủ khớp với câu hỏi, "
     "nên không trả lời để tránh đoán sai. Anh/chị có thể hỏi lại cụ thể hơn (loại hình kinh doanh, doanh thu năm, "
@@ -214,6 +227,10 @@ def process(sid: str, tid: str, redraft: bool, autosend: bool) -> dict:
                      processed_at=stamp())
             save(sid)
         return public(t)
+    caveat = bool(FREELANCE.search(t["message"]))
+    if caveat:
+        with lock:
+            t["caveat"] = FREELANCE_CAVEAT
     found = INDEX.search(t["message"])
     if not found["enough"]:
         with lock:
@@ -226,6 +243,9 @@ def process(sid: str, tid: str, redraft: bool, autosend: bool) -> dict:
             raise TooMany(f"Đã đạt giới hạn {HOURLY_LIMIT} câu hỏi mỗi giờ. Vui lòng thử lại sau.")
         st["usage"].append(time.time())
     hits = found["hits"]
+    if caveat:
+        seen = {h["id"] for h in hits}
+        hits += [{"id": c, "score": None, "matched": [], "core": False} for c in FREELANCE_CLAUSES if c not in seen]
     ctx = context(hits)
     if t.get("canned") and not t["drafts"] and not redraft:
         # Demo questions ship a fixed pair: equally fluent, one breaks one legal detail.

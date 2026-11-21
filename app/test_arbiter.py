@@ -70,3 +70,29 @@ def test_old_threshold_wording(draft, flagged):
 ])
 def test_gate(v1, v2, issues, held):
     assert factcheck.gate(decide(v1, v2), issues)["held"] is held
+
+
+# Citations are checked in the body too, down to the clause: a draft once cited an article it was
+# never given in its body ("Điều 5 khoản 2") while its "Căn cứ:" line was clean.
+@pytest.mark.parametrize("body, flagged", [
+    ("Trên 03 tỷ phải tính theo thu nhập (Điều 5 khoản 2 Nghị định 68/2026/NĐ-CP).", True),   # article not given
+    ("Theo Điều 4 khoản 2 Nghị định 68/2026/NĐ-CP, hộ phải khai thuế.", True),               # clause not given
+    ("Theo khoản 5 Điều 4 Nghị định 68/2026/NĐ-CP, trên 03 tỷ tính theo thu nhập.", False),  # legal word order
+])
+def test_body_citations(body, flagged):
+    t = {"message": "Làm IT tự do thì đóng thuế như thế nào?"}
+    given = {"nd-68-2026:d4:k1", "nd-68-2026:d4:k5"}
+    found = factcheck.check(body + "\nCăn cứ: Điều 4 khoản 1 Nghị định 68/2026/NĐ-CP", t, given, RECORDS)
+    assert any(i.startswith("Trích") for i in found) is flagged
+
+
+@pytest.mark.parametrize("draft, flagged", [
+    # A live draft put the income method's 15% on revenue; for services the revenue rate is 2%.
+    ("Thuế suất nhân doanh thu (doanh thu 01–03 tỷ đồng, thuế suất 15%).", True),
+    ("Tính theo thu nhập tính thuế (doanh thu trừ chi phí) nhân thuế suất 15%.", False),
+    ("Hàng hóa được giảm 20% mức tỷ lệ thuế GTGT trên doanh thu.", False),
+])
+def test_income_rate_on_revenue(draft, flagged):
+    t = {"message": "Làm IT tự do thì đóng thuế như thế nào?"}
+    found = factcheck.check(draft + "\nCăn cứ: Điều 4 khoản 5 Nghị định 68/2026/NĐ-CP", t, {"nd-68-2026:d4:k5"}, RECORDS)
+    assert any("phương pháp thu nhập" in i for i in found) is flagged

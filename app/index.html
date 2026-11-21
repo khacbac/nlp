@@ -173,6 +173,7 @@ a{color:var(--brand)}
 .answer .acts{margin-top:12px}
 .answer.warn{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 35%,transparent)}
 .answer.warn .hd{color:var(--warn)}
+.answer.caveat{margin-bottom:14px}.answer.caveat .txt{font-size:14px}
 .answer.unsure{background:var(--flip-soft);border-color:color-mix(in srgb,var(--flip) 35%,transparent)}
 .answer.unsure .hd{color:var(--flip)}
 .after{margin:14px 0 0;color:var(--ink2);font-size:14px}
@@ -701,6 +702,9 @@ function renderDetail() {
   } else {
     body = clauseList(t.retrieved);
   }
+  // A fixed note for freelancers: the answer covers business income only, not wages from a contract.
+  if (t.caveat && !busy.has(t.id) && st !== "new" && st !== "out_of_scope")
+    body = `<div class="answer warn caveat"><div class="hd">Lưu ý</div><div class="txt">${esc(t.caveat)}</div></div>` + body;
   el.innerHTML = `<div class="dwrap">
     <button class="btn ghost back" type="button" data-act="back">${ICON.back}Câu hỏi</button>
     <div class="dh"><h1>${esc(t.subject)}</h1><span class="chip mono">${esc(t.id)}</span>${pillFor(t)}</div>

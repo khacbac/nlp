@@ -81,5 +81,6 @@ python app/bench.py --judges groq-gpt-oss-20b,groq-gpt-oss-120b --repeats 3 --no
 
 - Mới có AI kiểm chứng số liệu (`VERIFICATION.md`, trạng thái `ai`). Cần người kiểm lại trước khi giới thiệu rộng.
 - Chưa có văn bản của Bộ Tài chính xếp chi tiết ngành nghề vào nhóm tỷ lệ. Tỷ lệ GTGT cho nhóm "cho thuê tài sản, đại lý" và nhóm "nội dung số" đang để trống. Xếp một ngành cụ thể (quán ăn, cà phê…) vào nhóm nào là việc của AI soạn và AI chấm, lớp đối chiếu không quyết.
+- Người làm tự do ("IT tự do", "freelancer", "hợp đồng dịch vụ"…) luôn kèm một lưu ý cố định: câu trả lời chỉ áp dụng cho thu nhập từ kinh doanh. Tiền công, tiền thù lao nhận từ tổ chức theo hợp đồng (Luật Thuế TNCN Điều 3 khoản 2) nằm ngoài phạm vi.
 - Không tự tính thuế theo phương pháp thu nhập (doanh thu trừ chi phí): chỉ nhận ra trường hợp này và khuyên hỏi cơ quan thuế hoặc kế toán.
 - Luật Quốc hội thông qua ngày 20/11/2026 (nâng mốc 03 tỷ lên 10 tỷ từ kỳ tính thuế 2027) chưa đăng Công báo, nên chưa đưa vào. Xem `rates.json` → `pending`.

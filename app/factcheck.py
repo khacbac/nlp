@@ -12,9 +12,11 @@ What this catches:
 - a threshold that is no longer in force ("từ 500 triệu đồng trở xuống");
 - thuế khoán or lệ phí môn bài presented as still applying;
 - a percentage that is not a rate in the law;
+- an income-method rate (15%, 17%, 20% of taxable income) applied to revenue;
 - a tax amount that does not match the law for the revenue in the question;
 - the revenue-percentage method used where revenue is above 03 tỷ;
-- a missing "Căn cứ:" line, or a cited article the draft was not given.
+- a missing "Căn cứ:" line, or a cited article or clause the draft was not given,
+  in the "Căn cứ:" line or in the body ("theo Điều 5 khoản 2 Nghị định 68/2026/NĐ-CP").
 
 What it cannot catch: judgment calls (which industry group a business is in,
 whether a good is in the VAT-reduction list), which stay with the judge.
@@ -36,13 +38,16 @@ MONEY = re.compile(
     re.I)
 PERCENT = re.compile(r"(\d+(?:[.,]\d+)?)\s*%")
 CITE_LINE = re.compile(r"căn cứ\s*:", re.I)
-CITE_DIEU = re.compile(r"Điều\s+(\d+)")
+# "Điều 4 khoản 5" and the legal order "khoản 5 Điều 4" both name clause 5 of article 4.
+CITE_DIEU = re.compile(r"(?:khoản\s+(\d+)\s+)?Điều\s+(\d+)(?:\s+khoản\s+(\d+))?", re.I)
 SO_HIEU = re.compile(r"\b(\d{1,3}/\d{4}/[A-ZĐ][A-ZĐ0-9\-]*)", re.I)
 
 # Whole-word matches only: "cũ" must not match inside "cũng".
 NEGATION = re.compile(r"\b(không|bỏ|bãi bỏ|chấm dứt|hết|ngừng|trước đây|đã được thay|thay vì|cũ)\b")
 # Words that mark an old threshold as history ("trước đây là 500 triệu"), not as the rule.
 OLD_MARKERS = re.compile(r"\b(trước đây|trước kia|đã được thay|đã được nâng|thay vì|cũ|năm 2025|không còn)\b")
+# Words that put a rate on taxable income (revenue minus costs), where 15/17/20% are the right rates.
+INCOME_BASIS = re.compile(r"thu nhập tính thuế|thu nhập chịu thuế|trừ chi phí|trừ \(-\) chi phí|phương pháp thu nhập|theo thu nhập")
 THRESHOLD_WORDS = ("trở xuống", "trở lên", "dưới", "không quá", "vượt", "ngưỡng", "mức doanh thu", "trên mức",
                    "doanh thu trên", "doanh thu năm trên", "doanh thu từ", "doanh thu năm từ")
 
@@ -159,6 +164,15 @@ def check(draft: str, ticket: dict, retrieved: set[str], records: dict[str, dict
     for p in {float(x.replace(",", ".")) for x in PERCENT.findall(draft)} - valid:
         issues.append(f"Mức {p:g}% không có trong luật thuế áp dụng cho hộ kinh doanh")
 
+    # 3b. The income method's rates (15/17/20% of revenue minus costs) stated as a share of revenue.
+    income_rates = {round(b["rate"] * 100) for b in RATES["tncn_income_method"]["brackets"]}
+    for s in sentences(draft):
+        low = s.lower()
+        rates = {float(x.replace(",", ".")) for x in PERCENT.findall(s)} & income_rates
+        if rates and "doanh thu" in low and not INCOME_BASIS.search(low) and "giảm" not in low:
+            issues.append(f"Thuế suất {', '.join(f'{r:g}%' for r in sorted(rates))} là của phương pháp thu nhập "
+                          "(doanh thu trừ chi phí), không áp lên doanh thu (Nghị định 68/2026/NĐ-CP Điều 4 khoản 5)")
+
     # 4–5. Amounts and method, when the revenue is known.
     group = next((g for g in RATES["groups"] if g["id"] == ticket.get("group")), None) or group_named(draft)
     if revenue:
@@ -178,36 +192,55 @@ def check(draft: str, ticket: dict, retrieved: set[str], records: dict[str, dict
                     issues.append(f"Số thuế {fmt(v)} không khớp với luật cho doanh thu {fmt(revenue)}, nhóm "
                                   f"\"{group['ten']}\": GTGT {gt}; TNCN {tn}")
 
-    # 6. Citations: a "Căn cứ:" line naming articles the draft was given.
-    if not CITE_LINE.search(draft):
+    # 6. Citations: a "Căn cứ:" line, and every article or clause cited anywhere was given to the draft.
+    line = CITE_LINE.search(draft)
+    if not line:
         issues.append("Thiếu dòng \"Căn cứ:\" nêu Điều luật")
-    else:
-        cite = draft[CITE_LINE.search(draft).start():]
-        given = {(records[r]["dieu"], a) for r in retrieved if r in records for a in records[r].get("aliases", [records[r]["so_hieu"]])}
-        known = {(r["dieu"], a) for r in records.values() for a in r.get("aliases", [r["so_hieu"]])}
-        for dieu, so in cited(cite):
-            if (dieu, so) not in known:
-                issues.append(f"Trích Điều {dieu} văn bản {so}, không có trong kho văn bản")
-            elif (dieu, so) not in given:
-                issues.append(f"Trích Điều {dieu} văn bản {so}, không nằm trong các Điều đã cung cấp")
+    body = draft[:line.start()] if line else draft
+    refs = cited(draft[line.start():]) if line else []
+    refs += cited(body, sentences)  # in the body a document number only counts within its own sentence
+    issues += citation_issues(refs, retrieved, records)
     return list(dict.fromkeys(issues))
 
 
-def cited(cite: str) -> list[tuple[int, str]]:
-    """(article, document number) pairs in a "Căn cứ:" line.
+def cited(text: str, split=lambda t: re.split(r"[;\n]", t)) -> list[tuple[int, int | None, str]]:
+    """(article, clause or None, document number) for each "Điều N" in `text`.
 
-    Each "Điều N" goes with the nearest document number, before or after it,
+    Each "Điều N" goes with the nearest document number, before or after it, within
+    one part of `text` (items of a "Căn cứ:" line are usually separated by ";"),
     so both "Điều 4 Nghị định 68/2026/NĐ-CP" and "Nghị định 68/2026/NĐ-CP, Điều 4"
-    read the same. An article with no document number in the line is skipped.
+    read the same. An article with no document number in its part is skipped.
     """
-    pairs = []
-    for part in re.split(r"[;\n]", cite):  # items are usually separated by ";"
+    refs = []
+    for part in split(text):
         docs = [(m.start(), m.end(), m[1].upper()) for m in SO_HIEU.finditer(part)]
         for m in CITE_DIEU.finditer(part):
             if docs:
                 near = min(docs, key=lambda d: min(abs(m.start() - d[1]), abs(d[0] - m.end())))
-                pairs.append((int(m[1]), near[2]))
-    return list(dict.fromkeys(pairs))
+                k = m[1] or m[3]
+                refs.append((int(m[2]), int(k) if k else None, near[2]))
+    return list(dict.fromkeys(refs))
+
+
+def citation_issues(refs: list[tuple[int, int | None, str]], retrieved: set[str], records: dict[str, dict]) -> list[str]:
+    """Notes for cited articles or clauses that are not in the corpus, or that the draft was not given."""
+    def keys(rs):
+        return {(r["dieu"], r["khoan"], a) for r in rs for a in r.get("aliases", [r["so_hieu"]])}
+    given = keys(records[r] for r in retrieved if r in records)
+    known = keys(records.values())
+    issues = []
+    for dieu, khoan, so in dict.fromkeys(refs):
+        if not any(d == dieu and a == so for d, _, a in known):
+            issues.append(f"Trích Điều {dieu} văn bản {so}, không có trong kho văn bản")
+        elif not any(d == dieu and a == so for d, _, a in given):
+            issues.append(f"Trích Điều {dieu} văn bản {so}, không nằm trong các Điều đã cung cấp")
+        elif khoan is not None and (dieu, khoan, so) not in given:
+            # An article given whole (no clauses) covers any clause of it.
+            if (dieu, None, so) in given:
+                continue
+            where = "không nằm trong các khoản đã cung cấp" if (dieu, khoan, so) in known else "không có trong kho văn bản"
+            issues.append(f"Trích khoản {khoan} Điều {dieu} văn bản {so}, {where}")
+    return issues
 
 
 def gate(decision: dict, issues: list[list[str]]) -> dict:
