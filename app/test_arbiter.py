@@ -146,3 +146,17 @@ def test_group_rates(draft, group, flagged):
     t = {"message": "Doanh thu 1,5 tỷ thì đóng thuế bao nhiêu?", "group": group}
     found = factcheck.check(draft + "\nCăn cứ: Điều 4 khoản 5 Nghị định 68/2026/NĐ-CP", t, {"nd-68-2026:d4:k5"}, RECORDS)
     assert any("không phải tỷ lệ của nhóm" in i for i in found) is flagged
+
+
+@pytest.mark.parametrize("draft, flagged", [
+    # A live draft put GTGT on the part above 01 tỷ, which is the TNCN base.
+    ("Về thuế giá trị gia tăng, anh/chị phải nộp thuế theo phương pháp trực tiếp trên phần doanh thu vượt trên mức 01 tỷ đồng.", True),
+    ("Thuế GTGT tính trên phần vượt 1 tỷ đồng.", True),
+    ("Thuế GTGT 5% tính trên toàn bộ doanh thu, còn thuế TNCN 2% tính trên phần vượt 01 tỷ đồng.", False),
+    ("Thuế TNCN 2% tính trên phần doanh thu vượt 01 tỷ đồng.", False),
+    ("Doanh thu trên 01 tỷ đồng thì phải nộp thuế GTGT.", False),            # the threshold, not the base
+])
+def test_gtgt_base(draft, flagged):
+    t = {"message": "Doanh thu 1,2 tỷ thì đóng thuế thế nào?"}
+    found = factcheck.check(draft + "\nCăn cứ: Điều 3 khoản 2 Nghị định 68/2026/NĐ-CP", t, {"nd-68-2026:d3:k2"}, RECORDS)
+    assert any("toàn bộ doanh thu" in i for i in found) is flagged

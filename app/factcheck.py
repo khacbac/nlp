@@ -13,6 +13,7 @@ What this catches:
 - thuế khoán or lệ phí môn bài presented as still applying;
 - a percentage that is not a rate in the law;
 - an income-method rate (15%, 17%, 20% of taxable income) applied to revenue;
+- GTGT worked out on the part of revenue above 01 tỷ (that base is TNCN's; GTGT is on all revenue);
 - a GTGT or TNCN rate that is not the rate of the industry group, when the group is known
   (from the question, the person's answer, or a group the draft names);
 - a tax amount that does not match the law for the revenue in the question;
@@ -175,6 +176,17 @@ def check(draft: str, ticket: dict, retrieved: set[str], records: dict[str, dict
             issues.append(f"Thuế suất {', '.join(f'{r:g}%' for r in sorted(rates))} là của phương pháp thu nhập "
                           "(doanh thu trừ chi phí), không áp lên doanh thu (Nghị định 68/2026/NĐ-CP Điều 4 khoản 5)")
 
+    # 3b'. GTGT on the part above the threshold, a base that belongs to TNCN only.
+    # The base belongs to the tax named last before it in the sentence ("GTGT 5% trên toàn bộ doanh thu,
+    # TNCN 2% trên phần vượt" is right).
+    for sent in sentences(draft):
+        m = EXCESS_BASE.search(sent)
+        named = list(TAX_NAME.finditer(sent[:m.start()])) if m else []
+        if named and GTGT_NAME.fullmatch(named[-1][0]):
+            issues.append("Thuế GTGT tính trên toàn bộ doanh thu, không phải trên phần vượt 01 tỷ đồng; chỉ thuế TNCN "
+                          "theo tỷ lệ mới tính trên phần vượt (Nghị định 68/2026/NĐ-CP Điều 3 khoản 2, Điều 4 khoản 5)")
+            break
+
     group = next((g for g in RATES["groups"] if g["id"] == ticket.get("group")), None) or group_named(draft)
     # 3c. Rates of the wrong group ("dịch vụ" is 5% GTGT and 2% TNCN, not distribution's 1%).
     if group:
@@ -247,6 +259,11 @@ def citation_issues(refs: list[tuple[int, int | None, str]], retrieved: set[str]
             where = "không nằm trong các khoản đã cung cấp" if (dieu, khoan, so) in known else "không có trong kho văn bản"
             issues.append(f"Trích khoản {khoan} Điều {dieu} văn bản {so}, {where}")
     return issues
+
+
+# "phần doanh thu vượt trên mức 01 tỷ", "phần vượt 1 tỷ", "sau khi trừ 01 tỷ": the TNCN base.
+EXCESS_BASE = re.compile(r"phần (?:doanh thu )?(?:vượt|trên|vượt quá|cao hơn|dôi ra)|(?:sau khi |)trừ (?:đi |)(?:mức |)0?1 tỷ", re.I)
+GTGT_NAME = re.compile(r"gtgt|giá trị gia tăng", re.I)
 
 
 TAX_NAME = re.compile(r"gtgt|giá trị gia tăng|tncn|thu nhập cá nhân", re.I)
