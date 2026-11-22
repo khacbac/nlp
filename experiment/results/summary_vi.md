@@ -1,6 +1,5 @@
 # Results (vi)
 
-
 Pairs: 1500 valid of 1500 (format errors 0.0%). Intervals: 95%, bootstrap over questions.
 
 ## RQ1 How often does the judge flip?

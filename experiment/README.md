@@ -132,8 +132,7 @@ judgments. Download `judgments_vi.jsonl` from Drive into `data/` (git-ignored).
 
 ```bash
 pip install numpy matplotlib            # sentence-transformers: optional cosine baseline
-python analyze.py                       # human scores from data/grading_sheet_A..D.csv
-python analyze.py --scores-dir data/ai_graded   # trial run on AI scores -> results/trial/
+python analyze.py                       # scores from data/grading_sheet_A..D.csv
 ```
 
 It writes every criterion with a 95% bootstrap interval (resampling

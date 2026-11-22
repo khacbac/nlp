@@ -3,10 +3,10 @@
 Inputs (all in data/, git-ignored):
     judgments_<lang>.jsonl   from judge.py, one line per (pair, order)
     key.csv                  answer_id -> qid, model, annotators
-    grading_sheet_A..D.csv   annotator scores (or --scores-dir data/ai_graded for a trial)
+    grading_sheet_A..D.csv   annotator scores
     questions.jsonl, answers_*.jsonl   gold answers and answer texts (baselines, lengths)
 
-Outputs (results/ or results/trial/ when the scores are not the human ones):
+Outputs (results/):
     metrics_<lang>.json      every number, with 95% bootstrap intervals
     summary_<lang>.md        the same numbers as readable tables
     figures/*.svg, *.png     the charts used in the report and the slides
@@ -28,8 +28,7 @@ Intervals bootstrap over questions, not pairs: the three pairs of one
 question share the passage and the annotators, so they are not independent.
 
 Usage:
-    python analyze.py                               # human scores
-    python analyze.py --scores-dir data/ai_graded   # trial with AI scores
+    python analyze.py
 """
 
 import argparse
@@ -396,62 +395,60 @@ def fmt(m: dict | None, pct: bool = True) -> str:
     return f"{f(m['value'])} [{f(m['lo'])}, {f(m['hi'])}]"
 
 
-def summary(res: dict, lang: str, source: str) -> str:
-    L = [f"# Results ({lang})", ""]
-    if source != "human":
-        L += [f"> **TRIAL:** scores from `{source}`, not the human annotators. Do not report.", ""]
-    L += [f"Pairs: {res['pairs_valid']} valid of {res['pairs_total']} "
-          f"(format errors {100 * res['format_error_rate']:.1f}%). Intervals: 95%, bootstrap over questions.", "",
-          "## RQ1 How often does the judge flip?", "",
-          "| Measure | Value |", "|---|---|",
-          f"| Flip rate | {fmt(res['flip_rate'])} |",
-          f"| Flip rate, pairs with no tie verdict | {fmt(res['flip_rate_no_tie'])} |",
-          f"| Slot A wins both runs | {fmt(res['first_slot_wins_both'])} |",
-          f"| Slot B wins both runs | {fmt(res['second_slot_wins_both'])} |",
-          f"| First-Position Preference | {fmt(res['fpp'], pct=False)} |",
-          f"| Verdict labels consistent (ties allowed) | {100 * res['labels']['consistent']:.1f}% |",
-          f"| Tie verdicts | {100 * res['labels']['tie_rate']:.1f}% |",
-          f"| Verdict written before the explanation | {100 * res['labels']['verdict_first']:.1f}% |", "",
-          "| Model pair | Flip rate | FPP |", "|---|---|---|"]
+def summary(res: dict, lang: str) -> str:
+    L = [f"# Results ({lang})", "",
+         f"Pairs: {res['pairs_valid']} valid of {res['pairs_total']} "
+         f"(format errors {100 * res['format_error_rate']:.1f}%). Intervals: 95%, bootstrap over questions.", "",
+         "## RQ1 How often does the judge flip?", "",
+         "| Measure | Value |", "|---|---|",
+         f"| Flip rate | {fmt(res['flip_rate'])} |",
+         f"| Flip rate, pairs with no tie verdict | {fmt(res['flip_rate_no_tie'])} |",
+         f"| Slot A wins both runs | {fmt(res['first_slot_wins_both'])} |",
+         f"| Slot B wins both runs | {fmt(res['second_slot_wins_both'])} |",
+         f"| First-Position Preference | {fmt(res['fpp'], pct=False)} |",
+         f"| Verdict labels consistent (ties allowed) | {100 * res['labels']['consistent']:.1f}% |",
+         f"| Tie verdicts | {100 * res['labels']['tie_rate']:.1f}% |",
+         f"| Verdict written before the explanation | {100 * res['labels']['verdict_first']:.1f}% |", "",
+         "| Model pair | Flip rate | FPP |", "|---|---|---|"]
     for k, v in res["by_pair"].items():
         L.append(f"| {k} | {fmt(v['flip_rate'])} | {fmt(v['fpp'], pct=False)} |")
     if res.get("flip_by_human_gap"):
         L += ["", "## RQ2 Flips by human score gap", "", "| \\|gap\\| | Pairs | Flip rate |", "|---|---|---|"]
         for b in res["flip_by_human_gap"]:
-            L.append(f"| {b['gap']} | {b['n']} | {fmt(b)} |")
+           L.append(f"| {b['gap']} | {b['n']} | {fmt(b)} |")
     m = res["margin"]
     L += ["", "## RQ3 Confidence margin", "", "| | Mean margin |", "|---|---|",
-          f"| Consistent pairs | {fmt(m['consistent'], pct=False)} |",
-          f"| Flipped pairs | {fmt(m['flipped'], pct=False)} |",
-          f"| Difference | {fmt(m['difference'], pct=False)} |",
-          f"| AUC (margin predicts consistency) | {m['auc_consistent']:.3f} |", "",
-          "| Margin quartile | Flip rate |", "|---|---|"]
+         f"| Consistent pairs | {fmt(m['consistent'], pct=False)} |",
+         f"| Flipped pairs | {fmt(m['flipped'], pct=False)} |",
+         f"| Difference | {fmt(m['difference'], pct=False)} |",
+         f"| AUC (margin predicts consistency) | {m['auc_consistent']:.3f} |", "",
+         "| Margin quartile | Flip rate |", "|---|---|"]
     for i, q in enumerate(res["flip_by_margin_quartile"], 1):
         L.append(f"| Q{i} ({q['range'][0]:.2f}–{q['range'][1]:.2f}) | {fmt(q)} |")
     if res.get("agreement"):
         a = res["agreement"]
         L += ["", "## RQ4 Agreement with human annotators (pairs with a human winner)", "",
-              "| Method | Agreement |", "|---|---|",
-              f"| One order (mean of both single runs) | {fmt(a['single_order_mean'])} |",
-              f"| Consistent pairs only | {fmt(a['consistent_only'])} (coverage {fmt(a['consistent_coverage'])}) |",
-              f"| BPC (average both orders) | {fmt(a['bpc'])} |",
-              f"| Baseline: word-overlap F1 vs gold | {fmt(a['f1_baseline'])} |"]
+             "| Method | Agreement |", "|---|---|",
+             f"| One order (mean of both single runs) | {fmt(a['single_order_mean'])} |",
+             f"| Consistent pairs only | {fmt(a['consistent_only'])} (coverage {fmt(a['consistent_coverage'])}) |",
+             f"| BPC (average both orders) | {fmt(a['bpc'])} |",
+             f"| Baseline: word-overlap F1 vs gold | {fmt(a['f1_baseline'])} |"]
         if "cosine_baseline" in a:
-            L.append(f"| Baseline: embedding cosine vs gold | {fmt(a['cosine_baseline'])} |")
+           L.append(f"| Baseline: embedding cosine vs gold | {fmt(a['cosine_baseline'])} |")
     L += ["", "## Ranking", "", "| Model | Human mean (1–5) | BPC win rate |", "|---|---|---|"]
     for k, v in res["ranking"].items():
         hm = f"{v['human_mean']:.2f}" if v["human_mean"] is not None else "–"
         L.append(f"| {k} | {hm} | {100 * v['bpc_win_rate']:.1f}% |")
     ln = res["length"]
     L += ["", "## Length", "",
-          f"- BPC picks the longer answer: {fmt(ln['bpc_prefers_longer'])}",
-          f"- Flip rate, length gap above median: {fmt(ln['flip_rate_len_gap_above_median'])}; "
-          f"at or below: {fmt(ln['flip_rate_len_gap_at_or_below_median'])}"]
+         f"- BPC picks the longer answer: {fmt(ln['bpc_prefers_longer'])}",
+         f"- Flip rate, length gap above median: {fmt(ln['flip_rate_len_gap_above_median'])}; "
+         f"at or below: {fmt(ln['flip_rate_len_gap_at_or_below_median'])}"]
     an = res["annotators"]
     if an["kappa"]:
         L += ["", "## Annotator agreement", "", "| Pair | n | Cohen's κ | Quadratic κ |", "|---|---|---|---|"]
         for k, v in an["kappa"].items():
-            L.append(f"| {k[0]}+{k[1]} | {v['n']} | {v['kappa']:.3f} | {v['kappa_quadratic']:.3f} |")
+           L.append(f"| {k[0]}+{k[1]} | {v['n']} | {v['kappa']:.3f} | {v['kappa_quadratic']:.3f} |")
         L += ["", f"Krippendorff's α: ordinal {an['alpha_ordinal']:.3f}, interval {an['alpha_interval']:.3f}"]
     return "\n".join(L) + "\n"
 
@@ -534,13 +531,10 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--lang", default="vi")
     parser.add_argument("--data-dir", type=Path, default=DATA)
-    parser.add_argument("--scores-dir", type=Path, help="default: the data dir (human sheets)")
-    parser.add_argument("--out-dir", type=Path, help="default: results/, or results/trial/ for non-human scores")
+    parser.add_argument("--out-dir", type=Path, default=HERE / "results")
     parser.add_argument("--no-embeddings", action="store_true", help="skip the cosine baseline")
     args = parser.parse_args()
-    scores_dir = args.scores_dir or args.data_dir
-    source = "human" if scores_dir.resolve() == args.data_dir.resolve() else str(scores_dir)
-    out_dir = args.out_dir or (HERE / "results" / ("" if source == "human" else "trial"))
+    out_dir = args.out_dir
 
     judgments = read_jsonl(args.data_dir / f"judgments_{args.lang}.jsonl")
     if not judgments:
@@ -551,17 +545,16 @@ def main() -> None:
     for m in MODELS:
         for r in read_jsonl(args.data_dir / f"answers_{m}.jsonl"):
             answers[(r["qid"], m)] = r.get("answer", "")
-    per_answer, by_annotator, gold_wrong = load_scores(scores_dir, args.data_dir / "key.csv")
+    per_answer, by_annotator, gold_wrong = load_scores(args.data_dir, args.data_dir / "key.csv")
 
     rows = pair_table(judgments, per_answer, answers, gold, gold_wrong)
     has_cos = False if args.no_embeddings else embedding_cosines(rows, answers, gold)
     res = compute(rows, by_annotator, has_cos)
-    res["human_scores"] = source
     res["gold_wrong_questions"] = len(gold_wrong)
 
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / f"metrics_{args.lang}.json").write_text(json.dumps(res, indent=2, ensure_ascii=False))
-    (out_dir / f"summary_{args.lang}.md").write_text(summary(res, args.lang, source), encoding="utf-8")
+    (out_dir / f"summary_{args.lang}.md").write_text(summary(res, args.lang), encoding="utf-8")
     figures(res, out_dir / "figures")
     # Pair-level rows for the demo and qualitative analysis; names models, so git-ignored.
     with (args.data_dir / f"pairs_{args.lang}.jsonl").open("w", encoding="utf-8") as f:

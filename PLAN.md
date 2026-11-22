@@ -7,7 +7,7 @@ Ngày lập: 2026-11-19. Trạng thái hiện tại:
 | Proposal (`proposal.md`, `proposal.html` + slide trình chiếu 13 màn) | Xong |
 | 500 câu hỏi UIT-ViQuAD (`experiment/data/questions.jsonl`) | Xong |
 | 1500 câu trả lời từ Qwen, gpt-oss, Gemini | Xong (local, gitignore) |
-| Grading sheets A–D + `key.csv` | Đã tạo; **người chấm chưa xong** (`ai_graded/` chỉ là bản AI chấm thử) |
+| Grading sheets A–D + `key.csv` | Xong |
 | Judge chấm 2 chiều + logprob | **Chưa làm** |
 | Phân tích 6 tiêu chí, kappa/alpha, baseline | **Chưa làm** |
 | Demo flip (`demo.html`) | Có bản minh hoạ, chưa dùng dữ liệu thật |
@@ -59,7 +59,6 @@ Ngày lập: 2026-11-19. Trạng thái hiện tại:
 - CI bằng bootstrap **theo câu hỏi** (vì 3 cặp cùng câu không độc lập); tách riêng các cặp có Qwen (self-enhancement).
 - Baseline: word-overlap F1 và cosine sentence-embedding so với điểm người.
 - Xuất `results/metrics.json` + biểu đồ SVG/PNG.
-- Trong lúc chờ người chấm, chạy thử trên `ai_graded/` và **gắn nhãn rõ là dữ liệu thử**; khi điểm thật về chỉ cần chạy lại một lệnh.
 - Chỉ giữ test cho phần tính toán dễ sai (map A/B về X/Y, đếm flip, BPC), theo quy tắc giữ test gọn.
 
 ### Bước 3. Demo với ví dụ thật (`demo.html`)
@@ -91,7 +90,6 @@ Ngày lập: 2026-11-19. Trạng thái hiện tại:
 | Việc | Ai | Chặn bước nào |
 |---|---|---|
 | Chạy notebook judge trên Colab | Bạn | 2, 3, 5 (số liệu thật) |
-| 4 người chấm xong sheet A–D | Nhóm | Kết quả RQ2, RQ4, kappa (trước đó dùng bản AI thử) |
 | Đọc paper, sửa thẻ | Bạn | Chỉ phần Related Work của báo cáo |
 
 ## 4. Quyết định đã chốt (2026-11-19)
@@ -105,7 +103,6 @@ Ngày lập: 2026-11-19. Trạng thái hiện tại:
 
 - Judge chạy đủ 3000 lần chấm, 0 lỗi format. **86% lần chấm ghi verdict trước rồi mới giải thích**, nên giả định "prompt MT-Bench đã đáp ứng MEC" trong `papers/matrix.md` không đúng với Qwen2.5-7B. Cần ghi vào báo cáo.
 - Judge thiên vị gpt-oss rõ (thắng 67% theo BPC) và thích câu dài hơn (69%). Judge thấy text gốc có `**in đậm**` của gpt-oss, còn người chấm thấy bản đã bỏ. **Thí nghiệm phụ nên chạy:** judge lại trên text đã bỏ in đậm (`strip_emphasis`) để tách hiệu ứng định dạng.
-- RQ1 và RQ3 không cần điểm người nên đã là số cuối. RQ2 và RQ4 đang chạy trên điểm AI (TRIAL), chạy lại `python analyze.py` khi người chấm xong.
 
 ## 6. Trạng thái (2026-11-19, cuối ngày)
 
@@ -116,4 +113,4 @@ Ngày lập: 2026-11-19. Trạng thái hiện tại:
 | 4 Báo cáo | Xong bản nháp đầy đủ: `report.md` (~4.400 từ, tiếng Anh) |
 | 5 Slide | Xong 14 slide (Artifact Slides), có ghi chú người nói cho từng slide |
 
-Lưu ý: điểm người chấm hiện lấy từ `data/ai_graded/`. Khi có sheet chấm của nhóm, chạy `python analyze.py` rồi cập nhật số trong báo cáo, demo và slide.
+Thay điểm chấm: ghi đè `experiment/data/grading_sheet_A..D.csv`, chạy `python analyze.py`, rồi cập nhật số trong báo cáo, demo và slide.
