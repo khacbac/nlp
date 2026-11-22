@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thứ tự có quan trọng không?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="deck.css">
+</head>
+<body>
+<div id="stage">
+
+<!-- ============================== MỞ ĐẦU ============================== -->
+
+<section class="slide dark nofoot" id="cover" data-part="Mở đầu">
+  <p class="eyebrow">NLP501.22 · Seminar chủ đề 18 · Nhóm ABNQ</p>
+  <div class="row grow" style="align-items:center;gap:96px">
+    <div class="col" style="flex:1.45">
+      <h1>Thứ tự có quan trọng không?</h1>
+      <p class="lead" style="margin-top:36px">LLM-as-a-Judge, thiên vị vị trí, và một nghiên cứu trên 1.500 cặp câu trả lời tiếng Việt</p>
+    </div>
+    <div class="col rise" style="flex:1;--i:2">
+      <p class="big" style="color:var(--flip-light)">48,7%</p>
+      <p class="lead" style="margin-top:16px">số cặp mà AI chấm đổi ý chỉ vì hai câu trả lời đổi chỗ</p>
+    </div>
+  </div>
+  <p class="small">Hồ Khắc Bắc · Đặng Thành Nhân · Nguyễn Việt Anh · Lê Trọng Quang — Giảng viên: TS. Nguyễn Sĩ Thìn</p>
+  <aside class="notes">Em chào thầy và các bạn. Nhóm ABNQ trình bày chủ đề 18: đánh giá mô hình ngôn ngữ lớn bằng LLM-as-a-Judge. Ngoài phần tổng quan tài liệu, nhóm có làm một thí nghiệm trên tiếng Việt. Câu hỏi của nhóm là: thứ tự hai câu trả lời có ảnh hưởng đến kết quả chấm không. Kết quả cho thấy có: ở gần một nửa số cặp, AI chấm đổi lựa chọn khi chỉ đổi chỗ hai câu trả lời.</aside>
+</section>
+
+<section class="slide" id="toc">
+  <p class="eyebrow">Mục lục</p>
+  <h2 style="margin-bottom:32px">Nội dung trình bày</h2>
+  <div class="col">
+    <div class="ag rise" style="--i:0"><p class="ag-n">01</p><div class="col"><h3>Bối cảnh: đánh giá LLM</h3><p class="body">Vì sao cần LLM-as-a-Judge, các kiểu chấm, bản đồ thiên vị</p></div><p class="ag-pg"><span data-pageof="part1"></span></p></div>
+    <div class="ag rise" style="--i:1"><p class="ag-n">02</p><div class="col"><h3>Đọc paper và survey</h3><p class="body">Ba paper lõi, hai survey, nhóm đúc kết được gì</p></div><p class="ag-pg"><span data-pageof="part2"></span></p></div>
+    <div class="ag rise" style="--i:2"><p class="ag-n">03</p><div class="col"><h3>Thí nghiệm của nhóm</h3><p class="body">Bốn câu hỏi nghiên cứu, dữ liệu, người chấm, độ đo</p></div><p class="ag-pg"><span data-pageof="part3"></span></p></div>
+    <div class="ag rise" style="--i:3"><p class="ag-n">04</p><div class="col"><h3>Kết quả</h3><p class="body">RQ1–RQ4 và so sánh với các paper tiếng Anh</p></div><p class="ag-pg"><span data-pageof="part4"></span></p></div>
+    <div class="ag rise" style="--i:4"><p class="ag-n">05</p><div class="col"><h3>Ứng dụng và demo</h3><p class="body">Hộp thư thuế hộ kinh doanh: biến kết quả thành quy tắc</p></div><p class="ag-pg"><span data-pageof="part5"></span></p></div>
+    <div class="ag rise" style="--i:5"><p class="ag-n">06</p><div class="col"><h3>Kết luận</h3><p class="body">Hạn chế, hướng tiếp theo, bài học mang về</p></div><p class="ag-pg"><span data-pageof="part6"></span></p></div>
+  </div>
+  <aside class="notes">Bài có sáu phần. Phần một và hai là phần seminar: bối cảnh đánh giá LLM và những gì nhóm đọc được từ paper, survey. Phần ba, bốn là thí nghiệm của nhóm. Phần năm là ứng dụng thật kèm demo. Cuối cùng là hạn chế và bài học.</aside>
+</section>
+
+<section class="slide" id="summary">
+  <p class="eyebrow">Tóm tắt</p>
+  <h2>Kết quả chính</h2>
+  <div class="g2 grow" style="gap:28px">
+    <div class="card rise" style="--i:0"><p class="num pink">48,7%</p><h3>Judge đổi ý khi chỉ đổi thứ tự</h3><p class="body">Qwen2.5-7B chấm 1.500 cặp tiếng Việt. Câu đứng trước thắng cả hai lượt ở 42,5% số cặp, câu đứng sau chỉ 6,2%.</p></div>
+    <div class="card rise" style="--i:1"><p class="num">AUC 0,56</p><h3>Độ tự tin không giúp phát hiện flip</h3><p class="body">Độ tự tin ở cặp nhất quán và cặp bị flip gần như bằng nhau, nên không dùng được để lọc kết quả chấm.</p></div>
+    <div class="card rise" style="--i:2"><p class="num teal">&lt; 50%</p><h3>Chấm hai chiều không giúp khớp người chấm</h3><p class="body">Chấm hai chiều (BPC) khớp người chấm 34,8%, trong khi so F1 với đáp án gốc đạt 68,9%.</p></div>
+    <div class="card rise" style="--i:3"><p class="num amber">0 / 12</p><h3>Ứng dụng: đối chiếu với văn bản luật</h3><p class="body">Trong hộp thư thuế, judge chấm cả hai thứ tự và bản nháp được đối chiếu với văn bản luật. Với gpt-oss-120b, không bản sai nào được gửi (0/12 tin bẫy).</p></div>
+  </div>
+  <aside class="notes">Em tóm tắt trước kết quả chính. Judge 7B đổi lựa chọn ở 48,7% số cặp, và gần như luôn nghiêng về câu đứng trước. Độ tự tin của judge không cho biết trước khi nào nó flip. Chấm hai chiều giúp judge nhất quán hơn nhưng không giúp khớp người chấm; trong khi so F1 với đáp án gốc lại khớp người hơn nhiều. Cuối cùng, nhóm áp dụng kết quả này vào một hộp thư tư vấn thuế, nơi đáp án chuẩn là văn bản luật.</aside>
+</section>
+
+<!-- ============================== PHẦN 1: BỐI CẢNH ============================== -->
+
+<section class="slide dark divider" id="part1" data-part="01 · Bối cảnh">
+  <p class="eyebrow">Phần 01 / 06</p>
+  <div class="grow"></div>
+  <p class="part-n rise">01</p>
+  <h1 class="rise" style="--i:1">Bối cảnh: đánh giá LLM</h1>
+  <p class="lead rise" style="--i:2;margin-top:24px">Vì sao dùng LLM để chấm, và các thiên vị đã biết</p>
+  <div class="grow"></div>
+  <div class="prog"><div class="pp on"><p>01</p><p>Bối cảnh</p></div><div class="pp"><p>02</p><p>Paper và survey</p></div><div class="pp"><p>03</p><p>Thí nghiệm</p></div><div class="pp"><p>04</p><p>Kết quả</p></div><div class="pp"><p>05</p><p>Ứng dụng</p></div><div class="pp"><p>06</p><p>Kết luận</p></div></div>
+  <aside class="notes">Phần một: bối cảnh.</aside>
+</section>
+
+<section class="slide" id="why-judge">
+  <p class="eyebrow">Đánh giá LLM</p>
+  <h2>Các cách đánh giá truyền thống và giới hạn</h2>
+  <div class="g3">
+    <div class="card rise" style="--i:0"><p class="tag teal">Benchmark trắc nghiệm</p><h3>MMLU, ARC, HELM</h3><p class="body">Chấm tự động, rẻ. Nhưng chỉ đo kiến thức dạng chọn đáp án, và đề công khai dễ <b>rò rỉ vào dữ liệu huấn luyện</b>.</p></div>
+    <div class="card rise" style="--i:1"><p class="tag teal">Metric trùng từ</p><h3>BLEU, ROUGE, F1</h3><p class="body">Cần đáp án mẫu. Một câu đúng nhưng diễn đạt khác bị chấm thấp; không đo được mức hữu ích.</p></div>
+    <div class="card rise" style="--i:2"><p class="tag teal">Người chấm</p><h3>Đánh giá thủ công</h3><p class="body">Đánh giá được chất lượng thật, nhưng chậm và tốn công. Nhóm ước tính khoảng 12 giờ mỗi người cho 750 câu trả lời.</p></div>
+  </div>
+  <div class="grow"></div>
+  <div class="card cx rise" style="--i:3">
+    <p class="lead" style="color:var(--ink)">LLM-as-a-Judge dùng một LLM đọc câu hỏi và câu trả lời rồi chấm thay người. Cách này phổ biến từ MT-Bench và Chatbot Arena (Zheng et al., 2023).</p>
+  </div>
+  <aside class="notes">Đánh giá LLM có ba cách truyền thống. Benchmark trắc nghiệm như MMLU chấm tự động được, nhưng chỉ đo kiến thức dạng chọn đáp án, và đề công khai có thể đã lọt vào dữ liệu huấn luyện, đó là câu hỏi mở của chủ đề: rò rỉ dữ liệu. Metric trùng từ như BLEU, ROUGE cần đáp án mẫu và phạt những câu đúng nhưng diễn đạt khác. Người chấm là chuẩn vàng nhưng đắt: nhóm mình mất khoảng 12 giờ mỗi người. Vì vậy cộng đồng chuyển sang LLM-as-a-Judge, được phổ biến bởi MT-Bench và Chatbot Arena.</aside>
+</section>
+
+<section class="slide" id="judge-types">
+  <p class="eyebrow">LLM-as-a-Judge là gì</p>
+  <h2>Các kiểu chấm của LLM-as-a-Judge</h2>
+  <div class="g3">
+    <div class="card rise" style="--i:0"><p class="tag pink">Pairwise</p><h3>Chọn câu tốt hơn</h3><p class="body">Đọc câu hỏi và hai câu trả lời A, B; trả lời A, B hoặc hoà. Gần cách người so sánh nhất. Thiên vị vị trí xuất hiện ở kiểu này.</p></div>
+    <div class="card rise" style="--i:1"><p class="tag">Single-answer</p><h3>Chấm điểm từng câu</h3><p class="body">Cho điểm 1–10 từng câu riêng. Mở rộng tốt hơn, nhưng thang điểm dễ trôi giữa các lần chấm.</p></div>
+    <div class="card rise" style="--i:2"><p class="tag">Reference-guided</p><h3>Có đáp án mẫu</h3><p class="body">Đưa thêm đáp án mẫu cho judge. Zheng et al. dùng cho câu toán: lỗi chấm giảm từ 14/20 xuống 3/20.</p></div>
+  </div>
+  <div class="grow"></div>
+  <div class="row" style="gap:28px">
+    <div class="card grow rise" style="--i:3"><p class="small"><b>Gu et al. (2024)</b> định nghĩa: E ← P<sub>LLM</sub>(x ⊕ C). Đầu vào x, ngữ cảnh/prompt C, đầu ra E là điểm, lựa chọn, nhãn hoặc câu.</p></div>
+    <div class="card grow rise" style="--i:4"><p class="small"><b>Li et al. (2024)</b> phân loại theo đầu vào (pointwise, pairwise, listwise) và đầu ra (điểm, xếp hạng, lựa chọn).</p></div>
+  </div>
+  <p class="source">Zheng et al. 2023, Sec. 3.1 và Table 4; Gu et al. 2024 (v6), §2; Li et al. 2024 (v7), §2.</p>
+  <aside class="notes">LLM-as-a-Judge có ba kiểu chính. Pairwise: đưa hai câu, hỏi câu nào tốt hơn, đây là kiểu nhóm nghiên cứu và cũng là kiểu dính thiên vị vị trí. Single-answer: chấm điểm từng câu. Reference-guided: đưa kèm đáp án mẫu; trên câu toán, cách này giảm lỗi chấm từ 14 xuống 3 trên 20 câu. Hai survey nhóm đọc đều đưa ra khung chung: Gu định nghĩa judge là một hàm của đầu vào và prompt; Li phân loại theo dạng đầu vào và đầu ra.</aside>
+</section>
+
+<section class="slide foot2" id="bias-map">
+  <p class="eyebrow">Thiên vị của judge</p>
+  <h2>Các thiên vị đã được ghi nhận</h2>
+  <table class="t">
+    <tr><th style="width:24%">Thiên vị</th><th style="width:44%">Biểu hiện</th><th>Bằng chứng</th></tr>
+    <tr class="hl"><td>Vị trí (position)</td><td>Chọn theo chỗ đứng, không theo nội dung</td><td>GPT-4 giữ nguyên lựa chọn sau khi đổi chỗ ở 65% số cặp (Zheng 2023)</td></tr>
+    <tr><td>Độ dài (verbosity)</td><td>Thích câu dài hơn dù không tốt hơn</td><td>Câu trả lời lặp ý lừa được Claude-v1, GPT-3.5 ở 91,3% (Zheng 2023)</td></tr>
+    <tr><td>Tự đề cao (self-enhancement)</td><td>Ưu ái câu do chính mình hoặc cùng họ sinh ra</td><td>Zheng 2023; Li 2024 gọi là egocentric bias</td></tr>
+    <tr><td>Hình thức, thẩm quyền</td><td>Bị kéo bởi định dạng, trích dẫn, giọng tự tin</td><td>Gu 2024 §4.2; Li 2024 §7.1</td></tr>
+    <tr><td>Tấn công prompt</td><td>Câu cài lệnh hoặc cụm “wait, let me think…” làm đổi kết quả chấm</td><td>Gu 2024 §4.3; Wang 2025 (superficial reflection)</td></tr>
+  </table>
+  <p class="source">Zheng et al. 2023, Table 2–3; Gu et al. 2024, §4.2–4.3; Li et al. 2024, §7.1; Wang et al. 2025.</p>
+  <aside class="notes">Judge là một mô hình nên cũng có thiên vị. Thiên vị vị trí là cái nhóm tập trung: chọn theo chỗ đứng. Ngay GPT-4 cũng chỉ giữ nguyên lựa chọn ở 65% số cặp khi đổi chỗ. Thiên vị độ dài: một câu trả lời lặp ý lừa được Claude-v1 và GPT-3.5 ở 91%. Tự đề cao: ưu ái câu của chính mình. Ngoài ra còn thiên vị hình thức, và các kiểu tấn công prompt. Các survey mới xếp chúng thành nhóm thiên vị chung và nhóm riêng cho việc chấm.</aside>
+</section>
+
+<section class="slide" id="flip-def">
+  <p class="eyebrow">Thiên vị vị trí</p>
+  <h2>Cùng hai câu trả lời, chỉ đổi thứ tự</h2>
+  <div class="col" style="gap:48px;margin-top:24px">
+    <div class="step rise" style="--i:1">
+      <p class="body" style="width:190px;font-weight:600;color:var(--ink)">Lượt 1</p>
+      <p class="slot sx">A = câu X</p><p class="slot sy">B = câu Y</p>
+      <p class="body" style="width:70px;text-align:center">→</p>
+      <p class="body" style="color:var(--ink)">Judge chọn <b>“A”</b>, tức là <b class="teal">X</b></p>
+    </div>
+    <div class="step rise" style="--i:3">
+      <p class="body" style="width:190px;font-weight:600;color:var(--ink)">Lượt 2</p>
+      <p class="slot sy">A = câu Y</p><p class="slot sx">B = câu X</p>
+      <p class="body" style="width:70px;text-align:center">→</p>
+      <p class="body" style="color:var(--ink)">Judge chọn <b>“A”</b>, tức là <b class="amber">Y</b></p>
+    </div>
+  </div>
+  <div class="grow"></div>
+  <div class="card cf rise" style="--i:5">
+    <p class="lead" style="color:var(--ink)"><b class="pink">Flip:</b> hai lượt chọn hai câu khác nhau dù nội dung không đổi một chữ. Wang et al. (2023) gọi tỉ lệ này là <i>Conflict Rate</i>.</p>
+  </div>
+  <aside class="notes">Định nghĩa cụ thể. Thử hình dung cô giáo chấm hai bài văn: hôm nay đọc bài An trước và chọn An, hôm sau đọc bài Bình trước và chọn Bình. Bài không đổi, người thắng đổi. Với LLM cũng vậy: mỗi cặp chấm hai lượt, lượt hai đổi chỗ. Nếu cả hai lượt judge đều nói “A”, nó đã chọn X rồi lại chọn Y. Đó là một flip. Tỉ lệ flip chính là Conflict Rate trong paper của Wang.</aside>
+</section>
+
+<!-- ============================== PHẦN 2: PAPER ============================== -->
+
+<section class="slide dark divider" id="part2" data-part="02 · Paper và survey">
+  <p class="eyebrow">Phần 02 / 06</p>
+  <div class="grow"></div>
+  <p class="part-n rise">02</p>
+  <h1 class="rise" style="--i:1">Đọc paper và survey</h1>
+  <p class="lead rise" style="--i:2;margin-top:24px">Zheng 2023, Wang 2023, Shi 2024 và hai survey</p>
+  <div class="grow"></div>
+  <div class="prog"><div class="pp done"><p>01</p><p>Bối cảnh</p></div><div class="pp on"><p>02</p><p>Paper và survey</p></div><div class="pp"><p>03</p><p>Thí nghiệm</p></div><div class="pp"><p>04</p><p>Kết quả</p></div><div class="pp"><p>05</p><p>Ứng dụng</p></div><div class="pp"><p>06</p><p>Kết luận</p></div></div>
+  <aside class="notes">Phần hai: nhóm đọc gì và rút ra gì. Ba paper lõi là Zheng 2023, Wang 2023, Shi 2024; hai survey là Gu 2024 và Li 2024. Mọi con số trên slide đã được đối chiếu với bản PDF.</aside>
+</section>
+
+<section class="slide" id="paper-zheng">
+  <div class="paper-head"><h2>Zheng et al. 2023 · MT-Bench</h2><span class="venue">NeurIPS 2023 D&amp;B</span></div>
+  <div class="quad">
+    <div class="card"><h3 class="teal">Đóng góp</h3><ul class="list tight"><li>MT-Bench: 80 câu hỏi nhiều lượt, 8 loại; Chatbot Arena</li><li>Ba kiểu judge, prompt pairwise “[[A]]/[[B]]/[[C]]”</li><li>Bốn hạn chế: vị trí, độ dài, tự đề cao, yếu toán</li></ul></div>
+    <div class="card"><h3 class="pink">Con số</h3><div class="kv">
+      <p class="k">65,0%</p><p class="v">GPT-4 nhất quán khi đổi chỗ (Claude-v1 23,8%) – cặp gần như giống nhau, T2</p>
+      <p class="k">36–42%</p><p class="v">nhất quán ở câu viết, nhân văn; 86% ở toán, code – T10</p>
+      <p class="k">98,8%</p><p class="v">khi hai mô hình chênh rõ – T11</p>
+      <p class="k">85%</p><p class="v">GPT-4 khớp người, cao hơn người–người 81% – T5</p></div></div>
+    <div class="card cx"><h3 class="teal">Nhóm lấy gì</h3><p class="body">Prompt pair-v2 nguyên văn; cách báo consistency, lệch đầu, lệch sau, lỗi format; “swap bảo thủ” cho RQ4.</p></div>
+    <div class="card"><h3>Hạn chế</h3><p class="body">Table 2 dùng cặp gần như trùng nhau (cực đoan). Chỉ tiếng Anh, judge đóng. Nguyên nhân chỉ là phỏng đoán: dữ liệu hoặc kiến trúc trái→phải.</p></div>
+  </div>
+  <aside class="notes">Paper đầu tiên là Zheng 2023, paper khai sinh MT-Bench. Họ chỉ ra bốn hạn chế của judge. Về vị trí: trên các cặp gần như giống nhau, GPT-4 chỉ nhất quán 65%, Claude-v1 chỉ 23,8%. Câu hỏi mở như viết lách bị nặng hơn nhiều so với toán. Khi hai mô hình chênh rõ, GPT-4 gần như luôn nhất quán. Và nếu bỏ qua bias, GPT-4 khớp người chấm còn cao hơn người khớp nhau. Nhóm lấy nguyên prompt của họ. Hạn chế: thí nghiệm vị trí dùng cặp cực đoan, chỉ tiếng Anh, judge đóng.</aside>
+</section>
+
+<section class="slide" id="paper-wang">
+  <div class="paper-head"><h2>Wang et al. 2023 · LLMs are not Fair Evaluators</h2><span class="venue">arXiv:2305.17926</span></div>
+  <div class="quad">
+    <div class="card"><h3 class="teal">Đóng góp</h3><ul class="list tight"><li>Định nghĩa Conflict Rate (Eq. 1)</li><li>Ba cách hiệu chỉnh: <b>MEC</b> (giải thích trước khi chấm), <b>BPC</b> (lấy trung bình hai thứ tự), <b>HITLC</b> (chuyển ca khó cho người)</li></ul></div>
+    <div class="card"><h3 class="pink">Con số</h3><div class="kv">
+      <p class="k">66/80</p><p class="v">câu Vicuna-13B “thắng” ChatGPT chỉ nhờ đổi thứ tự</p>
+      <p class="k">46,3%</p><p class="v">conflict của GPT-4 ở cặp sát nút; 5,0% ở cặp chênh rõ – T2</p>
+      <p class="k">Ngược</p><p class="v">GPT-4 ưu câu đầu, ChatGPT ưu câu sau</p>
+      <p class="k">0,24→0,37</p><p class="v">kappa GPT-4 với người sau MEC+BPC; người–người 0,54 – T4</p></div></div>
+    <div class="card cx"><h3 class="teal">Nhóm lấy gì</h3><p class="body">Flip rate = Conflict Rate. BPC cho RQ4, nhưng áp lên <b>xác suất token</b> thay vì điểm 1–10.</p></div>
+    <div class="card"><h3>Hạn chế</h3><p class="body">80 câu, 3 tác giả tự chấm. Độ chênh chất lượng đo bằng chính LLM. Judge đóng nên phải lấy mẫu nhiều lần mới đo được độ lưỡng lự.</p></div>
+  </div>
+  <aside class="notes">Paper thứ hai là Wang 2023. Khi ChatGPT làm giám khảo, chỉ cần đổi thứ tự là Vicuna-13B thắng ChatGPT ở 66 trên 80 câu. Họ định nghĩa Conflict Rate, chính là flip rate của nhóm. GPT-4 thích câu đầu, còn ChatGPT thích câu sau, nên không thể hiệu chỉnh theo một hướng cố định. Họ đề xuất ba cách hiệu chỉnh; MEC cộng BPC nâng kappa với người từ 0,24 lên 0,37. Nhóm dùng BPC cho RQ4. Hạn chế: quy mô nhỏ, và độ chênh chất lượng lại đo bằng chính LLM.</aside>
+</section>
+
+<section class="slide" id="paper-shi">
+  <div class="paper-head"><h2>Shi et al. 2024 · Judging the Judges</h2><span class="venue">arXiv:2406.07791 v9</span></div>
+  <div class="quad">
+    <div class="card"><h3 class="teal">Đóng góp</h3><ul class="list tight"><li>15 judge, MT-Bench + DevBench, hơn 150 nghìn lượt chấm</li><li>Ba độ đo: Repetition Stability, Position Consistency, Preference Fairness</li><li>Hồi quy các yếu tố cấp judge, ứng viên, task</li></ul></div>
+    <div class="card"><h3 class="pink">Phát hiện</h3><div class="kv">
+      <p class="k">RS&gt;0,85</p><p class="v">judge mạnh lặp lại ổn định: thiên vị không phải ngẫu nhiên</p>
+      <p class="k">Độ chênh</p><p class="v">“strongly affected” bởi độ chênh chất lượng; độ dài prompt ảnh hưởng yếu</p>
+      <p class="k">Hướng</p><p class="v">GPT-4 ưu câu sau ở MT-Bench, câu đầu ở DevBench</p>
+      <p class="k">PC≠PF</p><p class="v">nhất quán cao vẫn có thể không công bằng</p></div></div>
+    <div class="card cx"><h3 class="teal">Nhóm lấy gì</h3><p class="body">Chạy greedy để RS = 1; báo cả flip rate <b>và</b> hướng lệch (FPP); đo flip theo độ chênh cho RQ2.</p></div>
+    <div class="card"><h3>Hạn chế</h3><p class="body">Không có người chấm: độ chênh tính từ chính các judge. Chỉ tiếng Anh, không dùng xác suất token, judge mở chỉ có Llama.</p></div>
+  </div>
+  <aside class="notes">Paper thứ ba, Shi 2024, là nghiên cứu hệ thống nhất về riêng thiên vị vị trí, với 15 judge. Judge mạnh lặp lại rất ổn định, nên thiên vị là có hệ thống chứ không phải nhiễu. Thiên vị phụ thuộc mạnh vào độ chênh chất lượng giữa hai câu. Hướng lệch cũng đổi theo task, ngay cả với cùng một judge, và nhất quán cao chưa chắc đã công bằng. Hạn chế lớn: không có người chấm, độ chênh được tính từ chính kết quả của các judge, nên lập luận hơi vòng.</aside>
+</section>
+
+<section class="slide" id="surveys">
+  <p class="eyebrow">Hai survey và bằng chứng mới</p>
+  <h2>Survey và các nghiên cứu gần đây</h2>
+  <div class="g2" style="gap:28px">
+    <div class="card"><p class="tag teal">Gu et al. 2024 · A Survey on LLM-as-a-Judge</p><ul class="list tight"><li>Giảm thiên vị ở ba tầng: prompt (đổi chỗ, CoT), mô hình (fine-tune), đầu ra (bỏ phiếu nhiều lần)</li><li>Tự đo: nhất quán vị trí GPT-4-turbo 80%, LLaMA3-8B chỉ 39%; khớp người 51–62% với mọi judge</li><li>Lời giải thích <b>làm giảm</b> nhất quán vị trí (68,8 → 49,0, GPT-3.5)</li></ul></div>
+    <div class="card"><p class="tag teal">Li et al. 2024 · From Generation to Judgment</p><ul class="list tight"><li>Khung “chấm gì, chấm thế nào, đánh giá judge thế nào”</li><li>Sáu chiến lược prompt; đổi chỗ, bất nhất thì tính hoà</li><li>Nguyên nhân gốc của thiên vị vẫn chưa rõ, cần nghiên cứu (§7.1)</li><li>Judge kém ở ngôn ngữ ít tài nguyên</li></ul></div>
+  </div>
+  <div class="g3" style="margin-top:28px;gap:24px">
+    <div class="card cf"><p class="num pink" style="font-size:52px">50,9%</p><p class="small">GPT-4o trên JudgeBench (đúng/sai khách quan); 50% là đoán mò – Tan 2025</p></div>
+    <div class="card cf"><p class="num pink" style="font-size:52px">câu sau</p><p class="small">Mô hình suy luận (DeepSeek-R1) ưu câu đứng sau – Wang 2025</p></div>
+    <div class="card cf"><p class="num pink" style="font-size:52px">κ ≈ 0,3</p><p class="small">Nhất quán giữa 25 ngôn ngữ; kém nhất ở ngôn ngữ ít tài nguyên – Fu &amp; Liu 2025</p></div>
+  </div>
+  <aside class="notes">Hai survey nhìn rộng hơn. Gu 2024 chia cách giảm thiên vị thành ba tầng, và tự đo: GPT-4-turbo nhất quán 80%, nhưng LLaMA3-8B, cỡ gần với judge của nhóm, chỉ 39%; khớp người của mọi judge chỉ 51 đến 62%. Theo Gu, bắt giải thích lại làm giảm nhất quán vị trí, trong khi Fu và Liu thấy giải thích giúp nhất quán giữa ngôn ngữ. Li 2024 thừa nhận nguyên nhân gốc vẫn chưa rõ. Ba bằng chứng mới ở hàng dưới: GPT-4o gần như đoán mò trên JudgeBench; mô hình suy luận lại ưu câu đứng sau; và judge kém nhất quán giữa các ngôn ngữ.</aside>
+</section>
+
+<section class="slide" id="matrix">
+  <p class="eyebrow">Tổng hợp</p>
+  <h2>So sánh các nghiên cứu</h2>
+  <table class="t">
+    <tr><th style="width:17%">Paper</th><th style="width:20%">Judge</th><th style="width:11%">Ngôn ngữ</th><th style="width:20%">Độ chênh đo bằng</th><th style="width:16%">Xác suất token</th><th>So với người chấm</th></tr>
+    <tr><td>Zheng 2023</td><td>GPT-4, GPT-3.5, Claude</td><td>EN</td><td>Cặp mô hình</td><td>Không</td><td>Có, 58 chuyên gia</td></tr>
+    <tr><td>Wang 2023</td><td>GPT-4, ChatGPT</td><td>EN</td><td>Điểm của chính LLM</td><td>Không</td><td>Có, 3 tác giả</td></tr>
+    <tr><td>Shi 2024</td><td>15 judge (3 mở)</td><td>EN</td><td>Win rate của judge</td><td>Không</td><td>Không</td></tr>
+    <tr><td>Fu &amp; Liu 2025</td><td>5 mô hình</td><td>25 ngôn ngữ</td><td>–</td><td>Không</td><td>Không</td></tr>
+    <tr class="hl"><td>Nhóm ABNQ</td><td>Qwen2.5-7B (mở)</td><td>VI</td><td>Điểm người chấm</td><td>Có</td><td>Có, 4 người, 2 người/câu</td></tr>
+  </table>
+  <div class="grow"></div>
+  <p class="body">Nhóm tìm ở arXiv, ACL Anthology, VLSP và chưa thấy nghiên cứu nào đo thiên vị vị trí trên câu trả lời tiếng Việt dài, đối chiếu với người chấm.</p>
+  <aside class="notes">Đặt các paper cạnh nhau sẽ thấy khoảng trống. Gần như mọi bằng chứng là tiếng Anh. Judge chủ yếu là API đóng nên không đọc được xác suất token. Độ chênh chất lượng thường đo bằng chính LLM. Nhóm lấp vào bốn ô đó: tiếng Việt, judge mở có xác suất token, độ chênh đo bằng người chấm, và có đáp án gốc. Nhóm đã tìm ở arXiv, ACL Anthology, VLSP và chưa thấy nghiên cứu tương tự.</aside>
+</section>
+
+<section class="slide" id="insights">
+  <p class="eyebrow">Đúc kết từ tài liệu</p>
+  <h2>Những điểm nhóm rút ra từ tài liệu</h2>
+  <div class="col" style="gap:20px">
+    <div class="card rise" style="--i:0;display:grid;grid-template-columns:70px 1fr;gap:24px;padding:20px 32px;align-items:center"><p class="num teal" style="font-size:44px;margin:0">1</p><p class="body">Thiên vị vị trí có ở mọi judge được khảo sát, nặng hơn ở judge yếu, câu hỏi mở và cặp sát nút.</p></div>
+    <div class="card rise" style="--i:1;display:grid;grid-template-columns:70px 1fr;gap:24px;padding:20px 32px;align-items:center"><p class="num teal" style="font-size:44px;margin:0">2</p><p class="body">Hướng lệch khác nhau giữa các judge: GPT-4 ưu câu đầu, ChatGPT và mô hình suy luận ưu câu sau. Vì vậy cần đo cho từng judge, không hiệu chỉnh cố định được.</p></div>
+    <div class="card rise" style="--i:2;display:grid;grid-template-columns:70px 1fr;gap:24px;padding:20px 32px;align-items:center"><p class="num teal" style="font-size:44px;margin:0">3</p><p class="body">Judge nhất quán khi đổi thứ tự chưa chắc công bằng (Shi) hay chấm đúng (JudgeBench: GPT-4o gần mức đoán mò).</p></div>
+    <div class="card rise" style="--i:3;display:grid;grid-template-columns:70px 1fr;gap:24px;padding:20px 32px;align-items:center"><p class="num teal" style="font-size:44px;margin:0">4</p><p class="body">Cách giảm thiên vị rẻ nhất là chấm cả hai thứ tự (BPC), nhưng cách này chỉ xử lý vị trí, không xử lý độ dài hay các thiên vị khác.</p></div>
+    <div class="card rise" style="--i:4;display:grid;grid-template-columns:70px 1fr;gap:24px;padding:20px 32px;align-items:center"><p class="num teal" style="font-size:44px;margin:0">5</p><p class="body">Nguyên nhân chưa được chứng minh. Các giả thuyết: mô hình ưu ái token “A” (Zheng 2024), dùng ngữ cảnh không đều (Liu 2023), kiến trúc đọc trái sang phải.</p></div>
+  </div>
+  <aside class="notes">Từ tài liệu, nhóm rút ra mấy điểm. Thiên vị vị trí có ở mọi judge được khảo sát, nặng nhất khi judge yếu, câu hỏi mở và hai câu sát nút. Hướng lệch khác nhau giữa các judge, nên phải đo riêng. Điểm nhóm quan tâm nhất là judge nhất quán chưa chắc đã công bằng hay chấm đúng. Cách giảm thiên vị rẻ nhất là chấm cả hai thứ tự, nhưng chỉ xử lý được vị trí. Còn nguyên nhân thì chưa được chứng minh; giả thuyết được nhắc nhiều nhất là mô hình ưu ái token “A”.</aside>
+</section>
+
+<section class="slide" id="decisions">
+  <p class="eyebrow">Từ tài liệu đến thiết kế</p>
+  <h2>Áp dụng vào thiết kế thí nghiệm</h2>
+  <table class="t">
+    <tr><th style="width:44%">Bài học</th><th style="width:16%">Nguồn</th><th>Quyết định của nhóm</th></tr>
+    <tr><td>Chỉ đổi thứ tự đã đủ làm judge đổi kết quả</td><td>Wang, Zheng</td><td>Chấm mỗi cặp hai lượt, chỉ đổi vị trí A/B</td></tr>
+    <tr><td>Thiên vị mạnh nhất khi hai câu sát nút</td><td>Shi, Zheng T11</td><td>Ba mô hình trả lời để có nhiều mức chênh; chia nhóm theo <b>điểm người</b> (RQ2)</td></tr>
+    <tr><td>Mô hình có sẵn ưu ái token “A”</td><td>Zheng 2024</td><td>Đọc xác suất token A/B/C làm độ tự tin (RQ3)</td></tr>
+    <tr><td>BPC giảm thiên vị mà không cần huấn luyện</td><td>Wang</td><td>Thử BPC và “chỉ giữ cặp nhất quán” (RQ4)</td></tr>
+    <tr><td>Phải loại trừ nhiễu lấy mẫu</td><td>Shi</td><td>Judge chạy greedy, nhiệt độ 0: mọi flip là do thứ tự</td></tr>
+    <tr><td>Câu hỏi mở bị thiên vị nặng hơn</td><td>Zheng T10</td><td>Chỉ lấy câu “vì sao / như thế nào”</td></tr>
+  </table>
+  <aside class="notes">Các điểm trên được áp dụng vào thiết kế như sau. Đổi thứ tự là đủ gây flip, nên mỗi cặp chấm hai lượt. Thiên vị mạnh khi sát nút, nên nhóm dùng ba mô hình để có nhiều mức chênh, và đo độ chênh bằng người chấm. Token “A” có thể là nguyên nhân, nên nhóm đọc xác suất token. Judge chạy nhiệt độ 0 để mọi flip là do thứ tự, không phải do may rủi. Và chỉ lấy câu hỏi mở dạng vì sao, như thế nào.</aside>
+</section>
+
+<!-- ============================== PHẦN 3: THÍ NGHIỆM ============================== -->
+
+<section class="slide dark divider" id="part3" data-part="03 · Thí nghiệm">
+  <p class="eyebrow">Phần 03 / 06</p>
+  <div class="grow"></div>
+  <p class="part-n rise">03</p>
+  <h1 class="rise" style="--i:1">Thí nghiệm của nhóm</h1>
+  <p class="lead rise" style="--i:2;margin-top:24px">Câu hỏi nghiên cứu, dữ liệu và cách đo</p>
+  <div class="grow"></div>
+  <div class="prog"><div class="pp done"><p>01</p><p>Bối cảnh</p></div><div class="pp done"><p>02</p><p>Paper và survey</p></div><div class="pp on"><p>03</p><p>Thí nghiệm</p></div><div class="pp"><p>04</p><p>Kết quả</p></div><div class="pp"><p>05</p><p>Ứng dụng</p></div><div class="pp"><p>06</p><p>Kết luận</p></div></div>
+  <aside class="notes">Phần ba: thí nghiệm của nhóm.</aside>
+</section>
+
+<section class="slide" id="rqs">
+  <p class="eyebrow">Câu hỏi nghiên cứu</p>
+  <h2>Câu hỏi nghiên cứu</h2>
+  <div class="g2 grow" style="gap:28px">
+    <div class="card rise" style="--i:0"><p class="tag pink">RQ1 · Tần suất</p><h3>Judge flip bao nhiêu khi đổi thứ tự hai câu tiếng Việt?</h3><p class="body">Flip rate, First-Position Preference</p></div>
+    <div class="card rise" style="--i:1"><p class="tag pink">RQ2 · Khi nào</p><h3>Flip có tập trung ở cặp người chấm thấy sát nút?</h3><p class="body">Flip rate theo độ chênh điểm người</p></div>
+    <div class="card rise" style="--i:2"><p class="tag pink">RQ3 · Dấu hiệu</p><h3>Flip có đi kèm độ tự tin thấp của judge?</h3><p class="body">Confidence margin từ xác suất token, AUC</p></div>
+    <div class="card rise" style="--i:3"><p class="tag pink">RQ4 · Cách sửa</p><h3>Chấm hai chiều có làm judge khớp người chấm hơn?</h3><p class="body">Tỉ lệ khớp người: một lượt, chỉ cặp nhất quán, BPC, baseline</p></div>
+  </div>
+  <aside class="notes">Bốn câu hỏi. RQ1: flip bao nhiêu và lệch về phía nào. RQ2: flip có tập trung ở cặp sát nút không, sát nút theo người chấm chứ không theo LLM. RQ3: khi judge flip, nó có kém tự tin không; nếu có thì ta lọc được. RQ4: chấm hai chiều có giúp judge khớp người chấm hơn không.</aside>
+</section>
+
+<section class="slide" id="design">
+  <p class="eyebrow">Thiết kế</p>
+  <h2>500 câu hỏi → 1.500 cặp → 3.000 lượt chấm</h2>
+  <div class="flow" style="gap:0">
+    <div class="card grow rise" style="--i:0"><p class="num teal">500</p><h3>Câu hỏi</h3><p class="body">“Vì sao / như thế nào” từ UIT-ViQuAD 2.0, 108 bài, có đoạn văn và đáp án gốc</p></div>
+    <div class="arrow">→</div>
+    <div class="card grow rise" style="--i:1"><p class="num teal">3</p><h3>Mô hình trả lời</h3><p class="body">Qwen2.5-7B, gpt-oss-20b, Gemini Flash-Lite; cùng prompt, 2–4 câu, không định dạng</p></div>
+    <div class="arrow">→</div>
+    <div class="card grow rise" style="--i:2"><p class="num pink">3.000</p><h3>Lượt chấm</h3><p class="body">1.500 cặp × 2 thứ tự. Judge Qwen2.5-7B, prompt MT-Bench, có hoà, nhiệt độ 0</p></div>
+    <div class="arrow">→</div>
+    <div class="card grow rise" style="--i:3"><p class="num amber">4</p><h3>Người chấm</h3><p class="body">Thang 1–5, mỗi câu 2 người, không biết mô hình nào viết</p></div>
+  </div>
+  <div class="grow"></div>
+  <p class="small">Độ tự tin: xác suất token “A”, “B” tại vị trí kết luận, chuẩn hoá lại cho tổng bằng 1 và quy về X/Y. Khoảng tin cậy 95% bằng bootstrap theo câu hỏi (2.000 lần), vì ba cặp của cùng một câu không độc lập.</p>
+  <aside class="notes">Thiết kế. 500 câu hỏi vì sao, như thế nào từ UIT-ViQuAD. Ba mô hình miễn phí cùng trả lời, ghép thành ba cặp mỗi câu, tổng 1.500 cặp. Mỗi cặp chấm hai lượt, tổng 3.000 lượt, bằng Qwen2.5-7B chạy nhiệt độ 0. Song song, bốn người chấm cho điểm từng câu trả lời. Nhóm đọc xác suất của token kết luận làm độ tự tin. Khoảng tin cậy lấy bootstrap theo câu hỏi.</aside>
+</section>
+
+<section class="slide" id="annot">
+  <p class="eyebrow">Chuẩn để so sánh</p>
+  <h2>Người chấm đồng thuận đủ tốt để làm chuẩn</h2>
+  <div class="row grow" style="gap:56px">
+    <div class="col" style="flex:1.1">
+      <table class="t">
+        <tr><th style="width:14%">Điểm</th><th>Ý nghĩa (rubric rút gọn)</th></tr>
+        <tr><td><b>5</b></td><td>Có ý chính, mọi chi tiết đều có trong đoạn văn</td></tr>
+        <tr><td><b>4</b></td><td>Có ý chính, thiếu chi tiết nhỏ hoặc thêm một suy luận</td></tr>
+        <tr><td><b>3</b></td><td>Chỉ một phần ý chính, mơ hồ, hoặc có một ý sai</td></tr>
+        <tr><td><b>2</b></td><td>Thiếu ý chính, chỉ có ý phụ đúng</td></tr>
+        <tr><td><b>1</b></td><td>Sai, lạc đề, bịa, hoặc ý chính trái đoạn văn</td></tr>
+      </table>
+      <p class="small" style="margin-top:18px">Chấm nội dung, không chấm độ dài hay văn phong. 14 câu có đáp án gốc sai bị loại, còn 1.458 cặp.</p>
+    </div>
+    <div class="col" style="flex:.9;gap:24px">
+      <div class="card"><p class="num teal">α = 0,74</p><p class="body">Krippendorff’s α (ordinal) trên cả bốn người</p></div>
+      <div class="card"><p class="num">κ 0,62–0,76</p><p class="body">Cohen’s κ theo từng cặp người chấm. Wang et al. báo kappa người–người 0,54 (thang khác)</p></div>
+    </div>
+  </div>
+  <aside class="notes">Muốn nói judge đúng hay sai thì cần một chuẩn. Bốn người chấm theo rubric năm mức, tập trung vào ý chính so với đáp án gốc. Độ đồng thuận: Krippendorff’s alpha 0,74, Cohen’s kappa từ 0,62 đến 0,76. Để so sánh, ba người chấm của Wang chỉ đạt 0,54. Vậy nếu judge lệch người, đó không phải do người chấm bất đồng với nhau.</aside>
+</section>
+
+<!-- ============================== PHẦN 4: KẾT QUẢ ============================== -->
+
+<section class="slide dark divider" id="part4" data-part="04 · Kết quả">
+  <p class="eyebrow">Phần 04 / 06</p>
+  <div class="grow"></div>
+  <p class="part-n rise">04</p>
+  <h1 class="rise" style="--i:1">Kết quả</h1>
+  <p class="lead rise" style="--i:2;margin-top:24px">RQ1 tần suất · RQ2 sát nút · RQ3 độ tự tin · RQ4 khớp người chấm</p>
+  <div class="grow"></div>
+  <div class="prog"><div class="pp done"><p>01</p><p>Bối cảnh</p></div><div class="pp done"><p>02</p><p>Paper và survey</p></div><div class="pp done"><p>03</p><p>Thí nghiệm</p></div><div class="pp on"><p>04</p><p>Kết quả</p></div><div class="pp"><p>05</p><p>Ứng dụng</p></div><div class="pp"><p>06</p><p>Kết luận</p></div></div>
+  <aside class="notes">Phần bốn: kết quả. 3.000 lượt chấm đều ra kết quả hợp lệ, không lỗi format.</aside>
+</section>
+
+<section class="slide accent" id="rq1">
+  <p class="eyebrow">RQ1 · Judge flip bao nhiêu?</p>
+  <div class="grow"></div>
+  <p class="big rise" style="font-size:300px">48,7%</p>
+  <p class="lead" style="margin-top:28px;width:1300px">số cặp bị flip khi chỉ đổi chỗ hai câu trả lời</p>
+  <div class="grow"></div>
+  <div class="row" style="gap:96px">
+    <div class="col"><p class="num" style="font-size:60px">45,9–51,5%</p><p class="small">khoảng tin cậy 95%</p></div>
+    <div class="col"><p class="num" style="font-size:60px">34,8%</p><p class="small">nếu bỏ các cặp có kết quả hoà (929 cặp)</p></div>
+    <div class="col"><p class="num" style="font-size:60px">43–52%</p><p class="small">ở cả ba cặp mô hình</p></div>
+  </div>
+  <aside class="notes">Với RQ1, flip rate là 48,7%: ở gần một nửa số cặp, chỉ cần đổi chỗ là judge chọn câu khác. Một phần tư kết quả là hoà, nhưng bỏ hết các cặp có hoà thì vẫn còn 35%. Và con số này đều ở cả ba cặp mô hình, không phải do một cặp riêng.</aside>
+</section>
+
+<section class="slide" id="direction">
+  <p class="eyebrow">RQ1 · Hướng lệch</p>
+  <h2>Khi flip, judge gần như luôn chọn câu đứng trước</h2>
+  <div class="bars" style="margin-top:8px">
+    <div class="bar rise" style="--i:0"><p class="lbl"><b>Câu đầu</b> thắng cả 2 lượt</p><div class="track"><div class="fill" style="width:42.5%"></div></div><p class="val pink">42,5%</p></div>
+    <div class="bar rise" style="--i:1"><p class="lbl"><b>Câu sau</b> thắng cả 2 lượt</p><div class="track"><div class="fill light-f" style="width:6.2%"></div></div><p class="val">6,2%</p></div>
+    <div class="bar rise" style="--i:2"><p class="lbl">Nhất quán (cùng chọn một câu)</p><div class="track"><div class="fill gray-f" style="width:51.3%"></div></div><p class="val">51,3%</p></div>
+  </div>
+  <div class="grow"></div>
+  <div class="row" style="gap:40px">
+    <div class="card grow"><p class="num pink" style="font-size:68px">+0,36</p><p class="body">First-Position Preference = P(thắng | đứng đầu) − P(thắng | đứng sau); 0 là công bằng. KTC 95%: 0,33–0,40.</p></div>
+    <div class="card grow"><p class="num" style="font-size:68px">7 : 1</p><p class="body">Trong các cặp flip, cứ 7 cặp nghiêng về câu đầu thì 1 cặp nghiêng về câu sau. Cùng hướng với GPT-4 trong Zheng và Wang.</p></div>
+  </div>
+  <aside class="notes">Flip không ngẫu nhiên hai chiều. 42,5% số cặp là câu đứng đầu thắng cả hai lượt, chỉ 6,2% là câu đứng sau. Tỉ lệ khoảng 7 trên 1. Judge Qwen ưu câu đầu, cùng hướng với GPT-4 trong các paper, ngược với ChatGPT và mô hình suy luận.</aside>
+</section>
+
+<section class="slide" id="example">
+  <p class="eyebrow">Một cặp thật · câu 0058-0017-0003</p>
+  <h2 style="margin-bottom:32px">“Chả trái quất được chế biến ra sao?”</h2>
+  <div class="row" style="gap:36px">
+    <div class="card cx grow"><p class="tag teal">X · 5/5 từ cả hai người chấm</p><p class="body" style="color:var(--ink)">Chả trái quất được làm thành viên nhỏ giống như quả quất, sau đó phết lòng đỏ trứng ra ngoài, hấp chín rồi mới đem nướng.</p></div>
+    <div class="card cy grow"><p class="tag amber">Y · 5/5 từ cả hai người chấm</p><p class="body" style="color:var(--ink)">Chả trái quất được chế biến bằng cách viên thịt thành những viên nhỏ như quả quất, sau đó phết lòng đỏ trứng ra bên ngoài rồi đem hấp chín. Cuối cùng, món chả này sẽ được đem đi nướng để hoàn thành.</p></div>
+  </div>
+  <div class="grow"></div>
+  <div class="row" style="gap:40px;align-items:center">
+    <div class="col grow rise" style="gap:10px;--i:1"><p class="small">Lượt 1 · A = X</p><p class="lead" style="color:var(--ink)">P(“A”) ≈ <b>100%</b> → chọn <b class="teal">X</b></p></div>
+    <div class="col grow rise" style="gap:10px;--i:3"><p class="small">Lượt 2 · A = Y</p><p class="lead" style="color:var(--ink)">P(“A”) = <b>99,7%</b> → chọn <b class="amber">Y</b></p></div>
+    <p class="pill rise" style="--i:5;font-size:32px">FLIP</p>
+  </div>
+  <aside class="notes">Một ví dụ cụ thể. Hai câu đều đúng, người chấm cho cả hai 5 trên 5. Lượt một judge chắc gần 100% là A, tức X. Đổi chỗ, nó vẫn chắc 99,7% là A, tức Y. Rất tự tin, nhưng quyết định chỉ đi theo vị trí.</aside>
+</section>
+
+<section class="slide" id="rq2">
+  <p class="eyebrow">RQ2 · Flip theo độ chênh điểm người chấm</p>
+  <h2>Cặp càng sát nút, judge càng dễ flip</h2>
+  <div class="bars">
+    <div class="bar rise" style="--i:0"><p class="lbl">Chênh 0 điểm <span class="mute">(645 cặp)</span></p><div class="track"><div class="fill" style="width:56.6%"></div></div><p class="val">56,6%</p></div>
+    <div class="bar rise" style="--i:1"><p class="lbl">Chênh 0,5–1 <span class="mute">(659 cặp)</span></p><div class="track"><div class="fill" style="width:43.7%"></div></div><p class="val">43,7%</p></div>
+    <div class="bar rise" style="--i:2"><p class="lbl">Chênh 1,5–2 <span class="mute">(136 cặp)</span></p><div class="track"><div class="fill" style="width:36.0%"></div></div><p class="val">36,0%</p></div>
+    <div class="bar rise" style="--i:3"><p class="lbl">Chênh ≥ 2,5 <span class="mute">(18 cặp)</span></p><div class="track"><div class="fill gray-f" style="width:44.4%"></div></div><p class="val mute">44,4%</p></div>
+  </div>
+  <div class="grow"></div>
+  <div class="row" style="gap:32px">
+    <div class="card grow"><p class="body">Phù hợp với Zheng (T11), Wang (Fig. 2) và Shi. Khác ở chỗ độ chênh ở đây đo bằng điểm người chấm.</p></div>
+    <div class="card cf grow"><p class="body">Tuy vậy, cặp chênh 1,5–2 điểm vẫn flip 36%, trong khi GPT-4 ở cặp chênh rõ chỉ còn 5% (Wang).</p></div>
+  </div>
+  <p class="source">Nhóm ≥ 2,5 chỉ có 18 cặp (KTC 95%: 17–77%), không đủ để kết luận. 89% số cặp chênh không quá 1 điểm.</p>
+  <aside class="notes">Với RQ2, kết quả đúng một phần. Khi người chấm cho hai câu bằng điểm, 57% bị flip. Chênh 1,5 đến 2 điểm còn 36%. Giống paper: sát nút thì flip nhiều. Khác paper: ngay cả cặp chênh rõ vẫn flip hơn một phần ba, trong khi GPT-4 gần như hết flip ở cặp chênh rõ. Lưu ý 89% số cặp chênh không quá 1 điểm, vì người chấm cho phần lớn câu 4 hoặc 5.</aside>
+</section>
+
+<section class="slide" id="rq3">
+  <p class="eyebrow">RQ3 · Độ tự tin của judge</p>
+  <h2>Độ tự tin không báo trước được flip</h2>
+  <div class="row grow" style="gap:88px">
+    <div class="col" style="width:540px;gap:36px">
+      <div class="rise" style="--i:0"><p class="num teal">0,88</p><p class="body">margin trung bình, cặp nhất quán</p></div>
+      <div class="rise" style="--i:1"><p class="num pink">0,87</p><p class="body">margin trung bình, cặp bị flip (chênh lệch không có ý nghĩa thống kê)</p></div>
+      <div class="rise" style="--i:2"><p class="num">AUC 0,56</p><p class="body">dùng margin để đoán flip; 0,5 là đoán mò</p></div>
+    </div>
+    <div class="col grow">
+      <p class="body" style="margin-bottom:28px;color:var(--ink)"><b>Tỉ lệ flip theo tứ phân vị margin</b></p>
+      <div class="bars">
+        <div class="bar rise" style="grid-template-columns:270px 1fr 130px;--i:3"><p class="lbl">Q1 · 0,03–0,80</p><div class="track"><div class="fill" style="width:51.2%"></div></div><p class="val">51,2%</p></div>
+        <div class="bar rise" style="grid-template-columns:270px 1fr 130px;--i:4"><p class="lbl">Q2 · 0,80–0,96</p><div class="track"><div class="fill" style="width:54.9%"></div></div><p class="val">54,9%</p></div>
+        <div class="bar rise" style="grid-template-columns:270px 1fr 130px;--i:5"><p class="lbl">Q3 · 0,96–0,996</p><div class="track"><div class="fill" style="width:51.5%"></div></div><p class="val">51,5%</p></div>
+        <div class="bar rise" style="grid-template-columns:270px 1fr 130px;--i:6"><p class="lbl">Q4 · trên 0,996</p><div class="track"><div class="fill" style="width:37.1%"></div></div><p class="val">37,1%</p></div>
+      </div>
+      <p class="body" style="margin-top:36px">Ngay cả khi đặt hơn 99,6% xác suất vào một câu, judge vẫn flip 37% số cặp.</p>
+    </div>
+  </div>
+  <p class="source">Margin = |P(X) − P(Y)|, trung bình hai lượt, từ xác suất token “A”/“B” đã chuẩn hoá.</p>
+  <aside class="notes">RQ3 hỏi liệu judge có flip vào lúc nó không chắc chắn không. Số liệu cho thấy không rõ ràng. Judge gần như luôn rất tự tin: margin 0,88 ở cặp nhất quán và 0,87 ở cặp flip, gần như bằng nhau. AUC 0,56, chỉ hơn đoán mò một chút. Chỉ nhóm tự tin nhất mới flip ít hơn, mà vẫn 37%. Các paper trước không đo được điều này vì dùng judge đóng. Kết luận: không dùng xác suất của một lượt chấm để lọc verdict.</aside>
+</section>
+
+<section class="slide dark" id="verdictfirst">
+  <p class="eyebrow">Định dạng đầu ra của judge</p>
+  <div class="grow"></div>
+  <div class="row" style="gap:88px;align-items:center">
+    <p class="big rise" style="color:var(--x-light);width:760px">85,5%</p>
+    <div class="col grow" style="gap:28px">
+      <p class="lead" style="color:var(--dark-ink)">số lượt chấm Qwen ghi <b>[[A]]</b> ngay dòng đầu, rồi mới giải thích</p>
+      <p class="body">Prompt MT-Bench yêu cầu giải thích trước rồi mới kết luận. Judge 7B phần lớn không làm theo, nên lời giải thích được viết sau khi đã chọn.</p>
+    </div>
+  </div>
+  <div class="grow"></div>
+  <p class="small">Vì vậy thí nghiệm chưa kiểm tra được ý tưởng MEC (giải thích trước khi chấm) của Wang et al. Nhóm ban đầu giả định prompt MT-Bench đã đáp ứng điều này.</p>
+  <aside class="notes">Thêm một quan sát về định dạng. Prompt MT-Bench bảo judge giải thích trước rồi mới kết luận, đúng tinh thần MEC của Wang. Nhưng 85% số lần, Qwen viết ngay [[A]] ở dòng đầu, rồi mới giải thích. Tức là lựa chọn được đưa ra trước khi giải thích. Có thể đây là một lý do khiến xác suất của nó gần như luôn bằng 1.</aside>
+</section>
+
+<section class="slide" id="rq4">
+  <p class="eyebrow">RQ4 · Khớp với người chấm</p>
+  <h2>Mọi cách dùng judge đều khớp người dưới 50%</h2>
+  <div class="bars" style="margin-top:20px">
+    <div class="bar rise" style="--i:0"><p class="lbl">Chấm 1 lượt (TB hai thứ tự)</p><div class="track"><div class="fill teal-f" style="width:37.1%"></div><div class="chance" style="left:50%"><span>đoán mò</span></div></div><p class="val">37,1%</p></div>
+    <div class="bar rise" style="--i:1"><p class="lbl">Chỉ giữ cặp nhất quán <span class="mute">(57,6% số cặp)</span></p><div class="track"><div class="fill teal-f" style="width:27.6%"></div><div class="chance" style="left:50%"></div></div><p class="val">27,6%</p></div>
+    <div class="bar rise" style="--i:2"><p class="lbl">Chấm 2 chiều + BPC</p><div class="track"><div class="fill teal-f" style="width:34.8%"></div><div class="chance" style="left:50%"></div></div><p class="val">34,8%</p></div>
+    <div class="bar rise" style="--i:3"><p class="lbl">Baseline: F1 với đáp án gốc</p><div class="track"><div class="fill gray-f" style="width:68.9%"></div><div class="chance" style="left:50%"></div></div><p class="val">68,9%</p></div>
+    <div class="bar rise" style="--i:4"><p class="lbl">Baseline: cosine embedding</p><div class="track"><div class="fill gray-f" style="width:57.1%"></div><div class="chance" style="left:50%"></div></div><p class="val">57,1%</p></div>
+  </div>
+  <div class="grow"></div>
+  <p class="body" style="width:1620px">Chấm hai chiều loại được ảnh hưởng của vị trí, nhưng không sửa được sở thích riêng của judge. Trên các cặp judge nhất quán, nó chọn khác người chấm ở 72% số cặp.</p>
+  <p class="source">813 cặp có người thắng theo người chấm. Baseline được thấy đáp án gốc, judge thì không (như MT-Bench).</p>
+  <aside class="notes">RQ4 là kết quả chính của đề tài. Chấm hai chiều không giúp judge khớp người chấm hơn. Mọi cách dùng judge đều dưới 50%, tức kém hơn tung đồng xu. Giữ riêng các cặp nhất quán còn tệ hơn: 27,6%. Trong khi đó F1 so với đáp án gốc đạt 69%. Lưu ý công bằng: baseline và người chấm được nhìn đáp án gốc, judge thì không. Dù vậy, về mặt thực tế: khi có đáp án chuẩn, một metric rẻ bám người chấm tốt hơn judge 7B nhiều.</aside>
+</section>
+
+<section class="slide" id="why">
+  <p class="eyebrow">Vì sao lệch?</p>
+  <h2>Judge thích gpt-oss, người chấm thích Gemini</h2>
+  <div class="row grow" style="gap:72px">
+    <div class="col" style="width:940px">
+      <table class="t">
+        <tr><th style="width:34%">Mô hình</th><th class="r">Điểm người (1–5)</th><th class="r">Judge chọn (BPC)</th><th class="r">Số từ</th></tr>
+        <tr><td>Gemini Flash-Lite</td><td class="r"><b>4,82</b></td><td class="r">47,0%</td><td class="r">72</td></tr>
+        <tr><td>Qwen2.5-7B</td><td class="r">4,52</td><td class="r">35,7%</td><td class="r">52</td></tr>
+        <tr><td>gpt-oss-20b</td><td class="r">4,27</td><td class="r"><b>67,3%</b></td><td class="r">74</td></tr>
+      </table>
+      <p class="small" style="margin-top:22px">Đối đầu trực tiếp, BPC cho gpt-oss thắng Gemini ở 62,6% số cặp, dù người chấm cho Gemini cao hơn khoảng nửa điểm.</p>
+    </div>
+    <div class="col grow" style="gap:24px">
+      <div class="card rise" style="--i:0"><h3>Thích câu dài</h3><p class="body">BPC chọn câu dài hơn ở 69,2% số cặp, nên Qwen (ngắn nhất) thua.</p></div>
+      <div class="card rise" style="--i:1"><h3>Nghi vấn: chữ in đậm</h3><p class="body">Chỉ gpt-oss dùng **in đậm**. Judge thấy, người chấm thì không.</p></div>
+      <div class="card rise" style="--i:2"><h3>Không tự đề cao</h3><p class="body">Judge là Qwen nhưng xếp Qwen cuối.</p></div>
+    </div>
+  </div>
+  <aside class="notes">Vì sao judge lệch người? Người chấm xếp Gemini nhất, gpt-oss cuối. Judge thì ngược: gpt-oss thắng 67%. Một phần do độ dài: judge chọn câu dài hơn 69% số lần. Nhưng gpt-oss và Gemini dài gần như nhau, nên nhóm nghi một nguyên nhân khác: chỉ gpt-oss dùng chữ in đậm; judge nhìn thấy còn người chấm thì không, vì sheet đã bỏ để giấu mô hình. Nhóm chưa kiểm tra điều này. Và judge không thiên vị chính Qwen.</aside>
+</section>
+
+<section class="slide" id="vs-lit">
+  <p class="eyebrow">Đặt cạnh tài liệu</p>
+  <h2>So sánh với kết quả trên tiếng Anh</h2>
+  <table class="t">
+    <tr><th style="width:15%">Khía cạnh</th><th style="width:36%">Paper (tiếng Anh)</th><th style="width:27%">Nhóm (tiếng Việt, Qwen 7B)</th><th>Kết luận</th></tr>
+    <tr><td>Tần suất</td><td>GPT-4 mâu thuẫn ở 46,3% cặp sát nút; ChatGPT 82,5%</td><td>48,7% trên 1.500 cặp thật</td><td><span class="pill gray">ngang judge yếu</span></td></tr>
+    <tr><td>Hướng</td><td>GPT-4 ưu đầu; ChatGPT, R1 ưu sau</td><td>Ưu đầu, 42,5% vs 6,2%</td><td><span class="pill ok">khớp GPT-4</span></td></tr>
+    <tr><td>Cặp chênh rõ</td><td>GPT-4 còn 5% mâu thuẫn</td><td>Vẫn 36% flip</td><td><span class="pill">khác</span></td></tr>
+    <tr><td>Độ tự tin</td><td>Không đo được (judge đóng)</td><td>≈ 1 dù flip; AUC 0,56</td><td><span class="pill x">mới</span></td></tr>
+    <tr><td>Hiệu chỉnh</td><td>MEC+BPC: kappa 0,24 → 0,37</td><td>BPC 34,8% vs 1 lượt 37,1%</td><td><span class="pill">không cải thiện</span></td></tr>
+    <tr><td>Khớp người</td><td>GPT-4 85% (người–người 81%); Gu: 51–62%</td><td>Dưới 50% mọi biến thể</td><td><span class="pill">kém hơn</span></td></tr>
+  </table>
+  <p class="source">Wang 2023 T2, T4; Zheng 2023 T5; Gu 2024 Table 2; Wang 2025. Khác dữ liệu, judge và thang đo, nên chỉ so xu hướng, không so tuyệt đối.</p>
+  <aside class="notes">Đặt cạnh tài liệu. Tần suất flip của judge 7B ngang với judge yếu như ChatGPT, không phải GPT-4. Hướng lệch giống GPT-4. Khác biệt lớn: ở cặp chênh rõ, GPT-4 gần như hết flip, còn judge của nhóm vẫn flip 36%. Độ tự tin là phần mới, paper trước không đo được. Và BPC, cách sửa mà Wang báo là hiệu quả, ở đây không cải thiện khớp người. Lưu ý: khác dữ liệu và judge nên chỉ so xu hướng.</aside>
+</section>
+
+<!-- ============================== PHẦN 5: ỨNG DỤNG ============================== -->
+
+<section class="slide dark divider" id="part5" data-part="05 · Ứng dụng">
+  <p class="eyebrow">Phần 05 / 06</p>
+  <div class="grow"></div>
+  <p class="part-n rise">05</p>
+  <h1 class="rise" style="--i:1">Ứng dụng và demo</h1>
+  <p class="lead rise" style="--i:2;margin-top:24px">Hộp thư thuế hộ kinh doanh: biến kết quả nghiên cứu thành quy tắc định tuyến</p>
+  <div class="grow"></div>
+  <div class="prog"><div class="pp done"><p>01</p><p>Bối cảnh</p></div><div class="pp done"><p>02</p><p>Paper và survey</p></div><div class="pp done"><p>03</p><p>Thí nghiệm</p></div><div class="pp done"><p>04</p><p>Kết quả</p></div><div class="pp on"><p>05</p><p>Ứng dụng</p></div><div class="pp"><p>06</p><p>Kết luận</p></div></div>
+  <aside class="notes">Phần năm. Kết quả nghiên cứu thì dùng vào đâu? Nhóm xây một hộp thư trả lời câu hỏi thuế cho hộ kinh doanh.</aside>
+</section>
+
+<section class="slide" id="app-flow">
+  <p class="eyebrow">Hộp thư thuế hộ kinh doanh</p>
+  <h2>Luồng xử lý câu hỏi</h2>
+  <div class="flow">
+    <div class="node"><h3>Lọc phạm vi</h3><p>Doanh nghiệp, tiền lương… từ chối, không gọi AI</p></div><div class="arrow">→</div>
+    <div class="node"><h3>Hỏi lại</h3><p>Thiếu doanh thu, ngành: hỏi một lần</p></div><div class="arrow">→</div>
+    <div class="node"><h3>Tìm luật</h3><p>BM25 trên 402 khoản của 17 văn bản</p></div><div class="arrow">→</div>
+    <div class="node"><h3>2 bản nháp</h3><p>Hai mô hình soạn, bắt buộc ghi “Căn cứ”</p></div><div class="arrow">→</div>
+    <div class="node key"><h3>Chấm 2 thứ tự</h3><p>Đổi ý khi đảo chỗ → giữ lại</p></div><div class="arrow">→</div>
+    <div class="node key2"><h3>Đối chiếu luật</h3><p>Ngưỡng cũ, tỷ lệ, số tiền, trích dẫn</p></div>
+  </div>
+  <div class="g2" style="margin-top:36px;gap:28px">
+    <div class="card cx"><p class="tag teal">Từ RQ1</p><p class="body">Judge đổi ý khi đổi thứ tự, nên luôn chấm cả hai thứ tự; đổi ý thì <b>không gửi</b>, chuyển người duyệt.</p></div>
+    <div class="card cf"><p class="tag pink">Từ RQ4</p><p class="body">Nhất quán chưa chắc đúng, nên đối chiếu với <b>đáp án chuẩn</b>: ở đây là văn bản luật, kiểm bằng quy tắc, không dùng AI.</p></div>
+  </div>
+  <div class="grow"></div>
+  <p class="small">Câu trả lời bị giữ lại: người hỏi không thấy bản nháp chưa kiểm, chỉ thấy các khoản luật liên quan, lý do, và link văn bản gốc. Tìm kiếm đạt recall 0,97 trên bộ 30 câu hỏi kiểm thử.</p>
+  <aside class="notes">Đây là luồng xử lý. Câu ngoài phạm vi bị từ chối ngay. Thiếu thông tin thì hỏi lại. Hệ thống tìm khoản luật liên quan trong 17 văn bản gốc, hai mô hình soạn hai bản nháp. Sau đó là hai lớp lấy thẳng từ kết quả nghiên cứu. Từ RQ1: chấm cả hai thứ tự, judge đổi ý thì không gửi. Từ RQ4: nhất quán chưa chắc đúng, nên đối chiếu với đáp án chuẩn, ở đây là văn bản luật, bằng quy tắc chứ không bằng một AI chấm khác.</aside>
+</section>
+
+<section class="slide" id="app-bench">
+  <p class="eyebrow">Đo trên 13 tin bẫy · 21/11/2026</p>
+  <h2>Không có văn bản luật, cả hai judge đều chọn sai nhiều</h2>
+  <table class="t">
+    <tr><th style="width:36%">Chế độ</th><th class="r" style="width:21%">gpt-oss-20b</th><th class="r" style="width:21%">gpt-oss-120b</th><th>Ý nghĩa</th></tr>
+    <tr><td>Một lượt, <b>không có luật</b></td><td class="r"><b class="pink">38%</b> gửi sai</td><td class="r"><b class="pink">50%</b> gửi sai</td><td>Chọn theo trí nhớ cũ</td></tr>
+    <tr><td>Một lượt, có luật</td><td class="r">15%</td><td class="r">0%</td><td>Đáp án chuẩn trong prompt</td></tr>
+    <tr class="hl"><td>Có luật + đảo thứ tự + đối chiếu</td><td class="r">8% · 23% chuyển người</td><td class="r">0%</td><td>Đổi ý thì giữ lại</td></tr>
+  </table>
+  <div class="g3" style="margin-top:32px;gap:24px">
+    <div class="card"><p class="num teal" style="font-size:56px">8 / 12</p><p class="small">bản nháp sai mà lớp đối chiếu tự bắt được bằng quy tắc</p></div>
+    <div class="card"><p class="num" style="font-size:56px">3 lần</p><p class="small">quy định cho hộ kinh doanh đổi trong năm 2026; mô hình còn nhớ ngưỡng 500 triệu</p></div>
+    <div class="card cf"><p class="num pink" style="font-size:56px">T-2012</p><p class="small">tin cài lệnh cho AI chấm vẫn lọt qua mọi lớp</p></div>
+  </div>
+  <p class="source">Mỗi ô chạy 1 lần (hạn mức Groq miễn phí); 120B thiếu lượt có luật cho T-2012. Số mẫu nhỏ, chỉ là minh hoạ.</p>
+  <aside class="notes">Nhóm đo trên 13 tin bẫy, mỗi tin có hai bản nháp, một bản sai đúng một chi tiết luật. Không có văn bản luật, gpt-oss-120b chọn sai 50%, còn nhiều hơn bản 20b, vì luật năm 2026 đổi nhanh hơn dữ liệu huấn luyện. Có luật, 120b không sai câu nào. Bản 20b còn đổi ý ở hai câu, và hệ thống giữ cả hai lại. Lớp đối chiếu tự bắt được 8 trên 12 bản sai. Lỗ hổng còn lại: tin cài lệnh cho AI chấm vẫn lọt. Số mẫu nhỏ, mỗi ô chạy một lần, nên chỉ là minh hoạ.</aside>
+</section>
+
+<section class="slide dark" id="demo">
+  <p class="eyebrow">Demo trực tiếp · khoảng 4 phút</p>
+  <h2>Kịch bản demo</h2>
+  <div class="col" style="gap:22px">
+    <div class="card rise" style="--i:0;display:grid;grid-template-columns:70px 1fr 340px;gap:24px;align-items:center"><p class="num teal" style="font-size:48px;margin:0">1</p><p class="body"><b>Không có luật:</b> judge chọn bản “trên 500 triệu phải nộp thuế” ở cả hai thứ tự. Lớp đối chiếu chặn lại.</p><p class="small">T-2001 · tạp hoá 800 triệu</p></div>
+    <div class="card rise" style="--i:1;display:grid;grid-template-columns:70px 1fr 340px;gap:24px;align-items:center"><p class="num teal" style="font-size:48px;margin:0">2</p><p class="body"><b>Có luật:</b> cùng câu đó, judge chọn đúng ở cả hai thứ tự.</p><p class="small">“Đánh giá lại”</p></div>
+    <div class="card rise" style="--i:2;display:grid;grid-template-columns:70px 1fr 340px;gap:24px;align-items:center"><p class="num teal" style="font-size:48px;margin:0">3</p><p class="body"><b>Judge đổi ý khi đổi thứ tự:</b> hệ thống không gửi mà chuyển người duyệt.</p><p class="small">T-2002 / T-2007 · gpt-oss-20b</p></div>
+    <div class="card rise" style="--i:3;display:grid;grid-template-columns:70px 1fr 340px;gap:24px;align-items:center"><p class="num teal" style="font-size:48px;margin:0">4</p><p class="body"><b>Khán giả tự hỏi</b>, kể cả gõ không dấu; rồi xem lỗ hổng T-2012.</p><p class="small">localhost:8010 · phím N</p></div>
+  </div>
+  <div class="grow"></div>
+  <p class="small">Dự phòng nếu mất mạng hoặc hết hạn mức: <b>demo.html</b> (ba cặp flip thật, chạy offline) và ảnh chụp kết quả bench.</p>
+  <aside class="notes">Chuyển sang demo. Chạy python app/server.py, mở localhost:8010, bật Chế độ trình bày và Chế độ người duyệt, tắt tự trả lời. Bước một: chọn gpt-oss-20b, bật “AI chấm không xem văn bản luật”, mở T-2001. Judge chọn bản sai ở cả hai thứ tự, nhưng hàng đối chiếu báo ngưỡng 500 triệu đã hết hiệu lực. Bước hai: tắt công tắc, đánh giá lại. Bước ba: mở T-2002 hoặc T-2007, judge đổi ý, hệ thống chuyển người duyệt. Bước bốn: mời khán giả hỏi, rồi nhấn N ra T-2012 để nói thẳng giới hạn. Groq miễn phí chỉ 8.000 token mỗi phút: xử lý từng câu một. Nếu demo hỏng, mở demo.html.</aside>
+</section>
+
+<!-- ============================== PHẦN 6: KẾT LUẬN ============================== -->
+
+<section class="slide dark divider" id="part6" data-part="06 · Kết luận">
+  <p class="eyebrow">Phần 06 / 06</p>
+  <div class="grow"></div>
+  <p class="part-n rise">06</p>
+  <h1 class="rise" style="--i:1">Kết luận</h1>
+  <p class="lead rise" style="--i:2;margin-top:24px">Hạn chế, hướng tiếp theo, bài học mang về</p>
+  <div class="grow"></div>
+  <div class="prog"><div class="pp done"><p>01</p><p>Bối cảnh</p></div><div class="pp done"><p>02</p><p>Paper và survey</p></div><div class="pp done"><p>03</p><p>Thí nghiệm</p></div><div class="pp done"><p>04</p><p>Kết quả</p></div><div class="pp done"><p>05</p><p>Ứng dụng</p></div><div class="pp on"><p>06</p><p>Kết luận</p></div></div>
+  <aside class="notes">Phần cuối.</aside>
+</section>
+
+<section class="slide" id="limits">
+  <p class="eyebrow">Hạn chế</p>
+  <h2>Kết quả nói về một judge 7B, chưa phải mọi judge</h2>
+  <div class="g3 grow" style="gap:28px">
+    <div class="card"><h3>Thí nghiệm</h3><ul class="list tight"><li>Một judge nhỏ: Qwen2.5-7B, 4-bit</li><li>Chưa chạy điều kiện tiếng Anh</li><li>Judge thấy in đậm, không thấy đáp án gốc; người chấm ngược lại</li><li>Điểm dồn ở 4–5: 645 cặp hoà</li><li>Người chấm xem được điểm của nhau</li></ul></div>
+    <div class="card"><h3>Ứng dụng</h3><ul class="list tight"><li>13 tin bẫy, mỗi ô chạy 1 lần</li><li>Số liệu thuế mới có AI kiểm, chưa có người kiểm</li><li>Đối chiếu chỉ bắt được số và từ khoá</li><li>Tin cài lệnh cho AI chấm vẫn lọt</li></ul></div>
+    <div class="card"><h3>Tài liệu và dữ liệu</h3><ul class="list tight"><li>Bằng chứng gốc gần như chỉ tiếng Anh, judge đóng</li><li>Câu hỏi lấy từ tập train công khai: có thể đã rò rỉ vào mô hình</li><li>Tìm tài liệu tiếng Việt chưa đầy đủ</li></ul></div>
+  </div>
+  <aside class="notes">Hạn chế, chia ba nhóm. Thí nghiệm: chỉ một judge nhỏ, chưa có điều kiện tiếng Anh nên chưa tách được hiệu ứng ngôn ngữ, và judge với người chấm không thấy cùng một văn bản. Ứng dụng: bộ bẫy nhỏ, số liệu thuế chưa có người kiểm, và lỗ hổng tin cài lệnh. Tài liệu: bằng chứng gốc gần như chỉ tiếng Anh; dữ liệu của nhóm lấy từ tập công khai, đúng câu hỏi mở của chủ đề về rò rỉ dữ liệu, dù điều này ảnh hưởng chất lượng câu trả lời hơn là phép đo flip.</aside>
+</section>
+
+<section class="slide" id="future">
+  <p class="eyebrow">Hướng tiếp theo</p>
+  <h2>Hướng phát triển, theo thứ tự ưu tiên</h2>
+  <table class="t">
+    <tr><th style="width:5%">#</th><th style="width:38%">Thí nghiệm</th><th>Trả lời câu hỏi</th></tr>
+    <tr><td>1</td><td><b>Chấm lại trên văn bản đã bỏ in đậm</b></td><td>Định dạng có phải lý do judge thích gpt-oss?</td></tr>
+    <tr><td>2</td><td>Cho judge xem đáp án gốc (reference-guided)</td><td>Khoảng cách với F1 có do thiếu thông tin?</td></tr>
+    <tr><td>3</td><td>Judge lớn hơn, khác họ mô hình</td><td>Kết quả là của judge 7B hay của tiếng Việt?</td></tr>
+    <tr><td>4</td><td>Chạy bản dịch tiếng Anh của cùng 500 câu</td><td>Có hiệu ứng ngôn ngữ không?</td></tr>
+    <tr><td>5</td><td>Bắt buộc giải thích trước khi kết luận</td><td>MEC có giảm flip và làm độ tự tin có ích?</td></tr>
+    <tr><td>6</td><td>Đổi nhãn A/B thành tên khác</td><td>Judge ưu vị trí hay ưu token “A”?</td></tr>
+  </table>
+  <aside class="notes">Sáu thí nghiệm tiếp theo. Ưu tiên nhất là chấm lại trên văn bản bỏ in đậm, vì nó rẻ và trả lời thẳng nghi vấn về gpt-oss. Thứ hai, cho judge xem đáp án gốc như người chấm, để biết khoảng cách với F1 có phải do thiếu thông tin. Sau đó là judge lớn hơn, điều kiện tiếng Anh, bắt giải thích trước, và đổi nhãn A/B để tách vị trí khỏi token.</aside>
+</section>
+
+<section class="slide" id="takeaways">
+  <p class="eyebrow">Bài học mang về</p>
+  <h2>Khuyến nghị khi dùng LLM làm judge</h2>
+  <div class="col" style="gap:22px">
+    <div class="card rise" style="--i:0;display:grid;grid-template-columns:70px 1fr;gap:24px;padding:30px 36px;align-items:center"><p class="num pink" style="font-size:50px;margin:0">1</p><p class="body">Chấm cả hai thứ tự, báo cáo flip rate và hướng lệch cùng kết quả.</p></div>
+    <div class="card rise" style="--i:1;display:grid;grid-template-columns:70px 1fr;gap:24px;padding:30px 36px;align-items:center"><p class="num pink" style="font-size:50px;margin:0">2</p><p class="body">Kiểm tra judge trên vài trăm cặp có điểm người trước khi dùng, vì nhất quán chưa có nghĩa là đúng.</p></div>
+    <div class="card rise" style="--i:2;display:grid;grid-template-columns:70px 1fr;gap:24px;padding:30px 36px;align-items:center"><p class="num pink" style="font-size:50px;margin:0">3</p><p class="body">Khi có đáp án chuẩn (đáp án gốc, văn bản luật), đối chiếu với nó thay vì chỉ dựa vào judge.</p></div>
+    <div class="card rise" style="--i:3;display:grid;grid-template-columns:70px 1fr;gap:24px;padding:30px 36px;align-items:center"><p class="num pink" style="font-size:50px;margin:0">4</p><p class="body">Không dùng độ tự tin của judge nhỏ để lọc kết quả: nó gần bằng 1 cả khi flip.</p></div>
+    <div class="card rise" style="--i:4;display:grid;grid-template-columns:70px 1fr;gap:24px;padding:30px 36px;align-items:center"><p class="num pink" style="font-size:50px;margin:0">5</p><p class="body">Cho judge và người chấm xem cùng một văn bản, kiểm soát độ dài, và kiểm tra định dạng đầu ra.</p></div>
+  </div>
+  <aside class="notes">Từ kết quả, nhóm đề xuất mấy khuyến nghị khi dùng LLM làm judge: chấm cả hai thứ tự và báo flip rate; kiểm tra judge với điểm người trước khi dùng; có đáp án chuẩn thì đối chiếu với nó; không dùng độ tự tin của judge nhỏ để lọc; và cho judge với người chấm xem cùng một văn bản.</aside>
+</section>
+
+<section class="slide dark" id="thanks">
+  <p class="eyebrow">Kết luận</p>
+  <div class="grow"></div>
+  <h1 style="font-size:92px;width:1560px">Judge nhất quán khi đổi thứ tự chưa chắc đã chấm đúng.</h1>
+  <p class="lead" style="margin-top:36px;width:1500px">Judge 7B flip ở 48,7% số cặp. Chấm hai chiều loại được ảnh hưởng của vị trí, nhưng phải so với người chấm hoặc văn bản luật mới thấy judge vẫn chọn sai.</p>
+  <div class="grow"></div>
+  <div class="row" style="justify-content:space-between;align-items:flex-end">
+    <p class="lead" style="color:var(--dark-ink);font-weight:600">Cảm ơn thầy và các bạn. Mời đặt câu hỏi.</p>
+    <p class="small">Mã nguồn, dữ liệu, báo cáo: github.com/khacbac/nlp</p>
+  </div>
+  <aside class="notes">Với câu hỏi khi nào tin được kết quả của judge, nhóm thấy nhất quán khi đổi chỗ là cần nhưng chưa đủ; phải so với người chấm, hoặc với văn bản luật, mới thấy judge còn sai. Em cảm ơn thầy và các bạn, mời đặt câu hỏi.</aside>
+</section>
+
+<section class="slide" id="refs">
+  <p class="eyebrow">Tài liệu tham khảo</p>
+  <div class="g2" style="gap:12px 56px;font-size:21px;line-height:1.4;color:var(--body)">
+    <p><b>[1]</b> Zheng et al. Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena. NeurIPS 2023. arXiv:2306.05685</p>
+    <p><b>[8]</b> Fu &amp; Liu. How Reliable is Multilingual LLM-as-a-Judge? Findings EMNLP 2025. arXiv:2505.12201</p>
+    <p><b>[2]</b> Wang et al. Large Language Models are not Fair Evaluators. 2023. arXiv:2305.17926</p>
+    <p><b>[9]</b> Tan et al. JudgeBench: A Benchmark for Evaluating LLM-based Judges. ICLR 2025. arXiv:2410.12784</p>
+    <p><b>[3]</b> Shi et al. Judging the Judges: A Systematic Study of Position Bias in LLM-as-a-Judge. arXiv:2406.07791 (v9)</p>
+    <p><b>[10]</b> Wang et al. Assessing Judging Bias in Large Reasoning Models. 2025. arXiv:2504.09946</p>
+    <p><b>[4]</b> Gu et al. A Survey on LLM-as-a-Judge. arXiv:2411.15594 (v6)</p>
+    <p><b>[11]</b> Hendrycks et al. Measuring Massive Multitask Language Understanding (MMLU). ICLR 2021. arXiv:2009.03300</p>
+    <p><b>[5]</b> Li et al. From Generation to Judgment: Opportunities and Challenges of LLM-as-a-judge. EMNLP 2025. arXiv:2411.16594 (v7)</p>
+    <p><b>[12]</b> Nguyen et al. VLSP 2021 – ViMRC Challenge (UIT-ViQuAD 2.0). arXiv:2203.11400</p>
+    <p><b>[6]</b> Zheng et al. Large Language Models Are Not Robust Multiple Choice Selectors. ICLR 2024. arXiv:2309.03882</p>
+    <p><b>[13]</b> Bruine de Bruin. Save the last dance for me: serial position effects in jury evaluations. Acta Psychologica, 2005</p>
+    <p><b>[7]</b> Liu et al. Lost in the Middle: How Language Models Use Long Contexts. TACL 2024. arXiv:2307.03172</p>
+    <p><b>[14]</b> Zhao et al. Sequential Effects in Essay Ratings. Frontiers in Psychology, 2017</p>
+  </div>
+  <div class="grow"></div>
+  <p class="small">Văn bản pháp luật cho ứng dụng: 17 văn bản gốc từ Công báo và cổng Chính phủ, danh sách trong <b>app/data/tax/sources.json</b>.</p>
+  <aside class="notes">Danh sách tài liệu tham khảo, để mở khi được hỏi.</aside>
+</section>
+
+<section class="slide" id="appendix">
+  <p class="eyebrow">Phụ lục · dự phòng hỏi đáp</p>
+  <h2>Định nghĩa độ đo và số liệu theo cặp mô hình</h2>
+  <div class="row grow" style="gap:48px">
+    <div class="col" style="flex:1.05">
+      <table class="t" style="font-size:23px">
+        <tr><th style="width:30%">Độ đo</th><th>Cách tính</th></tr>
+        <tr><td>Flip rate</td><td>% cặp mà hai lượt chọn hai câu khác nhau (thắng: p<sub>X</sub> &gt; 0,5)</td></tr>
+        <tr><td>FPP</td><td>% câu đầu thắng cả hai lượt − % câu sau thắng cả hai lượt</td></tr>
+        <tr><td>Margin</td><td>|p<sub>X</sub> − p<sub>Y</sub>|, trung bình hai lượt</td></tr>
+        <tr><td>BPC</td><td>X thắng nếu trung bình p<sub>X</sub> qua hai lượt &gt; 0,5</td></tr>
+        <tr><td>Khớp người</td><td>% cặp có người thắng mà phương pháp chọn đúng; 50% là đoán mò</td></tr>
+      </table>
+    </div>
+    <div class="col" style="flex:.95">
+      <table class="t" style="font-size:23px">
+        <tr><th>Cặp</th><th class="r">Flip</th><th class="r">FPP</th><th class="r">BPC khớp người</th></tr>
+        <tr><td>Qwen – gpt-oss</td><td class="r">43,2%</td><td class="r">+0,27</td><td class="r">35,2%</td></tr>
+        <tr><td>Qwen – Gemini</td><td class="r">51,6%</td><td class="r">+0,42</td><td class="r">41,9%</td></tr>
+        <tr><td>gpt-oss – Gemini</td><td class="r">51,2%</td><td class="r">+0,40</td><td class="r">28,8%</td></tr>
+      </table>
+      <p class="small" style="margin-top:20px">Một lượt: X đứng trước khớp 29,6%, Y đứng trước 44,5%. Chọn thứ tự nào để chấm một lượt đã đổi kết quả 15 điểm.</p>
+    </div>
+  </div>
+  <aside class="notes">Slide dự phòng khi được hỏi cách tính. Cột phải là số liệu theo từng cặp mô hình. Điểm đáng nói: nếu chỉ chấm một lượt, chọn thứ tự này hay thứ tự kia làm kết quả chênh 15 điểm.</aside>
+</section>
+
+</div>
+<div id="notes"></div>
+<div id="help">← → chuyển · N ghi chú · P presenter · O tổng quan · F toàn màn hình</div>
+<script src="deck.js"></script>
+</body>
+</html>

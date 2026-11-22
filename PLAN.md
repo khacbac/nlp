@@ -73,7 +73,7 @@ Ngày lập: 2026-11-19. Trạng thái hiện tại:
 - Xuất PDF; có thể đưa lên Claude Docs nếu nhóm muốn cùng sửa và comment.
 - Phần Related Work dùng các thẻ đọc bạn đang hoàn thiện; chỗ chưa kiểm chứng sẽ đánh dấu `TODO` để bạn soát.
 
-### Bước 5. Slide kết quả (Artifact Slides)
+### Bước 5. Slide kết quả (ban đầu làm bằng Artifact Slides, nay ở `slides/`)
 
 - Khoảng 12–15 màn, giữ cùng hệ màu và font với `proposal.html` (Be Vietnam Pro, X xanh / Y vàng / flip hồng).
 - Mạch kể: câu chuyện cô Hoa → câu hỏi → cách làm → **4 kết quả, mỗi RQ một màn có 1 biểu đồ chính** → khuyến nghị → hạn chế → demo.
@@ -112,5 +112,12 @@ Ngày lập: 2026-11-19. Trạng thái hiện tại:
 | 3 Demo | Xong. `demo.html` dùng 3 cặp thật và số liệu toàn bộ 500 câu |
 | 4 Báo cáo | Xong bản nháp đầy đủ: `report.md` (~4.400 từ, tiếng Anh) |
 | 5 Slide | Xong 14 slide (Artifact Slides), có ghi chú người nói cho từng slide |
+
+## 7. Cập nhật (2026-11-22)
+
+- Slide chuyển về local: `slides/index.html` (41 slide, HTML tự chạy, có ghi chú người nói, cửa sổ presenter, in PDF) và bản dự phòng `slides/slides.pdf`. Đã xoá deck trên Artifact.
+- Deck mới có thêm phần seminar (bối cảnh đánh giá LLM, ba paper lõi, hai survey Gu 2024 và Li 2024, phần đúc kết), phần ứng dụng hộp thư thuế, tóm tắt và bài học mang về.
+- `presentation-script.md` là kịch bản cho buổi cuối kỳ (khoảng 25 phút). Kịch bản proposal cũ vẫn còn trong lịch sử git.
+- Khi số liệu đổi: chạy `python experiment/analyze.py`, sửa số trong `slides/index.html`, rồi xuất lại PDF bằng Chrome (Print → Save as PDF, lề None, bật Background graphics).
 
 Khi sửa điểm người chấm trong `experiment/data/grading_sheet_A..D.csv`: chạy `python analyze.py`, rồi cập nhật số trong báo cáo, demo và slide.
