@@ -106,6 +106,7 @@ import clarify  # noqa: E402
     ("làm IT tự do thì đóng thuế như thế nào", ["income", "revenue", "group"]),  # IT fits several groups
     ("lam IT tu do thi dong thue nhu the nao", ["income", "revenue", "group"]),  # typed without marks
     ("Tôi làm job ngoài có phải đóng thuế không?", ["income", "revenue"]),
+    ("Tôi làm thêm ngoài giờ thì có phải đóng thuế không?", ["income", "revenue"]),
     ("Tôi kinh doanh thì đóng thuế bao nhiêu?", ["revenue", "group"]),        # no amount, no line of business
     ("Tôi bán hàng online thì phải đóng thuế bao nhiêu?", ["revenue"]),       # the writers place the business
     ("Tôi mới mở tiệm, mỗi tháng thu khoảng 50 triệu, có phải đóng thuế không?", []),  # an amount is given
