@@ -113,4 +113,4 @@ Ngày lập: 2026-11-19. Trạng thái hiện tại:
 | 4 Báo cáo | Xong bản nháp đầy đủ: `report.md` (~4.400 từ, tiếng Anh) |
 | 5 Slide | Xong 14 slide (Artifact Slides), có ghi chú người nói cho từng slide |
 
-Thay điểm chấm: ghi đè `experiment/data/grading_sheet_A..D.csv`, chạy `python analyze.py`, rồi cập nhật số trong báo cáo, demo và slide.
+Khi sửa điểm người chấm trong `experiment/data/grading_sheet_A..D.csv`: chạy `python analyze.py`, rồi cập nhật số trong báo cáo, demo và slide.

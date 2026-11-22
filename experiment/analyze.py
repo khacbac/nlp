@@ -415,40 +415,40 @@ def summary(res: dict, lang: str) -> str:
     if res.get("flip_by_human_gap"):
         L += ["", "## RQ2 Flips by human score gap", "", "| \\|gap\\| | Pairs | Flip rate |", "|---|---|---|"]
         for b in res["flip_by_human_gap"]:
-           L.append(f"| {b['gap']} | {b['n']} | {fmt(b)} |")
+            L.append(f"| {b['gap']} | {b['n']} | {fmt(b)} |")
     m = res["margin"]
     L += ["", "## RQ3 Confidence margin", "", "| | Mean margin |", "|---|---|",
-         f"| Consistent pairs | {fmt(m['consistent'], pct=False)} |",
-         f"| Flipped pairs | {fmt(m['flipped'], pct=False)} |",
-         f"| Difference | {fmt(m['difference'], pct=False)} |",
-         f"| AUC (margin predicts consistency) | {m['auc_consistent']:.3f} |", "",
-         "| Margin quartile | Flip rate |", "|---|---|"]
+          f"| Consistent pairs | {fmt(m['consistent'], pct=False)} |",
+          f"| Flipped pairs | {fmt(m['flipped'], pct=False)} |",
+          f"| Difference | {fmt(m['difference'], pct=False)} |",
+          f"| AUC (margin predicts consistency) | {m['auc_consistent']:.3f} |", "",
+          "| Margin quartile | Flip rate |", "|---|---|"]
     for i, q in enumerate(res["flip_by_margin_quartile"], 1):
         L.append(f"| Q{i} ({q['range'][0]:.2f}–{q['range'][1]:.2f}) | {fmt(q)} |")
     if res.get("agreement"):
         a = res["agreement"]
         L += ["", "## RQ4 Agreement with human annotators (pairs with a human winner)", "",
-             "| Method | Agreement |", "|---|---|",
-             f"| One order (mean of both single runs) | {fmt(a['single_order_mean'])} |",
-             f"| Consistent pairs only | {fmt(a['consistent_only'])} (coverage {fmt(a['consistent_coverage'])}) |",
-             f"| BPC (average both orders) | {fmt(a['bpc'])} |",
-             f"| Baseline: word-overlap F1 vs gold | {fmt(a['f1_baseline'])} |"]
+              "| Method | Agreement |", "|---|---|",
+              f"| One order (mean of both single runs) | {fmt(a['single_order_mean'])} |",
+              f"| Consistent pairs only | {fmt(a['consistent_only'])} (coverage {fmt(a['consistent_coverage'])}) |",
+              f"| BPC (average both orders) | {fmt(a['bpc'])} |",
+              f"| Baseline: word-overlap F1 vs gold | {fmt(a['f1_baseline'])} |"]
         if "cosine_baseline" in a:
-           L.append(f"| Baseline: embedding cosine vs gold | {fmt(a['cosine_baseline'])} |")
+            L.append(f"| Baseline: embedding cosine vs gold | {fmt(a['cosine_baseline'])} |")
     L += ["", "## Ranking", "", "| Model | Human mean (1–5) | BPC win rate |", "|---|---|---|"]
     for k, v in res["ranking"].items():
         hm = f"{v['human_mean']:.2f}" if v["human_mean"] is not None else "–"
         L.append(f"| {k} | {hm} | {100 * v['bpc_win_rate']:.1f}% |")
     ln = res["length"]
     L += ["", "## Length", "",
-         f"- BPC picks the longer answer: {fmt(ln['bpc_prefers_longer'])}",
-         f"- Flip rate, length gap above median: {fmt(ln['flip_rate_len_gap_above_median'])}; "
-         f"at or below: {fmt(ln['flip_rate_len_gap_at_or_below_median'])}"]
+          f"- BPC picks the longer answer: {fmt(ln['bpc_prefers_longer'])}",
+          f"- Flip rate, length gap above median: {fmt(ln['flip_rate_len_gap_above_median'])}; "
+          f"at or below: {fmt(ln['flip_rate_len_gap_at_or_below_median'])}"]
     an = res["annotators"]
     if an["kappa"]:
         L += ["", "## Annotator agreement", "", "| Pair | n | Cohen's κ | Quadratic κ |", "|---|---|---|---|"]
         for k, v in an["kappa"].items():
-           L.append(f"| {k[0]}+{k[1]} | {v['n']} | {v['kappa']:.3f} | {v['kappa_quadratic']:.3f} |")
+            L.append(f"| {k[0]}+{k[1]} | {v['n']} | {v['kappa']:.3f} | {v['kappa_quadratic']:.3f} |")
         L += ["", f"Krippendorff's α: ordinal {an['alpha_ordinal']:.3f}, interval {an['alpha_interval']:.3f}"]
     return "\n".join(L) + "\n"
 
