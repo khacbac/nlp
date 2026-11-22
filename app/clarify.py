@@ -17,7 +17,7 @@ import factcheck
 from retrieve import strip_marks, unaccented
 
 # Freelancers may be running a business or may be paid wages by a company under a contract.
-FREELANCE = r"tự do|freelanc\w*|hợp đồng dịch vụ|hợp đồng khoán|cộng tác viên|ctv|thù lao|nhận dự án|nhận job|job ngoài|làm thêm ngoài giờ|upwork|fiverr|làm remote|làm từ xa"
+FREELANCE = r"tự do|freelanc\w*|hợp đồng dịch vụ|hợp đồng khoán|cộng tác viên|ctv|thù lao|nhận dự án|nhận job|job ngoài|làm thêm ngoài giờ|nhận việc ngoài|upwork|fiverr|làm remote|làm từ xa"
 # The question asks whether, how, or how much tax applies.
 ASKS_TAX = (r"(có |)phải (đóng|nộp)|(đóng|nộp|tính) thuế (như thế nào|thế nào|ra sao|sao|gì|những gì)|"
             r"(đóng|nộp|tính|mất|hết) (thuế |)(bao nhiêu|mấy)|thuế (là |)bao nhiêu|mức thuế|(chịu|mất|bị) thuế|"
