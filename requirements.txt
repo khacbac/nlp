@@ -1,0 +1,10 @@
+# Local analysis, support app and tests (Python 3.13).
+numpy==2.5.5
+matplotlib==3.11.2
+openpyxl==3.1.5
+pytest==9.2.0
+# Optional: cosine-similarity baseline in experiment/analyze.py.
+sentence-transformers==6.3.0
+# Question selection (experiment/select_questions.py).
+datasets
+# Answer generation and judging run on Colab with vLLM (see experiment/*.ipynb).
